@@ -114,36 +114,54 @@ CONNECT     Used to tell a proxy to make a connection to another host and simply
 ... Other extension methods.
 
 # HTTP headers to implement
+upply its credential (username/password) to access protected resources.
 
-    headers name        meaning from https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html
-
-◦ Accept-Charsets       tell the server which character sets (ISO-8859-1, ISO-8859-2, ISO-8859-5, BIG5, UCS2, UCS4, UTF8...) it can handle or it prefers.
-
-◦ Accept-Language       tell the server what languages it can handle or it prefers. If the server has multiple versions of the requested document (e.g., in English, Chinese,                        French), it can check this header to decide which version to return. This process is called language negotiation.
-
-◦ Allow
-
-◦ Authorization			Used by the client to supply its credential (username/password) to access protected resources.
-
-◦ Content-Language
+◦ Content-Language		https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
+						utilisé pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs.
+						Par exemple, si "Content-Language: de-DE" est mis en place, cela signifie que la page est destinée à un public parlant l'allemand (par contre, cela n'indique pas que la page est écrite en allemand. Par exemple, elle pourrait être écrite en anglais dans le cadre d'un cours de langue destiné aux allemands).
+						Si l'en-tête Content-Language n'est pas spécifié, par défaut, cela signifie que la page est destinée à tout public de langue. 
 
 ◦ Content-Length		number-of-bytes - Used by POST request, to inform the server the length of the request body.
 
-◦ Content-Location
+◦ Content-Location		"An alternate location for the returned data"
+						Content-Location: /index.htm
+						https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Location
+						indique l'URL directe à utiliser pour accéder à la ressource lorsque la négociation de contenu a eu lieu, sans qu'il soit nécessaire de poursuivre la négociation de contenu.
+						https://www.geeksforgeeks.org/http-headers-content-location/
+						example: Content-Location: /index.html
 
 ◦ Content-Type			mime-type - Used by POST request, to inform the server the media type of the request body.
-◦ Date
-◦ Host
-◦ Last-Modified
-◦ Location
+
+◦ Date					The date and time at which the message was originated (in "HTTP-date" format as defined by RFC 7231 Date/Time Formats).
+
+◦ Host					The domain name of the server (for virtual hosting), and the TCP port number on which the server is listening. 
+						Host: en.wikipedia.org:8080
+						The port number may be omitted if the port is the standard port for the service requested. 
+						Host: en.wikipedia.org
+						Mandatory since HTTP/1.1.[16] If the request is generated directly in HTTP/2, it should not be used.
+			
+◦ Last-Modified			The last modified date for the requested object (in "HTTP-date" format as defined by RFC 7231)
+						Example: Last-Modified: Tue, 15 Nov 1994 12:45:26 GMT
+
+◦ Location				Used in redirection, or when a new resource has been created.
+						Example 1: Location: http://www.w3.org/pub/WWW/People.html
+						Example 2: Location: /pub/WWW/People.html
 
 ◦ Referer				to indicate the referrer of this request. If you click a link from web page 1 to visit web page 2, web page 1 is the referrer for request to web 							page 2. All major browsers set this header, which can be used to track where the request comes from
 
-◦ Retry-After
-◦ Server
-◦ Transfer-Encoding
+◦ Retry-After			If an entity is temporarily unavailable, this instructs the client to try again later. Value could be a specified period of time (in seconds) or a HTTP-date
+						Example 1: Retry-After: 120
+						Example 2: Retry-After: Fri, 07 Nov 2014 23:59:59 GMT
+
+◦ Server				A name for the server
+
+◦ Transfer-Encoding		The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity.
+						Must not be used with HTTP/2.[13]
+						Transfer-Encoding: chunked
 
 ◦ User-Agent			browser-type - Identify the type of browser used to make the request. Server use this to return different document depending on the type of browsers.
+						https://fr.wikipedia.org/wiki/User_agent
+						User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0
 
 ◦ WWW-Authenticate
 
@@ -177,7 +195,3 @@ clear()
 
 https://www.youtube.com/watch?v=YD_exb9aPZU&pbjreload=101
  
-# todo
-- comprendre l'objectif de GET/PUT etc ...
-- comprendre les CGI ...
-- ?
