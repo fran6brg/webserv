@@ -1,0 +1,1 @@
+comprendre quels headers il faut inclure dans la réponse selon les requêtes

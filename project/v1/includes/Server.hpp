@@ -20,6 +20,8 @@
 */
 
 #include "Client.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
 
 /*
 ** Class
@@ -59,9 +61,12 @@ class Server
         Server(std::string serverName, int port);
 		// ~Server();
     
-        int start(void);    
+        int start(void);
         int connectClient(void);
+        int recvRequest(std::vector<Client>::iterator it_c);
+        int sendResponse(std::vector<Client>::iterator it_c);
         int handleClientRequest(std::vector<Client>::iterator it_c);
+
     /*
     ** friends
     */

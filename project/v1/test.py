@@ -48,6 +48,10 @@ print("GET on 8080")
 r = requests.get('http://localhost:8080')
 printResponse(r)
 
+print("GET on 4443")
+r = requests.get('http://localhost:4443')
+printResponse(r)
+
 # print("GET on 8080/test")
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)

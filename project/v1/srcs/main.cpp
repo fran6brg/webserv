@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 		{
 			// pour chaque serveur:
 			// - on accepte la demande de connexion du client s'il y en a une (FD_ISSET())
-			// - on itère sur ses clients pour pour les servir
+			// - on itère sur ses clients pour les servir
 
 			if (FD_ISSET(it_s->_socket_fd, &g_conf._readfds)) // check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
 			{
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
 			for (; it_c != it_s->_clients.end(); it_c++)
 			{
 				it_s->handleClientRequest(it_c);
-			}	
-		}        
+			}
+		}
     }
     return (EXIT_SUCCESS);
 }
