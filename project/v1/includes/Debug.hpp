@@ -1,56 +1,52 @@
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#ifndef DEBUG_HPP
+#define DEBUG_HPP
 
 /*
-** Libraries
+** Includes
 */
 
-#include <string>
-#include <iostream>
-
-/*
-** Headers
-*/
+#include <sys/select.h> // fd_set
 
 /*
 ** Class
 */
 
-class Client
+class Debug
 {
     /*
     ** member variables
     */
 
     private:
-        // 
+        //
 
     protected:
         //
 
     public:
-        int     _accept_fd;
+        //
 
     /*
     ** methods
     */
 
     private:
-        Client();
+        //
 
     protected:
         //
 
     public:
-        Client(int accept_fd);
-
+        Debug();
+		~Debug();
+    
+        void display_set(fd_set set) const;
 
     /*
     ** friends
     */
 
     friend class Conf;
-    friend class Server;
 };
 
 #endif

@@ -6,7 +6,12 @@ CPPFLAGS	=	-Wall -Werror -Wextra -g
 
 RM			=	rm -rf
 
-SRCS		=	main.cpp
+SRCS		=	srcs/main.cpp \
+				srcs/Conf.cpp \
+				srcs/Server.cpp \
+				srcs/Client.cpp \
+				srcs/Debug.cpp
+
 OBJS		= 	$(SRCS:.cpp=.o)
 EXEC		=	webserv
 

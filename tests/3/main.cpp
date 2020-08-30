@@ -117,6 +117,7 @@ int main (int argc, char *argv[])
       /**********************************************************/
       printf("Waiting on select()...\n");
       rc = select(max_sd + 1, &working_set, NULL, NULL, &timeout);
+      printf("select() débloqué\n");
 
       /**********************************************************/
       /* Check to see if the select call failed.                */

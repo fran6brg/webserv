@@ -4,11 +4,10 @@
 ** constructors / destructors
 */
 
-Client::Client(int accept_fd):
-    _accept_fd(accept_fd)
-{
-    ;
-}
+// Debug::Debug()
+// {
+//     ;
+// }
 
 /*
 ** other class methods
