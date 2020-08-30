@@ -7,7 +7,7 @@
             "address":  "/",
             "methods": 	["GET", "POST"],
             "root": 	"/www/content",
-            "index":    "oldindex.html"
+            "index":    "index.html"
         }
     },
     "server2":
