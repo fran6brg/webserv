@@ -6,7 +6,7 @@
         {
             "address":  "/",
             "methods": 	["GET", "POST"],
-            "root": 	"/Users/francisberger/code/42/1.other/inspis/webserver/2cd/www/content",
+            "root": 	"/www/content",
             "index":    "oldindex.html"
         }
     },
