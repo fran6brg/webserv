@@ -16,7 +16,9 @@ Server::Server(std::string serverName, int port):
 
 int Server::start(void)
 {
-	// socket
+    errno = 0;
+	
+    // socket
 	if ((_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
         std::cout << "error " << _name << "/start/socket(): " << std::string(strerror(errno)) << std::endl;
@@ -95,12 +97,11 @@ int Server::connectClient(void)
         else
             std::cout << "error " << _name << "/connectClient/accept: " << std::string(strerror(errno)) << std::endl;
         return (0);
-
     }
     else
     {
         std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": accepted client on fd " << ret << std::endl;
-        
+
         Client c = Client(ret);
         _clients.push_back(c);
 
@@ -110,9 +111,9 @@ int Server::connectClient(void)
 
 int Server::recvRequest(std::vector<Client>::iterator it_c)
 {
-    char buffer[1000];
     int ret = 1;
-
+    errno = 0;
+    
     // https://stackoverflow.com/questions/13736064/recv-connection-reset-by-peer
     // 'Connection reset by peer' has a number of causes,
     // but the most common one is that you have written to a connection that has already been closed by the peer.
@@ -126,7 +127,7 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     // - EAGAIN originally indicated when a "temporary resource shortage made an operation impossible"
         // Because the resource shortage was expected to be temporary, a subsequent attempt to perform the action might succeed (hence the name "again").
     
-    if ((ret = recv(it_c->_accept_fd, buffer, sizeof(buffer), 0)) < 0)
+    if ((ret = recv(it_c->_accept_fd, it_c->_buffer, sizeof(it_c->_buffer), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
         return (0);
@@ -142,8 +143,10 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     else
         std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": recv() is ok" << std::endl;
 
-    printf("\n\n************ request *************\n%s\n**********************************\n\n", buffer);
+    printf("\n\n****** request *******\n%s\n**********************\n\n", it_c->_buffer);
 
+    it_c->parse_request();
+    
     return (1);
 }
 
@@ -151,6 +154,7 @@ int Server::sendResponse(std::vector<Client>::iterator it_c)
 {
     char hello[108] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
     int ret = 1;
+    errno = 0;
 
     if ((ret = send(it_c->_accept_fd, hello, sizeof(hello), 0)) < 0)
     {

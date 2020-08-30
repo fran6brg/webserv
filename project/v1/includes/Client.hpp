@@ -12,6 +12,9 @@
 ** Headers
 */
 
+#include "Request.hpp"
+#include "Response.hpp"
+
 /*
 ** Class
 */
@@ -29,7 +32,10 @@ class Client
         //
 
     public:
-        int     _accept_fd;
+        int         _accept_fd;
+        char        _buffer[1000];
+        Request     _request;
+        Response    _response;
 
     /*
     ** methods
@@ -44,6 +50,7 @@ class Client
     public:
         Client(int accept_fd);
 
+        int parse_request(void);
 
     /*
     ** friends
