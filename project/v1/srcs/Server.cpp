@@ -114,27 +114,26 @@ int Server::handleClientRequest(std::vector<Client>::iterator it_c)
 
     char buffer[1000];
     int rc = 1;
-    rc = recv(it_c->_accept_fd, buffer, sizeof(buffer), 0);
-    if (rc < 0)
+
+    if ((rc = recv(it_c->_accept_fd, buffer, sizeof(buffer), 0)) < 0)
     {
-        if (errno != EWOULDBLOCK)
-        {
-            perror("  recv() failed");
-            // close_conn = TRUE;
-        }
-        // break;
+        std::cout << "error " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+        return (0);
     }
-    printf("buffer= %s", buffer);
+    else
+        std::cout << _name << "(" << _port << ")" << ": recv() is ok" << std::endl;
+
+    printf("\n\n************ request *************\n%s\n**********************************\n\n", buffer);
 
     char hello[108] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
 
-    rc = send(it_c->_accept_fd, hello, sizeof(hello), 0);
-    if (rc < 0)
+    if ((rc = send(it_c->_accept_fd, hello, sizeof(hello), 0)) < 0)
     {
-        perror("  send() failed");
-        // close_conn = TRUE;
-        // break;
+        std::cout << "error " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
+        return (0);
     }
+    else
+        std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
 
     return (1);
 }
