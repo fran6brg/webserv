@@ -33,7 +33,7 @@ class Client
 
     public:
         int         _accept_fd;
-        char        _buffer[1000];
+        // char        _buffer[1000];
         Request     _request;
         Response    _response;
 
@@ -56,7 +56,7 @@ class Client
     ** friends
     */
 
-    friend class Conf;
+    // friend class Conf;
     friend class Server;
 };
 

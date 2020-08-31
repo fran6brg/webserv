@@ -10,7 +10,9 @@ SRCS		=	srcs/main.cpp \
 				srcs/Conf.cpp \
 				srcs/Server.cpp \
 				srcs/Client.cpp \
-				srcs/Debug.cpp
+				srcs/Debug.cpp \
+				srcs/Request.cpp \
+				srcs/Response.cpp 
 
 OBJS		= 	$(SRCS:.cpp=.o)
 EXEC		=	webserv

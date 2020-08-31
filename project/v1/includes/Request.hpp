@@ -22,6 +22,8 @@
 ** Headers
 */
 
+#include "Client.hpp"
+
 /*
 ** Class
 */
@@ -39,6 +41,8 @@ class Request
 		//
 	
 	public:
+		char        _buffer[1000];
+
 		/*
 		** Request Line
 		*/
@@ -55,7 +59,7 @@ class Request
 		std::map<int, std::string> 							_accept_charset; // indique le jeu de caractères que le client est capable de comprendre. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Accept-Charset
 		std::map<int, std::string> 							_accept_language; // indique quelles sont les langues que le client est capable de comprendre, et quelle variante locale est préférée https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Accept-Language
 		// - Authentification:
-		std::map<int, std::pair<std::string, std::string>> 	_authorization; // contient les identifiants permettant l'authentification d'un utilisateur https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Authorization
+		std::map<int, std::pair<std::string, std::string> > _authorization; // contient les identifiants permettant l'authentification d'un utilisateur https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Authorization
 		// - informations sur le corps du message:
 		std::map<int, std::string> 							_content_language; // pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
 		int _content_length; // indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
@@ -72,7 +76,7 @@ class Request
 		** Request body
 		*/
 
-		std::map<int, std::pair<std::string, std::string>> _body;
+		std::map<int, std::pair<std::string, std::string> > _body;
 
 	/*
 	** methods
@@ -87,6 +91,11 @@ class Request
 	public:
 		Request();
 		void init();
+
+    	int parse_request_line();
+    	int parse_headers();
+    	int parse_body();
+		int parse();
 
 	/*
 	** friends

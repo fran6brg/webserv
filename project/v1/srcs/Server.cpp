@@ -69,7 +69,7 @@ int Server::start(void)
 	// O_NONBLOCK ou O_NDELAY : Le fichier est ouvert en mode « non bloquant ».
 	// Ni la fonction open() ni aucune autre opération ultérieure sur ce fichier ne laissera le processus appelant en attente.
 	// Pour la manipulation des FIFO (tubes nommés), voir également fifo(7). Pour une discussion sur l'effet de O_NONBLOCK conjointement aux verrouillages de fichier impératifs et aux baux de fichiers, voir fcntl(2).
-	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1)
+	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1) // cf. subject
 	{
         std::cout << "error " << _name << "/start/fcntl: " << std::string(strerror(errno)) << std::endl;
         return (0);
@@ -127,7 +127,7 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     // - EAGAIN originally indicated when a "temporary resource shortage made an operation impossible"
         // Because the resource shortage was expected to be temporary, a subsequent attempt to perform the action might succeed (hence the name "again").
     
-    if ((ret = recv(it_c->_accept_fd, it_c->_buffer, sizeof(it_c->_buffer), 0)) < 0)
+    if ((ret = recv(it_c->_accept_fd, it_c->_request._buffer, sizeof(it_c->_request._buffer), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
         return (0);
@@ -143,9 +143,9 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     else
         std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": recv() is ok" << std::endl;
 
-    printf("\n\n****** request *******\n%s\n**********************\n\n", it_c->_buffer);
+    printf("\n\n****** request *******\n%s\n**********************\n\n", it_c->_request._buffer);
 
-    it_c->parse_request();
+    it_c->_request.parse();
     
     return (1);
 }

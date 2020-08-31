@@ -77,7 +77,7 @@ class Response
 		** Response body
 		*/
 
-		std::map<int, std::pair<std::string, std::string>> _body;
+		std::map<int, std::pair<std::string, std::string> > _body;
 
 	/*
 	** methods
@@ -91,6 +91,7 @@ class Response
 
 	public:
 		Response();
+		void init();
 
 
 	/*

@@ -14,7 +14,11 @@ Client::Client(int accept_fd):
 ** other class methods
 */
 
-int parse_request(void)
+int Client::parse_request(void)
 {
     _request.init();
+    // _request.parse_request_line(this);
+    // _request.parse_headers(this);
+    // _request.parse_body(this);
+    return (1);
 }
