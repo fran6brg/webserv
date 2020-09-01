@@ -44,13 +44,13 @@ def printResponse(r):
 # printResponse(r)
 
 
-print("GET on 8080")
-r = requests.get('http://localhost:8080')
-printResponse(r)
+# print("GET on 8080")
+# r = requests.get('http://localhost:8080')
+# printResponse(r)
 
-print("GET on 4443")
-r = requests.get('http://localhost:4443')
-printResponse(r)
+# print("GET on 4443")
+# r = requests.get('http://localhost:4443')
+# printResponse(r)
 
 # print("GET on 8080/test")
 # r = requests.get('http://localhost:8080/test')
@@ -76,10 +76,10 @@ printResponse(r)
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
 # printResponse(r)
 
-# print("GET on 8080/test/index.html with preferred language EN and preferred encoding utf8")
-# headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-# printResponse(r)
+print("GET on 8080/test/index.html with preferred language EN and preferred encoding utf8")
+headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
+r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+printResponse(r)
 
 # print("GET on 8080/auth/add.html without auth")
 # r = requests.get('http://localhost:8080/auth/add.html')

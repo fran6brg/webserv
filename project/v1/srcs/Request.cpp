@@ -13,24 +13,24 @@ Request::Request(void)
 ** utils
 */
 
-void	ft_getline(std::string &buffer, std::string &line)
+void	ft_getline(std::string &b, std::string &line)
 {
     size_t					pos;
 
-    pos = buffer.find("\n");
+    pos = b.find("\n");
     if (pos != std::string::npos)
     {
-        line = std::string (buffer, 0, pos++);
-        buffer = buffer.substr(pos);
+        line = std::string (b, 0, pos++);
+        b = b.substr(pos);
     }
     else
     {
-        if (buffer[buffer.size() - 1] == '\n')
-            buffer = buffer.substr(buffer.size());
+        if (b[b.size() - 1] == '\n')
+            b = b.substr(b.size());
         else
         {
-            line = buffer;
-            buffer = buffer.substr(buffer.size());
+            line = b;
+            b = b.substr(b.size());
         }
     }
 }
@@ -40,7 +40,8 @@ std::vector<std::string> split(const std::string& str, char delim)
     std::vector<std::string> strings;
     size_t start;
     size_t end = 0;
-    while ((start = str.find_first_not_of(delim, end)) != std::string::npos) {
+    while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
+    {
         end = str.find(delim, start);
         strings.push_back(str.substr(start, end - start));
     }
@@ -50,22 +51,27 @@ std::vector<std::string> split(const std::string& str, char delim)
 std::string trim(const std::string& str)
 {
     size_t first = str.find_first_not_of(' ');
+
     if (std::string::npos == first)
-    {
         return str;
-    }
     size_t last = str.find_last_not_of(' ');
     return (str.substr(first, (last - first + 1)));
 }
 
-// void trim(std::string& str)
-// {
-//     size_t first = str.find_first_not_of(' ');
-//     if (std::string::npos == first)
-//         ;
-//     size_t last = str.find_last_not_of(' ');
-//     return (str.substr(first, (last - first + 1)));
-// }
+void print_map(std::stringstream &ss1, std::map<int, std::string> map)
+{
+    size_t i = 0;
+    
+    if (map.empty())
+        ss1 << std::endl;
+    else
+    {
+        while (i < map.size())
+            ss1 << " " << map[i++];
+        ss1 << std::endl;
+    }
+}
+
 
 /*
 ** private class methods
@@ -73,7 +79,10 @@ std::string trim(const std::string& str)
 
 void Request::fill_request(std::string key, std::string value)
 {
-    std::cout << "key: " << key << ", value: " << value << std::endl;
+    // std::cout << "key: " << key << ", value: " << value << std::endl;
+
+    size_t i = 0;
+    std::vector<std::string> tokens;
 
     if (key == "Host")
         _host = value;
@@ -85,6 +94,32 @@ void Request::fill_request(std::string key, std::string value)
         ;
     else if (key == "User-Agent")
         _user_agent = value;
+    else if (key == "Authorization")
+        _authorization = value;
+    else if (key == "Accept-Charset")
+    {
+        tokens = split(value, ' ');
+        if (!tokens.empty())
+        {
+            while (i < tokens.size())
+            {
+                _accept_charset[i] = tokens[i];
+                i++;
+            }
+        }
+    }
+    else if (key == "Accept-Language")
+    {
+        tokens = split(value, ' ');
+        if (!tokens.empty())
+        {
+            while (i < tokens.size())
+            {
+                _accept_language[i] = tokens[i];
+                i++;
+            }
+        }
+    }
 }
 
 /*
@@ -151,9 +186,12 @@ int Request::parse_headers()
             break ;
         // fill corresponding request member variable
         fill_request(key, value);
-        // parse la value selon la key
-        // todo
     }
+    return (1);
+}
+
+int Request::parse_body()
+{
     return (1);
 }
 
@@ -161,25 +199,58 @@ int Request::parse()
 {
     parse_request_line();
     parse_headers();
-
+    parse_body();
     return (1);
 }
 
 void Request::display(void)
 {
-    std::cout << "PARSED REQUEST:" << std::endl;
-    std::cout << "_method: " << _method << std::endl;
-    std::cout << "_uri: " << _uri << std::endl;
-    std::cout << "_http_version: " << _http_version << std::endl;
-    // std::cout << "_accept_charset: " << _accept_charset << std::endl;
-    // std::cout << "_accept_language: " << _accept_language << std::endl;
-    // std::cout << "_authorization: " << _authorization << std::endl;
-    // std::cout << "_content_language: " << _content_language << std::endl;
-    std::cout << "_content_length: " << _content_length << std::endl;
-    // std::cout << "_content_location: " << _content_location << std::endl;
-    // std::cout << "_content_type: " << _content_type << std::endl;
-    std::cout << "_date: " << _date << std::endl;
-    std::cout << "_host: " << _host << std::endl;
-    std::cout << "_referer: " << _referer << std::endl;
-    std::cout << "_user_agent: " << _user_agent << std::endl;
+    size_t i = 0;
+    std::stringstream ss1;
+
+    ss1 << "PARSED REQUEST:" << std::endl;
+
+    ss1 << " 1) _method: " << _method << std::endl; // 1
+    ss1 << " 2) _uri: " << _uri << std::endl; // 2
+    ss1 << " 3) _http_version: " << _http_version << std::endl; // 3
+    
+    ss1 << " 4) _accept_charset:"; // 4
+    print_map(ss1, _accept_charset);
+    
+    ss1 << " 5) _accept_language:"; // 5
+    print_map(ss1, _accept_language);
+
+    ss1 << " 6) _authorization: " << _authorization << std::endl; // 6
+        
+    ss1 << " 7) _content_language:"; // 7
+    print_map(ss1, _content_language);
+
+    ss1 << " 8) _content_length: " << _content_length << std::endl; // 8
+
+    ss1 << " 9) _content_location:"; // 9
+    print_map(ss1, _content_location);
+
+    ss1 << "10) _content_type:"; // 10
+    print_map(ss1, _content_type);
+
+    ss1 << "11) _date: " << _date << std::endl; // 11
+    ss1 << "12) _host: " << _host << std::endl; // 12
+    ss1 << "13) _referer: " << _referer << std::endl; // 13
+    ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
+
+    ss1 << "15) _body:"; // 15
+    if (_body.empty())
+        ss1 << std::endl;
+    else
+    {
+        while (i < _body.size())
+        {
+            ss1 << " " << _body[i].first << "=" << _body[i].second;
+            i++;
+        }
+        ss1 << std::endl;
+        i = 0;
+    }
+
+    std::cout << ss1.str() << std::endl;
 }
