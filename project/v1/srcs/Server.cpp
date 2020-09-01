@@ -127,7 +127,7 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     // - EAGAIN originally indicated when a "temporary resource shortage made an operation impossible"
         // Because the resource shortage was expected to be temporary, a subsequent attempt to perform the action might succeed (hence the name "again").
     
-    if ((ret = recv(it_c->_accept_fd, it_c->_request._buffer, sizeof(it_c->_request._buffer), 0)) < 0)
+    if ((ret = recv(it_c->_accept_fd, it_c->_buffer, sizeof(it_c->_buffer), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
         return (0);
@@ -143,9 +143,11 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     else
         std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": recv() is ok" << std::endl;
 
-    printf("\n\n****** request *******\n%s\n**********************\n\n", it_c->_request._buffer);
+    printf("\n\n****** request *******\n%s\n**********************\n\n", it_c->_buffer);
 
+    it_c->_request._buffer = std::string(it_c->_buffer, 1000);
     it_c->_request.parse();
+    it_c->_request.display();    
     
     return (1);
 }

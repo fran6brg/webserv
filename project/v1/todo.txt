@@ -1,1 +1,3 @@
 comprendre quels headers il faut inclure dans la réponse selon les requêtes
+
+construire une requête qui inclue tous les headers pour parfaire le parsing

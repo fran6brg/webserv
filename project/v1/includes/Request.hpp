@@ -41,7 +41,8 @@ class Request
 		//
 	
 	public:
-		char        _buffer[1000];
+		// char        _buffer[1000];
+		std::string	_buffer;
 
 		/*
 		** Request Line
@@ -62,7 +63,7 @@ class Request
 		std::map<int, std::pair<std::string, std::string> > _authorization; // contient les identifiants permettant l'authentification d'un utilisateur https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Authorization
 		// - informations sur le corps du message:
 		std::map<int, std::string> 							_content_language; // pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
-		int _content_length; // indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
+		int 												_content_length; // indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
 		std::map<int, std::string> 							_content_location; // indicates an alternate location for the returned data. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Location
 		std::map<int, std::string> 							_content_type; // sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
 		// - Autres:
@@ -83,7 +84,7 @@ class Request
 	*/
 
 	private:
-		// 
+		void fill_request(std::string key, std::string value);
 
 	protected:
 		//
@@ -92,11 +93,11 @@ class Request
 		Request();
 		void init();
 
-    	int parse_request_line();
-    	int parse_headers();
-    	int parse_body();
-		int parse();
-
+    	int parse_request_line(void);
+    	int parse_headers(void);
+    	int parse_body(void);
+		int parse(void);
+		void display(void);
 	/*
 	** friends
 	*/
