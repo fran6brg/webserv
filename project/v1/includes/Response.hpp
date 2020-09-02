@@ -45,8 +45,8 @@ class Response
 		*/
 
 		std::string _http_version;
-		int status_code;
-		std::string reason_phrase;
+		int _status_code;
+		std::string _reason_phrase;
 
 		/*
 		** Response Headers, dans l'ordre du sujet
@@ -79,21 +79,27 @@ class Response
 
 		std::map<int, std::pair<std::string, std::string> > _body;
 
+		/*
+		** Response body
+		*/
+
+		std::string _to_send;
+
 	/*
 	** methods
 	*/
 
 	private:
-		// 
+		void init();
 
 	protected:
 		//
 
 	public:
 		Response();
-		void init();
 
-
+		// int response_to_write(void);
+	
 	/*
 	** friends
 	*/

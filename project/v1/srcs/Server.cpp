@@ -162,10 +162,12 @@ int Server::recvRequest(Client *c)
 
 int Server::sendResponse(Client *c)
 {
+    // c->_response._to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
     char hello[108] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
     int ret = 1;
     errno = 0;
 
+    // if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), sizeof(c->_response._to_send.c_str()), 0)) < 0)
     if ((ret = send(c->_accept_fd, hello, sizeof(hello), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
@@ -183,6 +185,7 @@ int Server::handleClientRequest(Client *c)
 
     if (!recvRequest(c))
         return (0);
+        
     if (!sendResponse(c))
         return (0);
 
