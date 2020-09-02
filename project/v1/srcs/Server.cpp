@@ -10,6 +10,11 @@ Server::Server(std::string serverName, int port):
     bzero(&_addr, sizeof(_addr));
 }
 
+Server::~Server()
+{
+	std::cout << "server killed" << std::endl;
+}
+
 /*
 ** other class methods
 */
@@ -139,7 +144,7 @@ int Server::recvRequest(Client *c)
         else
         {
             std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
-            _clients.erase(_clients.begin());
+            c->_is_connected = false;
         }
         return (0);
     }

@@ -47,7 +47,7 @@ class Conf
         // int                     _nfds;
         
         // other variables
-        std::vector<Server, std::allocator<Server> >	    _servers;
+        std::vector<Server*>	    _servers;
 
     /*
     ** methods

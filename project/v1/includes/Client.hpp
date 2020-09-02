@@ -36,6 +36,7 @@ class Client
         char        _buffer[1000];
         Request     _request;
         Response    _response;
+        bool        _is_connected;
 
     /*
     ** methods

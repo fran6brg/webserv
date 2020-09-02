@@ -5,13 +5,14 @@
 */
 
 Client::Client(int accept_fd):
-    _accept_fd(accept_fd)
+    _accept_fd(accept_fd), _is_connected(true)
 {
     ;
 }
 
 Client::~Client()
 {
+	std::cout << "destructor client" << std::endl;
 	// free(_buffer);
 	// _buffer = NULL;
 	// if (_accept_fd != -1)

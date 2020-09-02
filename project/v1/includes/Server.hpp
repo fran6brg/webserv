@@ -56,7 +56,7 @@ class Server
 
     public:
         Server(std::string serverName, int port);
-		// ~Server();
+		~Server();
     
         int start(void);
         int connectClient(void);

@@ -15,7 +15,7 @@ Conf::Conf()
 	FD_ZERO(&_save_writefds);
 	FD_ZERO(&_exceptfds);
 	FD_ZERO(&_save_exceptfds);
-    _timeout.tv_sec = 10;
+    _timeout.tv_sec = 4;
 	_timeout.tv_usec = 0;
 }
 
@@ -26,14 +26,14 @@ Conf::Conf()
 int Conf::parse(void)
 {
     std::string n1 ("server1");
-    Server s1 = Server(n1, 8080);
-    if (!s1.start())
+    Server *s1 = new Server(n1, 8080);
+    if (!s1->start())
         return (0);
     _servers.push_back(s1);
 
     std::string n2 ("server2");
-    Server s2 = Server(n2, 4443);
-    if (!s2.start())
+    Server *s2 = new Server(n2, 4443);
+    if (!s2->start())
         return (0);
     _servers.push_back(s2);
 

@@ -18,6 +18,7 @@ void ft_putfd(int fd, char *str)
 
 int main(int argc, char *argv[])
 {
+	Server *s;
 	Client *c;
 
     // parsing
@@ -34,26 +35,32 @@ int main(int argc, char *argv[])
 			break;
 
 		printf("iterating over existing servers\n");
-        std::vector<Server>::iterator it_s = g_conf._servers.begin();
+        std::vector<Server*>::iterator it_s = g_conf._servers.begin();
 		for (; it_s != g_conf._servers.end(); it_s++)
 		{
+			s = *it_s;
 			// pour chaque serveur:
-			// - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
-			// - on itère sur les clients du serveur pour les servir
+			// 1 - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
+			// 2 - on itère sur les clients du serveur pour les servir
 
-			if (FD_ISSET(it_s->_socket_fd, &g_conf._readfds)) // check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
+
+			// 1
+			if (FD_ISSET(s->_socket_fd, &g_conf._readfds)) // check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
 			{
-				printf("fd %i is set\n", it_s->_socket_fd);
-				it_s->connectClient(); // connexion et création du nouveau client
+				printf("fd %i is set\n", s->_socket_fd);
+				s->connectClient(); // connexion et création du nouveau client
 			}
-			// pour chaque client dudit server:
-			std::vector<Client*>::iterator it_c = it_s->_clients.begin();
-			printf("%s has now %lu clients to serve\n", it_s->_name.c_str(), it_s->_clients.size());
-			for (; it_c != it_s->_clients.end(); it_c++)
+
+			// 2
+			std::vector<Client*>::iterator it_c = s->_clients.begin();
+			printf("%s has now %lu clients to serve\n", s->_name.c_str(), s->_clients.size());
+			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
-				if (c->_accept_fd != -1)
-					it_s->handleClientRequest(c);
+				if (c->_is_connected)
+					s->handleClientRequest(c);
+				else if (s->_clients.size() > 1)
+					it_c = s->_clients.erase(it_c); // sinon on supprime le client (mais bug lorsqu'il n'y en a qu'un à supp)
 			}
 		}
     }

@@ -26,6 +26,7 @@ clean:
 
 fclean: clean
 	$(RM) $(EXEC)
+	$(RM) webserv.dSYM
 
 re:	fclean all
 
