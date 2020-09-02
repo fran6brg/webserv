@@ -139,7 +139,7 @@ int Server::recvRequest(Client *c)
         else
         {
             std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
-            // _clients.erase(c);
+            _clients.erase(_clients.begin());
         }
         return (0);
     }
