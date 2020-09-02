@@ -18,6 +18,7 @@ void ft_putfd(int fd, char *str)
 
 int main(int argc, char *argv[])
 {
+	Client *c;
 
     // parsing
 	(void)argc;
@@ -37,8 +38,8 @@ int main(int argc, char *argv[])
 		for (; it_s != g_conf._servers.end(); it_s++)
 		{
 			// pour chaque serveur:
-			// - on accepte la demande de connexion du client s'il y en a une (FD_ISSET())
-			// - on itère sur ses clients pour les servir
+			// - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
+			// - on itère sur les clients du serveur pour les servir
 
 			if (FD_ISSET(it_s->_socket_fd, &g_conf._readfds)) // check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
 			{
@@ -46,10 +47,13 @@ int main(int argc, char *argv[])
 				it_s->connectClient(); // connexion et création du nouveau client
 			}
 			// pour chaque client dudit server:
-			std::vector<Client>::iterator it_c = it_s->_clients.begin();
+			std::vector<Client*>::iterator it_c = it_s->_clients.begin();
+			printf("%s has now %lu clients to serve\n", it_s->_name.c_str(), it_s->_clients.size());
 			for (; it_c != it_s->_clients.end(); it_c++)
 			{
-				it_s->handleClientRequest(it_c);
+				c = *it_c;
+				if (c->_accept_fd != -1)
+					it_s->handleClientRequest(c);
 			}
 		}
     }

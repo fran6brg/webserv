@@ -25,7 +25,7 @@ int Server::start(void)
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": socket_fd created (" << _socket_fd << ")" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": socket_fd created (" << _socket_fd << ")" << std::endl;
 
 	
 	// SO_REUSEADDR option on the listening socket: to avoid “Address already in use” error when binding(). 
@@ -38,7 +38,7 @@ int Server::start(void)
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": setsockopt() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": setsockopt() is ok" << std::endl;
 
 	// set struct sockaddr_in
 	_addr.sin_family = AF_INET;
@@ -51,7 +51,7 @@ int Server::start(void)
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": bind() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": bind() is ok" << std::endl;
 
     if (listen(_socket_fd, 10) == -1)
 	{
@@ -59,7 +59,7 @@ int Server::start(void)
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": listen() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": listen() is ok" << std::endl;
 
 	// http://beej.us/guide/bgnet/html/#selectman
 	// Note for Linux users: Linux’s select() can return “ready-to-read” and then not actually be ready to read, thus causing the subsequent read() call to block.
@@ -75,7 +75,7 @@ int Server::start(void)
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": fcntl() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": fcntl() is ok" << std::endl;
 	
     // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
 	FD_SET(_socket_fd, &g_conf._save_readfds);    
@@ -100,16 +100,16 @@ int Server::connectClient(void)
     }
     else
     {
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": accepted client on fd " << ret << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": accepted client on fd " << ret << std::endl;
 
-        Client c = Client(ret);
+        Client *c = new Client(ret);
         _clients.push_back(c);
 
         return (1);
     }
 }
 
-int Server::recvRequest(std::vector<Client>::iterator it_c)
+int Server::recvRequest(Client *c)
 {
     int ret = 1;
     errno = 0;
@@ -127,55 +127,58 @@ int Server::recvRequest(std::vector<Client>::iterator it_c)
     // - EAGAIN originally indicated when a "temporary resource shortage made an operation impossible"
         // Because the resource shortage was expected to be temporary, a subsequent attempt to perform the action might succeed (hence the name "again").
     
-    if ((ret = recv(it_c->_accept_fd, it_c->_buffer, sizeof(it_c->_buffer), 0)) < 0)
+    if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) < 0)
     {
-        std::cout << "error " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+        std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
         return (0);
     }
     else if (ret == 0)
     {
         if (errno == EWOULDBLOCK || errno == EAGAIN)
-            std::cout << "error " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
         else
+        {
             std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
+            // _clients.erase(c);
+        }
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": recv() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": recv() is ok" << std::endl;
 
-    printf("\n\n****** request *******\n%s\n**********************\n\n", it_c->_buffer);
+    printf("\n\n****** request *******\n%s\n**********************\n\n", c->_buffer);
 
-    it_c->_request._buffer = std::string(it_c->_buffer, 1000);
-    it_c->_request.parse();
-    it_c->_request.display();    
+    c->_request._buffer = std::string(c->_buffer, 1000);
+    c->_request.parse();
+    c->_request.display();    
     
     return (1);
 }
 
-int Server::sendResponse(std::vector<Client>::iterator it_c)
+int Server::sendResponse(Client *c)
 {
     char hello[108] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
     int ret = 1;
     errno = 0;
 
-    if ((ret = send(it_c->_accept_fd, hello, sizeof(hello), 0)) < 0)
+    if ((ret = send(c->_accept_fd, hello, sizeof(hello), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << "(" << _port << ")" << ": send() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
 
     return (1);
 }
 
-int Server::handleClientRequest(std::vector<Client>::iterator it_c)
+int Server::handleClientRequest(Client *c)
 {
-    printf("handling request of client %i\n", it_c->_accept_fd);
+    printf("handling request of client %i\n", c->_accept_fd);
 
-    if (!recvRequest(it_c))
+    if (!recvRequest(c))
         return (0);
-    if (!sendResponse(it_c))
+    if (!sendResponse(c))
         return (0);
 
     return (1);

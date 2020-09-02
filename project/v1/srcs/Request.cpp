@@ -79,24 +79,12 @@ void print_map(std::stringstream &ss1, std::map<int, std::string> map)
 
 void Request::fill_request(std::string key, std::string value)
 {
-    // std::cout << "key: " << key << ", value: " << value << std::endl;
+    std::cout << "key: " << key << ", value: " << value << std::endl;
 
     size_t i = 0;
     std::vector<std::string> tokens;
 
-    if (key == "Host")
-        _host = value;
-    else if (key == "Connection")
-        ;
-    else if (key == "Accept-Encoding")
-        ;
-    else if (key == "Accept")
-        ;
-    else if (key == "User-Agent")
-        _user_agent = value;
-    else if (key == "Authorization")
-        _authorization = value;
-    else if (key == "Accept-Charset")
+    if (key == "Accept-Charset") // 4
     {
         tokens = split(value, ' ');
         if (!tokens.empty())
@@ -108,7 +96,7 @@ void Request::fill_request(std::string key, std::string value)
             }
         }
     }
-    else if (key == "Accept-Language")
+    else if (key == "Accept-Language") // 5
     {
         tokens = split(value, ' ');
         if (!tokens.empty())
@@ -120,6 +108,22 @@ void Request::fill_request(std::string key, std::string value)
             }
         }
     }
+    else if (key == "Authorization") // 6
+        _authorization = value;
+    else if (key == "Content-Length") // 8
+        _content_length = std::stoi(value);
+    else if (key == "Host") // 12
+        _host = value;
+    else if (key == "User-Agent") // 14
+        _user_agent = value;
+
+    // other headers not to be handled cf. subject
+    else if (key == "Connection")
+        ;
+    else if (key == "Accept-Encoding")
+        ;
+    else if (key == "Accept")
+        ;
 }
 
 /*
@@ -167,12 +171,12 @@ int Request::parse_request_line()
 
 int Request::parse_headers()
 {
-    // std::cout << "PARSE:" << std::endl;
     std::string line;
     std::size_t pos;
     std::string key;
     std::string value;
     
+    // headers
     while (!_buffer.empty())
     {
         ft_getline(_buffer, line);
@@ -184,7 +188,7 @@ int Request::parse_headers()
         value = trim(line.substr(pos + 1));
         if (key.empty())
             break ;
-        // fill corresponding request member variable
+        // fill corresponding request member variable with value
         fill_request(key, value);
     }
     return (1);
@@ -192,6 +196,36 @@ int Request::parse_headers()
 
 int Request::parse_body()
 {
+
+    if (_content_length) // meaning if value > 0 <=> a body exists
+    {
+        std::string line;
+        std::vector<std::string> tokens;
+        std::size_t pos;
+        size_t i = 0;
+        std::string key;
+        std::string value;
+
+        ft_getline(_buffer, line);
+        line = line.substr(0, _content_length);
+        // std::cout << "last line = " << line << std::endl;
+        tokens = split(line, '&');
+        while (i < tokens.size())
+        {
+            line = tokens[i];
+            pos = line.find("=");
+            if (pos == std::string::npos) // format is not key=value
+            {
+                _body[i++] = std::make_pair("", line);
+            }
+            else
+            {
+                key = trim(line.substr(0, pos));
+                value = trim(line.substr(pos + 1));
+                _body[i++] = std::make_pair(key, value);
+            }
+        }
+    }
     return (1);
 }
 
@@ -203,9 +237,13 @@ int Request::parse()
     return (1);
 }
 
+/*
+** Debug
+*/
+
 void Request::display(void)
 {
-    size_t i = 0;
+    size_t i;
     std::stringstream ss1;
 
     ss1 << "PARSED REQUEST:" << std::endl;
@@ -213,43 +251,34 @@ void Request::display(void)
     ss1 << " 1) _method: " << _method << std::endl; // 1
     ss1 << " 2) _uri: " << _uri << std::endl; // 2
     ss1 << " 3) _http_version: " << _http_version << std::endl; // 3
-    
     ss1 << " 4) _accept_charset:"; // 4
     print_map(ss1, _accept_charset);
-    
     ss1 << " 5) _accept_language:"; // 5
     print_map(ss1, _accept_language);
-
     ss1 << " 6) _authorization: " << _authorization << std::endl; // 6
-        
     ss1 << " 7) _content_language:"; // 7
     print_map(ss1, _content_language);
-
     ss1 << " 8) _content_length: " << _content_length << std::endl; // 8
-
     ss1 << " 9) _content_location:"; // 9
     print_map(ss1, _content_location);
-
     ss1 << "10) _content_type:"; // 10
     print_map(ss1, _content_type);
-
     ss1 << "11) _date: " << _date << std::endl; // 11
     ss1 << "12) _host: " << _host << std::endl; // 12
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
-
     ss1 << "15) _body:"; // 15
     if (_body.empty())
         ss1 << std::endl;
     else
     {
+        i = 0;
         while (i < _body.size())
         {
             ss1 << " " << _body[i].first << "=" << _body[i].second;
             i++;
         }
         ss1 << std::endl;
-        i = 0;
     }
 
     std::cout << ss1.str() << std::endl;

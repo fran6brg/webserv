@@ -38,10 +38,11 @@ def printResponse(r):
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
 # printResponse(r)
 
-# print("same PUT on 8080/put_test/testfile.txt")
-# body = "Some4text to test"
-# r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
-# printResponse(r)
+print("same PUT on 8080/put_test/testfile.txt")
+# body = "Some text to test"
+body = 'a=1&b=2'
+r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
+printResponse(r)
 
 
 # print("GET on 8080")
@@ -76,10 +77,10 @@ def printResponse(r):
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
 # printResponse(r)
 
-print("GET on 8080/test/index.html with preferred language EN and preferred encoding utf8")
-headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
-r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-printResponse(r)
+# print("GET on 8080/test/index.html with preferred language EN and preferred encoding utf8")
+# headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
+# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+# printResponse(r)
 
 # print("GET on 8080/auth/add.html without auth")
 # r = requests.get('http://localhost:8080/auth/add.html')

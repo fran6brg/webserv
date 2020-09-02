@@ -64,7 +64,7 @@ class Request
 		std::string 										_authorization; // 6 contient les identifiants permettant l'authentification d'un utilisateur https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Authorization
 		// - informations sur le corps du message:
 		std::map<int, std::string> 							_content_language; // 7 pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
-		int 												_content_length; // 8 indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
+		int			 										_content_length; // 8 indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
 		std::map<int, std::string> 							_content_location; // 9 indicates an alternate location for the returned data. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Location
 		std::map<int, std::string> 							_content_type; // 10 sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
 		// - Autres:
@@ -99,6 +99,7 @@ class Request
     	int parse_body(void);
 		int parse(void);
 		void display(void);
+
 	/*
 	** friends
 	*/

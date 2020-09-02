@@ -49,6 +49,7 @@ class Client
 
     public:
         Client(int accept_fd);
+        ~Client();
 
         int parse_request(void);
 

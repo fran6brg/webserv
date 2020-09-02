@@ -42,8 +42,7 @@ class Server
         int                         _socket_fd;
         struct sockaddr_in		    _addr;
 
-        std::vector<Client,
-        std::allocator<Client> >    _clients;        
+        std::vector<Client*>        _clients;        
 
     /*
     ** methods
@@ -61,9 +60,9 @@ class Server
     
         int start(void);
         int connectClient(void);
-        int recvRequest(std::vector<Client>::iterator it_c);
-        int sendResponse(std::vector<Client>::iterator it_c);
-        int handleClientRequest(std::vector<Client>::iterator it_c);
+        int recvRequest(Client *c);
+        int sendResponse(Client *c);
+        int handleClientRequest(Client *c);
 
     /*
     ** friends
