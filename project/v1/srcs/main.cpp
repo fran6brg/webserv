@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     // loop
     while (g_conf._on)
     {
-		printf("run_select()\n");
+		printf("\nrun_select()\n");
 		if (g_conf.run_select() == -1)
 			break;
 
@@ -53,14 +53,18 @@ int main(int argc, char *argv[])
 
 			// 2
 			std::vector<Client*>::iterator it_c = s->_clients.begin();
-			printf("%s has now %lu clients to serve\n", s->_name.c_str(), s->_clients.size());
+			printf("%s has now %lu clients connected\n", s->_name.c_str(), s->_clients.size());
 			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
 				if (c->_is_connected)
 					s->handleClientRequest(c);
-				else if (s->_clients.size() > 1)
-					it_c = s->_clients.erase(it_c); // sinon on supprime le client (mais bug lorsqu'il n'y en a qu'un à supp)
+				else // sinon on supprime le client
+				{
+					it_c = s->_clients.erase(it_c);
+					if (s->_clients.empty())
+						break;
+				}
 			}
 		}
     }
