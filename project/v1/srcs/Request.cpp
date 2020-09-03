@@ -1,5 +1,4 @@
 #include "../includes/Headers.hpp"
-std::string     get_date(void);
 /*
 ** constructors / destructors
 */
