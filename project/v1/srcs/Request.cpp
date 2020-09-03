@@ -165,6 +165,9 @@ int Request::parse_request_line()
         _method = tokens[0];
         _uri = tokens[1];
         _http_version = tokens[2];
+		// Modifier le chemin de la racine du serveur ? a voir dans le parsing ?
+		// Pour l'instant je met "./"
+		_file = "./www" + _uri;
     }
     return (1);
 }
@@ -186,8 +189,13 @@ int Request::parse_headers()
             break ;
         key = trim(line.substr(0, pos));
         value = trim(line.substr(pos + 1));
+<<<<<<< HEAD
         if (key.empty()) // si empty <=> 'ligne vide' qui sépare les headers du body
             break ;
+=======
+        if (key.empty())
+            break ; 
+>>>>>>> 0a1a55e2fc608c8b3f93c346f4ebd4489945451e
         // fill corresponding request member variable with value
         fill_request(key, value);
     }
@@ -245,15 +253,15 @@ void Request::display(void)
 {
     size_t i;
     std::stringstream ss1;
-
-    ss1 << "PARSED REQUEST:" << std::endl;
+    
+	ss1 << "PARSED REQUEST:" << std::endl;
 
     ss1 << " 1) _method: " << _method << std::endl; // 1
     ss1 << " 2) _uri: " << _uri << std::endl; // 2
     ss1 << " 3) _http_version: " << _http_version << std::endl; // 3
     ss1 << " 4) _accept_charset:"; // 4
     print_map(ss1, _accept_charset);
-    ss1 << " 5) _accept_language:"; // 5
+     ss1 << " 5) _accept_language:"; // 5
     print_map(ss1, _accept_language);
     ss1 << " 6) _authorization: " << _authorization << std::endl; // 6
     ss1 << " 7) _content_language:"; // 7
@@ -267,7 +275,8 @@ void Request::display(void)
     ss1 << "12) _host: " << _host << std::endl; // 12
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
-    ss1 << "15) _body:"; // 15
+    ss1 << "15) _body:" << std::endl; // 15
+    ss1 << "16) _file (location du fichier de la requete ?): " << _file << std::endl;
     if (_body.empty())
         ss1 << std::endl;
     else

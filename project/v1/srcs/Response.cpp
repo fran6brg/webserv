@@ -82,16 +82,16 @@ int Response::concat_to_send(void)
 ** public class methods
 */
 
-int Response::format_to_send(void)
+int Response::format_to_send(Request *req)
 {
     // Status Line
     _http_version = "HTTP/1.1";
-    _status_code = 200;
-    _reason_phrase = "OK";
-    // Request Headers, dans l'ordre du sujet
+//	_reason_phrase = ; ---- > acceder au bon message en fonction du _status_code
+    
+	// Request Headers, dans l'ordre du sujet
     _allow.clear();
     _content_language.clear();
-    _content_length = 44;
+    _content_length = _body.size();
     _content_location.clear();
     _content_type[1] = "text/html";
     _last_modified.clear();
@@ -101,9 +101,94 @@ int Response::format_to_send(void)
     _server.clear();
     _transfer_encoding.clear();
     _www_authenticate.clear();
-    // Request body
-    _body = "<html><body><h1>It works!</h1></body></html>";
-
+	
+	if (req->_method == "HEAD")
+		_body.clear();
     concat_to_send();
     return (1);
+}
+
+void		Response::handle_response(Request *req)
+{
+	if (req->_method == "GET" || req->_method == "HEAD")
+		get(req);
+	else if (req->_method == "POST")
+		post(req);
+	else if (req->_method == "PUT")
+		put(req);
+	else if (req->_method == "DELETE")
+		ft_delete(req);
+	else if (req->_method == "OPTION")
+		option(req);
+	else
+	{
+		// ERREUR 405
+		std::ifstream error405("www/405.html");
+		std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
+		_body = buffer;
+		_status_code = 405;
+		_reason_phrase = "METHOD NOT ALLOWED";
+	}
+}
+
+void			Response::get(Request *req)
+{
+	std::ifstream file(req->_file);
+	if (file.good())
+	{
+		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+		//gerer le cas ou la requete definie content-size (copier dans le body que les size premier caracteres ?)
+		_body = buffer;
+		_status_code = 200;
+		_reason_phrase = "OK";
+	}
+	else
+	{
+		// ERREUR 404
+		std::ifstream error404("www/404.html");
+		std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
+		_body = buffer;
+		_status_code = 404;
+		_reason_phrase = "NOT FOUND";
+	}
+}
+
+void			Response::post(Request *req)
+{
+	(void)req;
+}
+
+void			Response::put(Request *req)
+{
+	(void)req;
+}
+
+void			Response::ft_delete(Request *req)
+{
+	int	ret;
+	std::ifstream file(req->_file);
+	if (file.good())
+	{
+		ret = remove(req->_file.c_str());
+		if (!ret)
+		{
+			_status_code = 200;
+			_reason_phrase = "OK";
+		}
+		else
+		{
+			// ERREUR 202
+			_status_code = 202;
+		}
+	}
+	else
+	{
+		// ERREUR 204
+		_status_code = 204;
+	}
+}
+
+void			Response::option(Request *req)
+{
+	(void)req;
 }

@@ -17,6 +17,13 @@
 #include <iostream>
 #include <map>
 #include <utility> // std::pair, std::make_pair
+#include <fstream>
+#include <sstream>
+
+#include "Request.hpp"
+//#include "Code.hpp"
+
+#define MAX_SIZE	4096
 
 /*
 ** Headers
@@ -100,7 +107,15 @@ class Response
 		Response(void);
 		// ~Response(void);
 
-		int format_to_send(void);
+		int format_to_send(Request *req);
+
+		void			handle_response(Request *req);
+		
+		void			get(Request *req);
+		void			post(Request *req);
+		void			put(Request *req);
+		void			ft_delete(Request *req);
+		void			option(Request *req);
 	
 	/*
 	** friends
