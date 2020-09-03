@@ -90,7 +90,7 @@ int Server::start(void)
 
 int Server::connectClient(void)
 {
-    int ret = -1;
+    int ret = 0;
 
     if ((ret = accept(_socket_fd, NULL, NULL)) == -1)
     {
@@ -116,7 +116,7 @@ int Server::connectClient(void)
 
 int Server::recvRequest(Client *c)
 {
-    int ret = 1;
+    int ret = 0;
     errno = 0;
     
     // https://stackoverflow.com/questions/13736064/recv-connection-reset-by-peer
@@ -162,13 +162,11 @@ int Server::recvRequest(Client *c)
 
 int Server::sendResponse(Client *c)
 {
-    // c->_response._to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
-    char hello[108] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
-    int ret = 1;
+    c->_response.format_to_send();
+    int ret = 0;
     errno = 0;
 
-    // if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), sizeof(c->_response._to_send.c_str()), 0)) < 0)
-    if ((ret = send(c->_accept_fd, hello, sizeof(hello), 0)) < 0)
+    if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
         return (0);

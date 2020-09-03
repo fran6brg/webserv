@@ -77,7 +77,7 @@ class Response
 		** Response body
 		*/
 
-		std::map<int, std::pair<std::string, std::string> > _body;
+		std::string					_body;
 
 		/*
 		** Response body
@@ -90,15 +90,17 @@ class Response
 	*/
 
 	private:
-		void init();
+		void init(void);
+		int concat_to_send(void);
 
 	protected:
 		//
 
 	public:
-		Response();
+		Response(void);
+		// ~Response(void);
 
-		// int response_to_write(void);
+		int format_to_send(void);
 	
 	/*
 	** friends
