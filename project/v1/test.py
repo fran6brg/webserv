@@ -68,7 +68,8 @@ def printResponse(r):
 # print properties
 
 print("GET on 8080")
-r = requests.get('http://localhost:8080')
+r = requests.get('http://localhost:8080/index.html')
+# r = requests.head('http://localhost:8080/index.html')
 printResponse(r)
 
 # print("GET on 4443")

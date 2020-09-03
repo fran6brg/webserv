@@ -156,15 +156,13 @@ int Server::recvRequest(Client *c)
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse();
     c->_request.display();    
-//	Ou mettre la fonction handle response ??
-	c->_response.handle_response(&(c->_request));
-    
     return (1);
 }
 
 int Server::sendResponse(Client *c)
 {
-    c->_response.format_to_send();
+	c->_response.handle_response(&(c->_request));
+    c->_response.format_to_send(&(c->_request));
     int ret = 0;
     errno = 0;
 
