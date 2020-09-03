@@ -79,7 +79,7 @@ void print_map(std::stringstream &ss1, std::map<int, std::string> map)
 
 void Request::fill_request(std::string key, std::string value)
 {
-    std::cout << "key: " << key << ", value: " << value << std::endl;
+    // std::cout << "key: " << key << ", value: " << value << std::endl;
 
     size_t i = 0;
     std::vector<std::string> tokens;

@@ -1,3 +1,9 @@
-comprendre quels headers il faut inclure dans la réponse selon les requêtes
+faire différentes fonctions pour chaque méthodes : GET~=HEAD PUT POST DELETE
 
-construire une requête qui inclue tous les headers pour parfaire le parsing
+faire une map status code -> reason phrase
+
+cas d'erreurs à gérer :
+- tester différentes requêtes sur un serveur nginx pour voir les réponses qu'il renvoie
+- faire fichier html pour chaque type d'erreur
+
+fonction get_date() pour requêtes / réponses
