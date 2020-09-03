@@ -21,7 +21,7 @@
 #include <sstream>
 
 #include "Request.hpp"
-//#include "Code.hpp"
+#include "Code.hpp"
 
 #define MAX_SIZE	4096
 
@@ -107,7 +107,7 @@ class Response
 		Response(void);
 		// ~Response(void);
 
-		int format_to_send(Request *req);
+		int 			format_to_send(Request *req);
 
 		void			handle_response(Request *req);
 		

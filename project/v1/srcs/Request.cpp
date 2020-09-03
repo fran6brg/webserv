@@ -72,7 +72,6 @@ void print_map(std::stringstream &ss1, std::map<int, std::string> map)
     }
 }
 
-
 /*
 ** private class methods
 */
@@ -189,13 +188,8 @@ int Request::parse_headers()
             break ;
         key = trim(line.substr(0, pos));
         value = trim(line.substr(pos + 1));
-<<<<<<< HEAD
-        if (key.empty()) // si empty <=> 'ligne vide' qui sépare les headers du body
-            break ;
-=======
         if (key.empty())
             break ; 
->>>>>>> 0a1a55e2fc608c8b3f93c346f4ebd4489945451e
         // fill corresponding request member variable with value
         fill_request(key, value);
     }

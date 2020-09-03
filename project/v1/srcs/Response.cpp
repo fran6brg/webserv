@@ -127,7 +127,7 @@ void		Response::handle_response(Request *req)
 		std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
 		_body = buffer;
 		_status_code = 405;
-		_reason_phrase = "METHOD NOT ALLOWED";
+		_reason_phrase = code_to_reason[405];
 	}
 }
 
@@ -137,10 +137,10 @@ void			Response::get(Request *req)
 	if (file.good())
 	{
 		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-		//gerer le cas ou la requete definie content-size (copier dans le body que les size premier caracteres ?)
+		// gerer le cas ou la requete definie content-size (copier dans le body que les size premier caracteres ?)
 		_body = buffer;
 		_status_code = 200;
-		_reason_phrase = "OK";
+		_reason_phrase = code_to_reason[200];
 	}
 	else
 	{
@@ -149,7 +149,7 @@ void			Response::get(Request *req)
 		std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
 		_body = buffer;
 		_status_code = 404;
-		_reason_phrase = "NOT FOUND";
+		_reason_phrase = code_to_reason[404];
 	}
 }
 
@@ -173,18 +173,20 @@ void			Response::ft_delete(Request *req)
 		if (!ret)
 		{
 			_status_code = 200;
-			_reason_phrase = "OK";
+			_reason_phrase = code_to_reason[200];
 		}
 		else
 		{
 			// ERREUR 202
 			_status_code = 202;
+            _reason_phrase = code_to_reason[202];
 		}
 	}
 	else
 	{
 		// ERREUR 204
 		_status_code = 204;
+        _reason_phrase = code_to_reason[204];
 	}
 }
 
