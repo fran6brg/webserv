@@ -18,7 +18,7 @@ def printResponse(r):
 	print("--------CONNECTION")
 	print(r.connection)
 	properties = props(r.connection)
-	print properties
+	print (properties)
 	print("--------HEADERS")
 	print(r.headers)
 	print("--------BODY")

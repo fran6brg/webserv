@@ -107,3 +107,50 @@ int Response::format_to_send(void)
     concat_to_send();
     return (1);
 }
+
+void		Response::handle_response(Request *req)
+{
+	if (req->_method == "GET")
+		get(req);
+	else if (req->_method == "HEAD")
+		head(req);
+	else if (req->_method == "POST")
+		post(req);
+	else if (req->_method == "PUT")
+		put(req);
+	else if (req->_method == "DELETE")
+		ft_delete(req);
+	else if (req->_method == "OPTION")
+		option(req);
+//	else
+//		code d'erreur mauvaise METHODE ??
+}
+
+void			Response::get(Request *req)
+{
+	std::cout << "--------------" << req->_method << "------------\n";
+}
+
+void			Response::head(Request *req)
+{
+	(void)req;
+}
+void			Response::post(Request *req)
+{
+	(void)req;
+}
+
+void			Response::put(Request *req)
+{
+	(void)req;
+}
+
+void			Response::ft_delete(Request *req)
+{
+	(void)req;
+}
+
+void			Response::option(Request *req)
+{
+	(void)req;
+}

@@ -18,6 +18,8 @@
 #include <map>
 #include <utility> // std::pair, std::make_pair
 
+#include "Request.hpp"
+
 /*
 ** Headers
 */
@@ -101,6 +103,15 @@ class Response
 		// ~Response(void);
 
 		int format_to_send(void);
+
+		void			handle_response(Request *req);
+		
+		void			get(Request *req);
+		void			head(Request *req);
+		void			post(Request *req);
+		void			put(Request *req);
+		void			ft_delete(Request *req);
+		void			option(Request *req);
 	
 	/*
 	** friends
