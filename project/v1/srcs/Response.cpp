@@ -110,10 +110,8 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
-	if (req->_method == "GET")
+	if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
-	else if (req->_method == "HEAD")
-		head(req);
 	else if (req->_method == "POST")
 		post(req);
 	else if (req->_method == "PUT")
@@ -155,11 +153,6 @@ void			Response::get(Request *req)
 	}
 }
 
-void			Response::head(Request *req)
-{
-	get(req);
-}
-
 void			Response::post(Request *req)
 {
 	(void)req;
@@ -172,7 +165,27 @@ void			Response::put(Request *req)
 
 void			Response::ft_delete(Request *req)
 {
-	(void)req;
+	int	ret;
+	std::ifstream file(req->_file);
+	if (file.good())
+	{
+		ret = remove(req->_file.c_str());
+		if (!ret)
+		{
+			_status_code = 200;
+			_reason_phrase = "OK";
+		}
+		else
+		{
+			// ERREUR 202
+			_status_code = 202;
+		}
+	}
+	else
+	{
+		// ERREUR 204
+		_status_code = 204;
+	}
 }
 
 void			Response::option(Request *req)
