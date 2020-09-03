@@ -177,7 +177,7 @@ int Request::parse_headers()
     std::string value;
     
     // headers
-    while (!_buffer.empty()) // while line != 'ligne vide' qui sépare les headers du body
+    while (!_buffer.empty())
     {
         ft_getline(_buffer, line);
         // parse key/value before/after first ':'
@@ -186,7 +186,7 @@ int Request::parse_headers()
             break ;
         key = trim(line.substr(0, pos));
         value = trim(line.substr(pos + 1));
-        if (key.empty())
+        if (key.empty()) // si empty <=> 'ligne vide' qui sépare les headers du body
             break ;
         // fill corresponding request member variable with value
         fill_request(key, value);
