@@ -45,9 +45,6 @@ class Server
         int                         _socket_fd;
         struct sockaddr_in		    _addr;
 
-		std::string					_root;
-		std::string					_index;
-
         std::vector<Location*>        _location;        
         std::vector<Client*>        _clients;        
 

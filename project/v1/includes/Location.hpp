@@ -10,7 +10,13 @@ class Location
          private:
             Location();
          public:
-            Location(std::string uri, std::string root, std::string index, std::string method)
+            
+			std::string                 _uri;
+            std::string                 _root;
+            std::string                 _index;
+            std::vector<std::string>    _method;
+            
+			Location(std::string uri, std::string root, std::string index, std::string method)
             {
                 _uri = uri;
                 _root = root;
@@ -18,10 +24,6 @@ class Location
                 _method = split(method, ',');
             };
 
-            std::string                 _uri;
-            std::string                 _root;
-            std::string                 _index;
-            std::vector<std::string>    _method;
      };
 
 #endif
