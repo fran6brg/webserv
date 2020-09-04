@@ -1,5 +1,4 @@
 #include "../includes/Headers.hpp"
-
 /*
 ** constructors / destructors
 */
@@ -94,9 +93,9 @@ int Response::format_to_send(Request *req)
     _content_length = _body.size();
     _content_location.clear();
     _content_type[1] = "text/html";
-    _last_modified.clear();
+//    _last_modified = get_last_modif(req->_file);
     _location.clear();
-    _date.clear();
+    _date = get_date();
     _retry_after.clear();
     _server.clear();
     _transfer_encoding.clear();
@@ -179,14 +178,14 @@ void			Response::ft_delete(Request *req)
 		{
 			// ERREUR 202
 			_status_code = 202;
-            _reason_phrase = code_to_reason[202];
+			_reason_phrase = code_to_reason[202];
 		}
 	}
 	else
 	{
 		// ERREUR 204
 		_status_code = 204;
-        _reason_phrase = code_to_reason[204];
+		_reason_phrase = code_to_reason[204];
 	}
 }
 

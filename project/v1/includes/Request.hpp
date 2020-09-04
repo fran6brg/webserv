@@ -98,7 +98,8 @@ class Request
     	int parse_request_line(void);
     	int parse_headers(void);
     	int parse_body(void);
-		int parse(void);
+		int	parse_filename(std::string root, std::string index);
+		int parse(std::string root, std::string index);
 		void display(void);
 
 	/*

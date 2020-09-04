@@ -20,10 +20,9 @@
 #include <fstream>
 #include <sstream>
 
+#include "Utils.hpp"
 #include "Request.hpp"
 #include "Code.hpp"
-
-#define MAX_SIZE	4096
 
 /*
 ** Headers

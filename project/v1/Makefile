@@ -12,13 +12,14 @@ SRCS		=	srcs/main.cpp \
 				srcs/Client.cpp \
 				srcs/Debug.cpp \
 				srcs/Request.cpp \
-				srcs/Response.cpp 
+				srcs/Response.cpp \
+				srcs/Utils.cpp
 
 OBJS		= 	$(SRCS:.cpp=.o)
 EXEC		=	webserv
 
 all:
-	${CC} ${VERSION} ${CPPFLAGS} -o $(EXEC) $(SRCS)
+	${CC} ${VERSION} ${CPPFLAGS} -o $(EXEC) $(SRCS) -std=c++11
 
 clean:
 	$(RM) $(OBJS)

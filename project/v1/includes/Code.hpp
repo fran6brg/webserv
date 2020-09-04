@@ -1,3 +1,6 @@
+#ifndef CODE_HPP
+#define CODE_HPP
+
 #include <map>
 #include <string>
 
@@ -95,4 +98,4 @@ static std::map<int, std::string> code_to_reason = {
 
 };
 
-// std::map<int, std::string > codeTab(codes, codes + 83);
+#endif
