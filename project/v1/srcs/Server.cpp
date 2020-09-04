@@ -8,6 +8,9 @@ Server::Server(std::string serverName, int port):
     _name(serverName), _port(port), _socket_fd(-1)
 {
     bzero(&_addr, sizeof(_addr));
+	// --- > root et index a definir dans le prasing de la conf
+	_root = "./www";
+	_index = "index.html";
 }
 
 Server::~Server()
@@ -154,7 +157,7 @@ int Server::recvRequest(Client *c)
     printf("\n\n****** request *******\n%s\n**********************\n\n", c->_buffer);
 
     c->_request._buffer = std::string(c->_buffer, 1000);
-    c->_request.parse();
+    c->_request.parse(_root, _index);
     c->_request.display();    
     return (1);
 }

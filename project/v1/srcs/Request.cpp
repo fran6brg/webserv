@@ -163,9 +163,7 @@ int Request::parse_request_line()
         _method = tokens[0];
         _uri = tokens[1];
         _http_version = tokens[2];
-		// Modifier le chemin de la racine du serveur ? a voir dans le parsing ?
-		// Pour l'instant je met "./"
-		_file = "./www" + _uri;
+//		_file = "./www" + _uri;
     }
     return (1);
 }
@@ -230,9 +228,22 @@ int Request::parse_body()
     return (1);
 }
 
-int Request::parse()
+int	Request::parse_filename(std::string root, std::string index)
+{
+	int		i;
+
+	i = _uri.size();
+	if (_uri[i - 1] == '/')
+		_file = root + _uri + index;
+	else
+		_file = root + _uri;
+	return (1);
+}
+
+int Request::parse(std::string root, std::string index)
 {
     parse_request_line();
+	parse_filename(root, index);
     parse_headers();
     parse_body();
     return (1);
