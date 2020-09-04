@@ -264,24 +264,24 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 	return (0);
 }
 
-int	Request::parse_filename(std::vector<Location*> location)
+int	Request::parse_filename(std::vector<Location*> locations)
 {
 	struct stat	info;
 	int			i;
 	
-	get_location(&_uri, location);
+	get_location(&_uri, locations);
 	if (_location)
 	{
 			_file = _location->_root + _file;
 			if (stat(_file.c_str(), &info) == 0)
 			{
-				 if(S_ISDIR(info.st_mode))
+				 if (S_ISDIR(info.st_mode))
 				 {
 					i = _file.size() - 1;
 					if (_file[i] == '/')
 						_file = _file + _location->_index;
 					else
-						_file = _file + "/" +  _location->_index;
+						_file = _file + "/" + _location->_index;
 				 }
 			}
 	}

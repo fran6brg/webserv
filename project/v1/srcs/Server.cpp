@@ -11,10 +11,12 @@ Server::Server(std::string serverName, int port):
 
 	// --- > location et error a definir dans le prasing de la conf
 	_error = "./www/error";
-	Location *location1 = new Location("/", "./www", "index.html", "GET,POST,HEAD");
-	_location.push_back(location1);
+	
+    Location *location1 = new Location("/", "./www", "index.html", "GET,POST,HEAD");
+	_locations.push_back(location1);
+
 	Location *location2 = new Location("/test", "./www/test", "index.html", "DELETE");
-	_location.push_back(location2);
+	_locations.push_back(location2);
 }
 
 Server::~Server()
@@ -161,25 +163,29 @@ int Server::recvRequest(Client *c)
     printf("\n\n****** request *******\n%s\n**********************\n\n", c->_buffer);
 
     c->_request._buffer = std::string(c->_buffer, 1000);
-    c->_request.parse(_location);
+    c->_request.parse(_locations);
     c->_request.display();    
     return (1);
 }
 
 int Server::sendResponse(Client *c)
 {
-	c->_response.handle_response(&(c->_request));
-    c->_response.format_to_send(&(c->_request));
     int ret = 0;
     errno = 0;
 
+	c->_response.handle_response(&(c->_request));
+    c->_response.format_to_send(&(c->_request));
+    
     if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) < 0)
     {
         std::cout << "error " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
         return (0);
     }
     else
+    {
         std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
+        c->_is_connected = false;
+    }
 
     return (1);
 }

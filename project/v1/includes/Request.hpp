@@ -44,10 +44,9 @@ class Request
 		//
 	
 	public:
-		// char        _buffer[1000];
-		std::string	_buffer;
-		std::string _file; // faire une fonction qui recupere le path du fichier a traiter dans la requete
-		Location	*_location;
+		std::string			_buffer;
+		std::string 		_file; // faire une fonction qui recupere le path du fichier a traiter dans la requete
+		Location			*_location;
 	
 		/*
 		** Request Line

@@ -120,14 +120,7 @@ void		Response::handle_response(Request *req)
 	else if (req->_method == "OPTION")
 		option(req);
 	else
-	{
-		// ERREUR 405
-		std::ifstream error405("www/405.html");
-		std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
-		_body = buffer;
-		_status_code = 405;
-		_reason_phrase = code_to_reason[405];
-	}
+        method_not_allowed(req);
 }
 
 void			Response::get(Request *req)
@@ -139,7 +132,7 @@ void			Response::get(Request *req)
 		// gerer le cas ou la requete definie content-size (copier dans le body que les size premier caracteres ?)
 		_body = buffer;
 		_status_code = 200;
-		_reason_phrase = code_to_reason[200];
+		_reason_phrase = code_to_reason[_status_code];
 	}
 	else
 	{
@@ -148,7 +141,7 @@ void			Response::get(Request *req)
 		std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
 		_body = buffer;
 		_status_code = 404;
-		_reason_phrase = code_to_reason[404];
+		_reason_phrase = code_to_reason[_status_code];
 	}
 }
 
@@ -172,24 +165,35 @@ void			Response::ft_delete(Request *req)
 		if (!ret)
 		{
 			_status_code = 200;
-			_reason_phrase = code_to_reason[200];
+			_reason_phrase = code_to_reason[_status_code];
 		}
 		else
 		{
 			// ERREUR 202
 			_status_code = 202;
-			_reason_phrase = code_to_reason[202];
+			_reason_phrase = code_to_reason[_status_code];
 		}
 	}
 	else
 	{
 		// ERREUR 204
 		_status_code = 204;
-		_reason_phrase = code_to_reason[204];
+		_reason_phrase = code_to_reason[_status_code];
 	}
 }
 
 void			Response::option(Request *req)
 {
 	(void)req;
+}
+
+void			Response::method_not_allowed(Request *req)
+{
+    (void)req;
+    std::ifstream error405("www/405.html"); // method not allowed
+    std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
+
+    _body = buffer;
+    _status_code = 405;
+    _reason_phrase = code_to_reason[_status_code];
 }
