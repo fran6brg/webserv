@@ -228,11 +228,16 @@ int Request::parse_body()
     return (1);
 }
 
+/*
+**	Recuperer la location presente dans le fichier de config
+**	a partir de l'uri present dans la requete
+*/
+
 int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 {
 	int			j;
 	std::string uri_tmp;
-
+	// Verifie si l'uri est present dans les locations
 	for (std::size_t i = 0; i < locations.size(); ++i)
 	{
 		if (locations[i]->_uri == *uri)
@@ -241,10 +246,9 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			return (1);
 		}
 	}
-
+	// Sinon check les sous dossiers de l'uri (jusqu'a "/") pour voir s'ils correspondent a une location 
 	j = (*uri).size() - 1;
 	uri_tmp = *uri;
-	
     while (uri_tmp.size() > 0)
 	{
 		while (uri_tmp[j] != '/' && j != 0)
@@ -254,7 +258,6 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 		{
 			if (locations[i]->_uri == uri_tmp)
 			{
-		        // *uri = uri_tmp;
 				_file = (*uri).substr(j + 1, (*uri).size());
 				_location = locations[i];
 				return(1);
@@ -263,6 +266,11 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 	}
 	return (0);
 }
+
+/*
+**	Definir le Path du fichier a traiter dans la reponse
+**	a partir de l'uri present dans la requete, et de la location
+*/
 
 int	Request::parse_filename(std::vector<Location*> locations)
 {
@@ -275,7 +283,7 @@ int	Request::parse_filename(std::vector<Location*> locations)
 			_file = _location->_root + _file;
 			if (stat(_file.c_str(), &info) == 0)
 			{
-				 if (S_ISDIR(info.st_mode))
+				 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
 				 {
 					i = _file.size() - 1;
 					if (_file[i] == '/')
@@ -285,7 +293,6 @@ int	Request::parse_filename(std::vector<Location*> locations)
 				 }
 			}
 	}
-	std::cout << "=========" << _file << std::endl;
 	return (1);
 }
 

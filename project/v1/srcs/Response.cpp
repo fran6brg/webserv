@@ -137,7 +137,8 @@ void			Response::get(Request *req)
 	else
 	{
 		// ERREUR 404
-		std::ifstream error404("www/404.html");
+		std::string error = "./www/error/404.html";
+		std::ifstream error404(error);
 		std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
 		_body = buffer;
 		_status_code = 404;
@@ -189,8 +190,9 @@ void			Response::option(Request *req)
 
 void			Response::method_not_allowed(Request *req)
 {
-    (void)req;
-    std::ifstream error405("www/405.html"); // method not allowed
+	(void)req;
+	std::string error = "./www/error/405.html";
+    std::ifstream error405(error); // method not allowed
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
 
     _body = buffer;
