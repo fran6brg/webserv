@@ -228,10 +228,10 @@ int Request::parse_body()
     return (1);
 }
 
-Server::Location	*get_location(std::string uri)
+Location	*get_location(std::string uri)
 {
 	(void)uri;
-	Server::Location *loc;
+	Location *loc;
 	return (loc);
 }
 

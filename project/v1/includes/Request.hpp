@@ -23,7 +23,8 @@
 ** Headers
 */
 
- #include "Server.hpp"
+#include "Server.hpp"
+#include "Location.hpp"
 
 /*
 ** Class
@@ -98,7 +99,7 @@ class Request
     	int 				parse_request_line(void);
     	int 				parse_headers(void);
     	int 				parse_body(void);
-		Server::Location	*get_location(std::string uri);
+		Location			*get_location(std::string uri);
 		int					parse_filename(std::string root, std::string index);
 		int 				parse(std::string root, std::string index);
 		void 				display(void);
