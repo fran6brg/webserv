@@ -18,12 +18,14 @@
 #include <map>
 #include <utility> // std::pair, std::make_pair
 #include <sstream>
+#include <sys/stat.h> 
 
 /*
 ** Headers
 */
 
- #include "Server.hpp"
+#include "Server.hpp"
+#include "Location.hpp"
 
 /*
 ** Class
@@ -44,8 +46,9 @@ class Request
 	public:
 		// char        _buffer[1000];
 		std::string	_buffer;
-		std::string _file; //faire une fonction qui recupere le path du fichier a traiter dans la requete
-
+		std::string _file; // faire une fonction qui recupere le path du fichier a traiter dans la requete
+		Location	*_location;
+	
 		/*
 		** Request Line
 		*/
@@ -98,9 +101,9 @@ class Request
     	int 				parse_request_line(void);
     	int 				parse_headers(void);
     	int 				parse_body(void);
-		Server::Location	*get_location(std::string uri);
-		int					parse_filename(std::string root, std::string index);
-		int 				parse(std::string root, std::string index);
+		int					get_location(std::string *uri, std::vector<Location*> location);
+		int					parse_filename(std::vector<Location*> location);
+		int 				parse(std::vector<Location*> location);
 		void 				display(void);
 
 	/*

@@ -21,8 +21,7 @@
 
 #include "Client.hpp"
 #include "Request.hpp"
-
-std::vector<std::string> split(const std::string& str, char delim);
+#include "Location.hpp"
 
 /*
 ** Class
@@ -30,30 +29,6 @@ std::vector<std::string> split(const std::string& str, char delim);
 
 class Server
 {
-    /*
-    ** class
-    */
-
-    public:
-        class Location 
-        {
-            private:
-            Location();	 		
-            public:
-            Location(std::string uri, std::string root, std::string index, std::string method)
-            {
-                _uri = uri;
-                _root = root;
-                _index = index;
-                _method = split(method, ',');
-            };
-            
-            std::string 				_uri;
-            std::string 				_root;
-            std::string					_index;
-            std::vector<std::string>	_method;
-        };
-
     /*
     ** member variables
     */
@@ -70,11 +45,7 @@ class Server
         int                         _socket_fd;
         struct sockaddr_in		    _addr;
 
-		std::string					_root;
-		std::string					_index;
-
-        std::vector<Location*>        _location;        
-
+        std::vector<Location*>      _locations;        
         std::vector<Client*>        _clients;        
 
     /*

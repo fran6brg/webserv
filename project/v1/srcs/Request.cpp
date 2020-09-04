@@ -228,29 +228,71 @@ int Request::parse_body()
     return (1);
 }
 
-Server::Location	*get_location(std::string uri)
+int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 {
-	(void)uri;
-	Server::Location *loc;
-	return (loc);
+	int			j;
+	std::string uri_tmp;
+
+	for (std::size_t i = 0; i < locations.size(); ++i)
+	{
+		if (locations[i]->_uri == *uri)
+		{
+			_location = locations[i];
+			return (1);
+		}
+	}
+
+	j = (*uri).size() - 1;
+	uri_tmp = *uri;
+	
+    while (uri_tmp.size() > 0)
+	{
+		while (uri_tmp[j] != '/' && j != 0)
+			j--;
+		uri_tmp = uri_tmp.substr(0, j + 1);
+		for (std::size_t i = 0; i < locations.size(); ++i)
+		{
+			if (locations[i]->_uri == uri_tmp)
+			{
+		        // *uri = uri_tmp;
+				_file = (*uri).substr(j + 1, (*uri).size());
+				_location = locations[i];
+				return(1);
+			}
+		}
+	}
+	return (0);
 }
 
-int	Request::parse_filename(std::string root, std::string index)
+int	Request::parse_filename(std::vector<Location*> location)
 {
-	int		i;
-
-	i = _uri.size();
-	if (_uri[i - 1] == '/')
-		_file = root + _uri + index;
-	else
-		_file = root + _uri;
+	struct stat	info;
+	int			i;
+	
+	get_location(&_uri, location);
+	if (_location)
+	{
+			_file = _location->_root + _file;
+			if (stat(_file.c_str(), &info) == 0)
+			{
+				 if(S_ISDIR(info.st_mode))
+				 {
+					i = _file.size() - 1;
+					if (_file[i] == '/')
+						_file = _file + _location->_index;
+					else
+						_file = _file + "/" +  _location->_index;
+				 }
+			}
+	}
+	std::cout << "=========" << _file << std::endl;
 	return (1);
 }
 
-int Request::parse(std::string root, std::string index)
+int Request::parse(std::vector<Location*> location)
 {
     parse_request_line();
-	parse_filename(root, index);
+	parse_filename(location);
     parse_headers();
     parse_body();
     return (1);

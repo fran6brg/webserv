@@ -1,20 +1,18 @@
 #include "../includes/Utils.hpp"
 
-std::string get_last_modif(std::string &file)
+std::string get_last_modif(std::string file)
 {
-// ------------ > Probleme avec structure "Stat" a la compilation ?
-	(void)file;
-//	struct stat st;
-//	std::string sec;
-//	struct tm time;
+	struct stat info;
+	std::string sec;
+	struct tm time;
 	std::string date;
-//	char buffer[1000];
+	char buffer[10000];
 
-//	stat(file.c_str(), &st);
-//	sec = std::to_string(st.st_mtime).c_str();
-//	strptime(sec.c_str(), "%s", &time);
-//	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", &time);
-//	date = buffer;
+	stat(file.c_str(), &info);
+	sec = std::to_string(info.st_mtime).c_str();
+	strptime(sec.c_str(), "%s", &time);
+	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", &time);
+	date = buffer;
 	return (date);
 }
 
