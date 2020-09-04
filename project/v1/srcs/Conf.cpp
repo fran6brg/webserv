@@ -25,6 +25,7 @@ Conf::Conf()
 
 int Conf::parse(void)
 {
+    // création à la main
     std::string n1 ("server1");
     Server *s1 = new Server(n1, 8080);
     if (!s1->start())
