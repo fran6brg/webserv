@@ -47,11 +47,11 @@ int Response::concat_to_send(void)
     // Status Line
     ss << _http_version << " ";
     ss << _status_code << " ";
-    ss << _reason_phrase << "\n";
+    ss << _reason_phrase << "\r\n";
     // Request Headers, dans l'ordre du sujet
-    // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\n"; }
-    if (_content_length > 0)            { ss << "Content-Length: " << _content_length << "\n"; }
-    // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\n"; }
+    // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
+    if (_content_length > 0)            { ss << "Content-Length: " << _content_length << "\r\n"; }
+    // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
 
     ss << "Content-Type:";
     while (i < _content_type.size())
@@ -60,15 +60,15 @@ int Response::concat_to_send(void)
         if (i + 1 < _content_type.size())
             ss << ";";
     }
-    ss << "\n";
+    ss << "\r\n";
     
-    if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\n"; }
-    if (!_location.empty())             { ss << "Location: " << _location << "\n"; }
-    if (!_date.empty())                 { ss << "Date: " << _date << "\n"; }
-    if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\n"; }
-    if (!_server.empty())               { ss << "Server: " << _server << "\n"; }
-    // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\n"; }
-    // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\n"; }
+    if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
+    if (!_location.empty())             { ss << "Location: " << _location << "\r\n"; }
+    if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
+    if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
+    if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
+    // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\r\n"; }
+    // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\r\n"; }
     // Request body
     ss << "\n\n";
     if (!_body.empty())                 { ss << _body << " "; }
