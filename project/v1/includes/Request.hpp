@@ -23,7 +23,7 @@
 ** Headers
 */
 
-// #include "Client.hpp"
+ #include "Server.hpp"
 
 /*
 ** Class
@@ -93,14 +93,15 @@ class Request
 
 	public:
 		Request();
-		void init();
+		void 				init();
 
-    	int parse_request_line(void);
-    	int parse_headers(void);
-    	int parse_body(void);
-		int	parse_filename(std::string root, std::string index);
-		int parse(std::string root, std::string index);
-		void display(void);
+    	int 				parse_request_line(void);
+    	int 				parse_headers(void);
+    	int 				parse_body(void);
+		Server::Location	*get_location(std::string uri);
+		int					parse_filename(std::string root, std::string index);
+		int 				parse(std::string root, std::string index);
+		void 				display(void);
 
 	/*
 	** friends

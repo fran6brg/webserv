@@ -20,6 +20,9 @@
 */
 
 #include "Client.hpp"
+#include "Request.hpp"
+
+std::vector<std::string> split(const std::string& str, char delim);
 
 /*
 ** Class
@@ -27,15 +30,24 @@
 
 class Server
 {
-    // class Location 
-	// {
-    //     private:
-    //         //
-    //     protected:
-    //         //
-    //     public:
-    //         //
-	// }
+     class Location 
+	 {
+         private:
+			Location();	 		
+         public:
+		 	Location(std::string uri, std::string root, std::string index, std::string method)
+		 	{
+				_uri = uri;
+				_root = root;
+				_index = index;
+				_method = split(method, ',');
+		 	};
+			
+			std::string 				_uri;
+			std::string 				_root;
+			std::string					_index;
+			std::vector<std::string>	_method;
+	 };
 	
 
     /*
@@ -50,13 +62,14 @@ class Server
     public:
         std::string                 _name;
         int                         _port;
+		std::string					_error;
         int                         _socket_fd;
         struct sockaddr_in		    _addr;
 
 		std::string					_root;
 		std::string					_index;
 
-        // std::vector<Location*>        _location;        
+        std::vector<Location*>        _location;        
 
         std::vector<Client*>        _clients;        
 
@@ -86,5 +99,6 @@ class Server
 
     friend class Conf;
 };
+
 
 #endif

@@ -8,9 +8,16 @@ Server::Server(std::string serverName, int port):
     _name(serverName), _port(port), _socket_fd(-1)
 {
     bzero(&_addr, sizeof(_addr));
-	// --- > root et index a definir dans le prasing de la conf
+
+	// --- > location et error a definir dans le prasing de la conf
 	_root = "./www";
 	_index = "index.html";
+	
+	_error = "./www/error";
+	Location *location1 = new Location("/", "./www", "index.html", "GET,POST,HEAD");
+	_location.push_back(location1);
+	Location *location2 = new Location("/test", "./www/test", "index.html", "DELETE");
+	_location.push_back(location2);
 }
 
 Server::~Server()

@@ -228,6 +228,13 @@ int Request::parse_body()
     return (1);
 }
 
+Server::Location	*get_location(std::string uri)
+{
+	(void)uri;
+	Server::Location *loc;
+	return (loc);
+}
+
 int	Request::parse_filename(std::string root, std::string index)
 {
 	int		i;
