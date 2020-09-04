@@ -93,7 +93,7 @@ int Response::format_to_send(Request *req)
     _content_length = _body.size();
     _content_location.clear();
     _content_type[1] = "text/html";
-//    _last_modified = get_last_modif(req->_file);
+	_last_modified = get_last_modif(req->_file);
     _location.clear();
     _date = get_date();
     _retry_after.clear();
