@@ -8,7 +8,7 @@ in another shell:
 cd project/v1 && python test.py
 ```
 
-# some good readings to start the project
+# quality readings to start the project
 
 ### web socket
 - Beej's Guide to Network Programming http://beej.us/guide/bgnet/html/
