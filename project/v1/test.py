@@ -74,13 +74,22 @@ def printResponse(r):
 ###############################################################################
 ###############################################################################
 
-print("GET on 8080")
+		# CODE ERREUR 200 Ok:
 
 r = requests.get('http://localhost:8080/')
 #r = requests.get('http://localhost:8080/index.html')
+#r = requests.delete('http://localhost:8080/test/test.html')
+#r = requests.head('http://localhost:8080/index.html')
+
+ 		# CODE ERREUR 405 Methode Not Allowed:
+
 #r = requests.get('http://localhost:8080/test')
-# r = requests.head('http://localhost:8080/index.html')
-# r = requests.delete('http://localhost:8080/test.html')
+#r = requests.delete('http://localhost:8080/test.html')
+
+ 		# CODE ERREUR 404 Not found:
+ 		# CODE ERREUR 202 Accepted:
+ 		# CODE ERREUR 204 No Content:
+
 
 printResponse(r)
 

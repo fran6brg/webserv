@@ -115,7 +115,7 @@ class Response
 		void			put(Request *req);
 		void			ft_delete(Request *req);
 		void			option(Request *req);
-		void			method_not_allowed(Request *req);
+		int				method_not_allowed(Request *req);
 	
 	/*
 	** friends
