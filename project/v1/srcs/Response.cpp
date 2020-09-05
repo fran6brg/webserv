@@ -86,13 +86,13 @@ int Response::format_to_send(Request *req)
     // Status Line
     _http_version = "HTTP/1.1";
 //	_reason_phrase = ; ---- > acceder au bon message en fonction du _status_code
-    
 	// Request Headers, dans l'ordre du sujet
     _allow.clear();
     _content_language.clear();
     _content_length = _body.size();
     _content_location.clear();
     _content_type[1] = "text/html";
+//	revoir les header en cas d'erreur (404, 405 ..) genre date, last_modif etc..
 	_last_modified = get_last_modif(req->_file);
     _location.clear();
     _date = get_date();
@@ -109,7 +109,9 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
-	if (req->_method == "GET" || req->_method == "HEAD")
+	if (method_not_allowed(req))
+		return ;
+	else if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
 	else if (req->_method == "POST")
 		post(req);
@@ -120,7 +122,10 @@ void		Response::handle_response(Request *req)
 	else if (req->_method == "OPTION")
 		option(req);
 	else
+	{
+		// pas le bon code d'erreur je pense, surment Bad Request ici ?
         method_not_allowed(req);
+	}
 }
 
 void			Response::get(Request *req)
@@ -188,14 +193,19 @@ void			Response::option(Request *req)
 	(void)req;
 }
 
-void			Response::method_not_allowed(Request *req)
+int				Response::method_not_allowed(Request *req)
 {
-	(void)req;
+	// Comparaison de la methode demande avec les methodes autorise dans la location
+	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
+	{
+		if ((req->_location->_method)[i] == req->_method)
+			return (0);
+	}
 	std::string error = "./www/error/405.html";
     std::ifstream error405(error); // method not allowed
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
-
     _body = buffer;
     _status_code = 405;
-    _reason_phrase = code_to_reason[_status_code];
+	_reason_phrase = code_to_reason[_status_code];
+	return (1);
 }

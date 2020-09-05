@@ -253,7 +253,9 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 	{
 		while (uri_tmp[j] != '/' && j != 0)
 			j--;
-		uri_tmp = uri_tmp.substr(0, j + 1);
+		uri_tmp = uri_tmp.substr(0, j);
+		if (uri_tmp == "")
+			uri_tmp = "/";
 		for (std::size_t i = 0; i < locations.size(); ++i)
 		{
 			if (locations[i]->_uri == uri_tmp)
@@ -280,7 +282,11 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	get_location(&_uri, locations);
 	if (_location)
 	{
-			_file = _location->_root + _file;
+			i = (_location->_root).size() - 1;
+			if ((_location->_root)[i] == '/')
+				_file = _location->_root + _file;
+			else
+				_file = _location->_root + "/" + _file;
 			if (stat(_file.c_str(), &info) == 0)
 			{
 				 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
