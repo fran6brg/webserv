@@ -260,7 +260,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			{
 				_file = (*uri).substr(j + 1, (*uri).size());
 				_location = locations[i];
-				return(1);
+				return (1);
 			}
 		}
 	}
