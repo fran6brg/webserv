@@ -206,5 +206,6 @@ int				Response::method_not_allowed(Request *req)
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
     _body = buffer;
     _status_code = 405;
+	_reason_phrase = code_to_reason[_status_code];
 	return (1);
 }
