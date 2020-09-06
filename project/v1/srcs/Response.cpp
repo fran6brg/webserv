@@ -51,7 +51,7 @@ int Response::concat_to_send(void)
     // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
     if (_content_length > 0)            { ss << "Content-Length: " << _content_length << "\r\n"; }
     // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
-
+    if (!_allow.empty())     { ss << "allow: " << _allow << "\r\n"; }
     ss << "Content-Type:";
     while (i < _content_type.size())
     {
@@ -87,11 +87,11 @@ int Response::format_to_send(Request *req)
     _http_version = "HTTP/1.1";
 //	_reason_phrase = ; ---- > acceder au bon message en fonction du _status_code
 	// Request Headers, dans l'ordre du sujet
-    _allow.clear();
     _content_language.clear();
     _content_length = _body.size();
     _content_location.clear();
-    _content_type[1] = "text/html";
+//	Pas de content type dans toutes les methodes (OPTIONS par exemple)	
+	_content_type[1] = "text/html";
 //	revoir les header en cas d'erreur (404, 405 ..) genre date, last_modif etc..
 	_last_modified = get_last_modif(req->_file);
     _location.clear();
@@ -119,7 +119,7 @@ void		Response::handle_response(Request *req)
 		put(req);
 	else if (req->_method == "DELETE")
 		ft_delete(req);
-	else if (req->_method == "OPTION")
+	else if (req->_method == "OPTIONS")
 		option(req);
 	else
 	{
@@ -190,7 +190,17 @@ void			Response::ft_delete(Request *req)
 
 void			Response::option(Request *req)
 {
-	(void)req;
+	std::string buffer;
+
+	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
+	{
+		buffer = buffer + (req->_location->_method)[i];
+		if (i != (req->_location->_method).size() - 1)
+			buffer = buffer + ", ";
+	}
+	_status_code = 200;
+	_reason_phrase = code_to_reason[_status_code];
+	_allow = buffer;
 }
 
 int				Response::method_not_allowed(Request *req)
