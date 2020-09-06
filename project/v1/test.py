@@ -7,67 +7,110 @@ def props(cls):
 # https://stackoverflow.com/questions/9058305/getting-attributes-of-a-class
 
 def printResponse(r):
-	print("--------URL")
-	print(r.url)
-	print("--------STATUSCODE")
-	print(r.status_code)
-	print("--------ENCODING")
-	print(r.encoding)
-	print("--------REQUEST")
-	print(r.request)
-	# print("--------CONNECTION")
-	# print(r.connection)
-	# properties = props(r.connection)
-	# print (properties)
-	print("--------HEADERS")
+	print (props(r))
+
+	print ("-------- REQUEST")
+	# print (props(r.request))
+	print r.request.method, "on", r.request.url
+	print
+	for h in r.request.headers:
+		print (h + ": " + r.request.headers[h])
+	print
+	print "Body:", r.request.body
+
+	print
+	print ("-------- RESPONSE")
+	print "Status code:", r.status_code
+	print
 	for h in r.headers:
-		print(h + ": " + r.headers[h])
-	print("--------BODY")
-	print(r.text)
-	# print("==RAW==")
-	# r.raw.decode_content = True
-	# print (r.raw.data)
-	# print (r.content)
-	print("******************\n")
+		print (h + ": " + r.headers[h])
+	print
+	print "Body:", r.text
+
+	# print ("-------- ENCODING")
+	# print (r.encoding)
+	print ("******************\n")
 
 
-# req = requests.Request('POST','http://stackoverflow.com',headers={'X-Custom':'Test'},data='a=1&b=2')
-# prepared = req.prepare()
+# GET -------------------------------------------------------------------------
 
-# def pretty_print_POST(req):
-#     """
-#     At this point it is completely built and ready
-#     to be fired; it is "prepared".
-
-#     However pay attention at the formatting used in 
-#     this function because it is programmed to be pretty 
-#     printed and may differ from the actual request.
-#     """
-#     print('{}\n{}\r\n{}\r\n\r\n{}'.format(
-#         '-----------START-----------',
-#         req.method + ' ' + req.url,
-#         '\r\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
-#         req.body,
-#     ))
-
-print("PUT on 8080/test/put.txt")
-body = "Random text to see if put is working"
-r = requests.put('http://localhost:8080/test/put.txt', data=body)
+r = requests.get('http://localhost:4443')
 printResponse(r)
 
-# print("PUT on 8080/put_test/testfile.txt")
+# r = requests.get('http://localhost:8080/test')
+# printResponse(r)
+
+# r = requests.get('http://localhost:8080/test/index.html')
+# printResponse(r)
+
+# headers = {'Accept-Language': 'fr'}
+# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+# printResponse(r)
+
+# headers = {'Accept-Language': 'en'}
+# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+# printResponse(r)
+
+# headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
+# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+# printResponse(r)
+
+# headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
+# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+# printResponse(r)
+
+# r = requests.get('http://localhost:8080/auth/add.html')
+# printResponse(r)
+
+# r = requests.get('http://localhost:8080/auth/add.html', auth=HTTPBasicAuth('test', 'test'))
+# printResponse(r)
+
+# headers = {'Host': 'test'}
+# r = requests.get('http://localhost:80/', headers=headers)
+# printResponse(r)
+
+# headers = {'Host': 'add'}
+# r = requests.get('http://localhost:80/', headers=headers)
+# printResponse(r)
+
+# HEAD ------------------------------------------------------------------------
+
+# POST ------------------------------------------------------------------------
+
+# PUT -------------------------------------------------------------------------
+
+# body = "Some random text to see if put is working"
+# r = requests.put('http://localhost:8080/test/put.txt', data=body)
+# printResponse(r)
+# prettyPrint(r)
+
 # body = "Some5text5to5test"
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
 # printResponse(r)
 
-# print("same PUT on 8080/put_test/testfile.txt")
-# # body = "Some text to test"
-# body = 'a=1&b=2'
-# r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body, stream=True)
-# printResponse(r)
+# DELETE ----------------------------------------------------------------------
 
-# properties = props(r)
-# print properties
+# OPTIONS ---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ###############################################################################
 ###############################################################################
@@ -79,7 +122,7 @@ printResponse(r)
 		# CODE ERREUR 200 Ok:
 
 #r = requests.get('http://localhost:8080/')
-# print("GET :8080/index.html")
+# print ("GET :8080/index.html")
 # r = requests.options('http://localhost:8080/index.html')
 # r = requests.get('http://localhost:8080/index.html')
 #r = requests.delete('http://localhost:8080/test/test.html')
@@ -103,53 +146,3 @@ printResponse(r)
 ###############################################################################
 ###############################################################################
 
-# print("GET on 4443")
-# r = requests.get('http://localhost:4443')
-# printResponse(r)
-
-# print("GET on 8080/test")
-# r = requests.get('http://localhost:8080/test')
-# printResponse(r)
-# print(r)
-
-# print("GET on 8080/test/index.html with no language parameter")
-# r = requests.get('http://localhost:8080/test/index.html')
-# printResponse(r)
-
-# print("GET on 8080/test/index.html with preferred language FR")
-# headers = {'Accept-Language': 'fr'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-# printResponse(r)
-
-# print("GET on 8080/test/index.html with preferred language EN")
-# headers = {'Accept-Language': 'en'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-# printResponse(r)
-
-# print("GET on 8080/test/index.html with preferred language FR and preferred encoding utf8")
-# headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-# printResponse(r)
-
-# print("GET on 8080/test/index.html with preferred language EN and preferred encoding utf8")
-# headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-# printResponse(r)
-
-# print("GET on 8080/auth/add.html without auth")
-# r = requests.get('http://localhost:8080/auth/add.html')
-# printResponse(r)
-
-# print("GET on 8080/auth/add.html with auth")
-# r = requests.get('http://localhost:8080/auth/add.html', auth=HTTPBasicAuth('test', 'test'))
-# printResponse(r)
-
-# print("GET on 80/ with test host header")
-# headers = {'Host': 'test'}
-# r = requests.get('http://localhost:80/', headers=headers)
-# printResponse(r)
-
-# print("GET on 80/ with add host header")
-# headers = {'Host': 'add'}
-# r = requests.get('http://localhost:80/', headers=headers)
-# printResponse(r)

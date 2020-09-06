@@ -111,9 +111,9 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
-	/* if (method_not_allowed(req))
+	if (method_not_allowed(req))
 		return ;
-	else*/ if (req->_method == "GET" || req->_method == "HEAD")
+	else if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
 	else if (req->_method == "POST")
 		post(req);

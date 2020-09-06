@@ -6,12 +6,12 @@ std::string get_last_modif(std::string file)
 	std::string sec;
 	struct tm time;
 	std::string date;
-	char buffer[10000];
+	char buffer[1000];
 
 	stat(file.c_str(), &info);
 	sec = std::to_string(info.st_mtime).c_str();
 	strptime(sec.c_str(), "%s", &time);
-	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", &time);
+	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S CEST", &time);
 	date = buffer;
 	return (date);
 }
@@ -26,7 +26,7 @@ std::string get_date(void)
 
     gettimeofday(&tv, &tz);
     strptime(std::to_string(tv.tv_sec).c_str(), "%s", &time);
-    strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", &time);
+    strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S CEST", &time);
     date = buffer;
 	return (date);
 }
