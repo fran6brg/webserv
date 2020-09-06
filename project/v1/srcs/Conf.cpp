@@ -15,7 +15,7 @@ Conf::Conf()
 	FD_ZERO(&_save_writefds);
 	FD_ZERO(&_exceptfds);
 	FD_ZERO(&_save_exceptfds);
-    _timeout.tv_sec = 2;
+    _timeout.tv_sec = 4;
 	_timeout.tv_usec = 0;
 }
 

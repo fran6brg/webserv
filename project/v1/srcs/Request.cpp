@@ -17,6 +17,7 @@ void	ft_getline(std::string &b, std::string &line)
     size_t					pos;
 
     pos = b.find("\n");
+
     if (pos != std::string::npos)
     {
         line = std::string (b, 0, pos++);
@@ -139,7 +140,7 @@ void Request::init(void)
     _accept_language.clear();
     _authorization.clear();
     _content_language.clear();
-    _content_length = 0;
+    _content_length = -1;
     _content_location.clear();
     _content_type.clear();
     _date.clear();
@@ -148,6 +149,9 @@ void Request::init(void)
     _user_agent.clear();
     // Request body
     _body.clear();
+
+    // autres variables qui ne sont pas des headers
+    _body_length = -1;
 }
 
 int Request::parse_request_line()
@@ -205,15 +209,16 @@ int Request::parse_body()
         std::string key;
         std::string value;
 
+        line.clear();
         ft_getline(_buffer, line);
+        _body_length = line.length();
         line = line.substr(0, _content_length);
-        // std::cout << "last line = " << line << std::endl;
         tokens = split(line, '&');
         while (i < tokens.size())
         {
             line = tokens[i];
             pos = line.find("=");
-            if (pos == std::string::npos) // format is not key=value
+            if (pos == std::string::npos) // format is not 'key=value'
             {
                 _body[i++] = std::make_pair("", line);
             }
@@ -342,7 +347,8 @@ void Request::display(void)
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
     ss1 << "15) _body:" << std::endl; // 15
-    ss1 << "16) _file (location du fichier de la requete ?): " << _file << std::endl;
+    ss1 << "16) _file: " << _file << std::endl;
+    
     if (_body.empty())
         ss1 << std::endl;
     else

@@ -22,7 +22,7 @@ void Response::init(void)
     // Request Headers, dans l'ordre du sujet
     _allow.clear();
     _content_language.clear();
-    _content_length = 0;
+    _content_length = -1; // est-ce qu'on peut avoir un content_length de 0 ?
     _content_location.clear();
     _content_type.clear();
     _last_modified.clear();
@@ -85,33 +85,35 @@ int Response::format_to_send(Request *req)
 {
     // Status Line
     _http_version = "HTTP/1.1";
-//	_reason_phrase = ; ---- > acceder au bon message en fonction du _status_code
+    _reason_phrase = code_to_reason[_status_code];
 	// Request Headers, dans l'ordre du sujet
     _content_language.clear();
     _content_length = _body.size();
     _content_location.clear();
-//	Pas de content type dans toutes les methodes (OPTIONS par exemple)	
+    //	Pas de content type dans toutes les methodes (OPTIONS par exemple)	
 	_content_type[1] = "text/html";
-//	revoir les header en cas d'erreur (404, 405 ..) genre date, last_modif etc..
+    //	revoir les header en cas d'erreur (404, 405 ..) genre date, last_modif etc..
 	_last_modified = get_last_modif(req->_file);
     _location.clear();
     _date = get_date();
     _retry_after.clear();
-    _server.clear();
+    _server = "webserv";
     _transfer_encoding.clear();
     _www_authenticate.clear();
 	
 	if (req->_method == "HEAD")
 		_body.clear();
+
     concat_to_send();
+
     return (1);
 }
 
 void		Response::handle_response(Request *req)
 {
-	if (method_not_allowed(req))
+	/* if (method_not_allowed(req))
 		return ;
-	else if (req->_method == "GET" || req->_method == "HEAD")
+	else*/ if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
 	else if (req->_method == "POST")
 		post(req);
@@ -122,10 +124,7 @@ void		Response::handle_response(Request *req)
 	else if (req->_method == "OPTIONS")
 		option(req);
 	else
-	{
-		// pas le bon code d'erreur je pense, surment Bad Request ici ?
-        method_not_allowed(req);
-	}
+        bad_request(req);
 }
 
 void			Response::get(Request *req)
@@ -136,8 +135,7 @@ void			Response::get(Request *req)
 		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		// gerer le cas ou la requete definie content-size (copier dans le body que les size premier caracteres ?)
 		_body = buffer;
-		_status_code = 200;
-		_reason_phrase = code_to_reason[_status_code];
+		_status_code = OK_200;
 	}
 	else
 	{
@@ -146,8 +144,7 @@ void			Response::get(Request *req)
 		std::ifstream error404(error);
 		std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
 		_body = buffer;
-		_status_code = 404;
-		_reason_phrase = code_to_reason[_status_code];
+		_status_code = NOT_FOUND_404;
 	}
 }
 
@@ -158,7 +155,43 @@ void			Response::post(Request *req)
 
 void			Response::put(Request *req)
 {
-	(void)req;
+
+    if (req->_content_length == -1)
+    {
+	    std::cout << "inside put: BAD_REQUEST_400" << std::endl;
+        _status_code = BAD_REQUEST_400;
+        return ;
+    }
+
+    // if (req->_content_length != req->_body_length)
+    // {
+	//     std::cout << "inside put: REQUEST_ENTITY_TOO_LARGE_413: " << req->_content_length << " vs " <<  req->_body_length << std::endl;
+    //     _status_code = REQUEST_ENTITY_TOO_LARGE_413;
+    //     return ;
+    // }
+
+	std::ifstream f1(req->_file);
+	if (f1.good()) // test if _file already exists
+	{
+        _status_code = OK_200;
+    }
+	else // _file does not exist
+	{
+        _status_code = CREATED_201;
+    }
+	f1.close();
+
+	std::ofstream f2(req->_file);
+	if (f2.good())
+	{
+	    std::cout << "inside put: writing body in _file" << std::endl;
+        f2 << req->_body[0].second.substr(0, req->_content_length) << std::endl;
+    }
+	else
+	{
+	    std::cout << "inside put: failed to write body in _file" << std::endl;
+    }
+	f2.close();
 }
 
 void			Response::ft_delete(Request *req)
@@ -170,21 +203,16 @@ void			Response::ft_delete(Request *req)
 		ret = remove(req->_file.c_str());
 		if (!ret)
 		{
-			_status_code = 200;
-			_reason_phrase = code_to_reason[_status_code];
+			_status_code = OK_200;
 		}
 		else
 		{
-			// ERREUR 202
-			_status_code = 202;
-			_reason_phrase = code_to_reason[_status_code];
+			_status_code = ACCEPTED_202; // ?
 		}
 	}
 	else
 	{
-		// ERREUR 204
-		_status_code = 204;
-		_reason_phrase = code_to_reason[_status_code];
+		_status_code = NO_CONTENT_204;
 	}
 }
 
@@ -198,8 +226,7 @@ void			Response::option(Request *req)
 		if (i != (req->_location->_method).size() - 1)
 			buffer = buffer + ", ";
 	}
-	_status_code = 200;
-	_reason_phrase = code_to_reason[_status_code];
+	_status_code = OK_200;
 	_allow = buffer;
 }
 
@@ -215,7 +242,17 @@ int				Response::method_not_allowed(Request *req)
     std::ifstream error405(error); // method not allowed
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
     _body = buffer;
-    _status_code = 405;
-	_reason_phrase = code_to_reason[_status_code];
+    _status_code = METHOD_NOT_ALLOWED_405;
+	return (1);
+}
+
+int				Response::bad_request(Request *req)
+{
+    (void)req;
+	std::string error = "./www/error/400.html";
+    std::ifstream error400(error); // bad request
+    std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
+    _body = buffer;
+    _status_code = BAD_REQUEST_400;
 	return (1);
 }

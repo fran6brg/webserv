@@ -184,7 +184,7 @@ int Server::sendResponse(Client *c)
     else
     {
         std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
-        c->_is_connected = false;
+        // c->_is_connected = false;
     }
 
     return (1);

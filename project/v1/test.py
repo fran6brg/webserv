@@ -15,12 +15,13 @@ def printResponse(r):
 	print(r.encoding)
 	print("--------REQUEST")
 	print(r.request)
-	print("--------CONNECTION")
-	print(r.connection)
-	properties = props(r.connection)
-	print (properties)
+	# print("--------CONNECTION")
+	# print(r.connection)
+	# properties = props(r.connection)
+	# print (properties)
 	print("--------HEADERS")
-	print(r.headers)
+	for h in r.headers:
+		print(h + ": " + r.headers[h])
 	print("--------BODY")
 	print(r.text)
 	# print("==RAW==")
@@ -49,9 +50,10 @@ def printResponse(r):
 #         req.body,
 #     ))
 
-# print("PUT on 8080/test")
-# r = requests.put('http://localhost:8080/test')
-# printResponse(r)
+print("PUT on 8080/test/put.txt")
+body = "Random text to see if put is working"
+r = requests.put('http://localhost:8080/test/put.txt', data=body)
+printResponse(r)
 
 # print("PUT on 8080/put_test/testfile.txt")
 # body = "Some5text5to5test"
@@ -77,8 +79,9 @@ def printResponse(r):
 		# CODE ERREUR 200 Ok:
 
 #r = requests.get('http://localhost:8080/')
-r = requests.options('http://localhost:8080/')
-#r = requests.get('http://localhost:8080/index.html')
+# print("GET :8080/index.html")
+# r = requests.options('http://localhost:8080/index.html')
+# r = requests.get('http://localhost:8080/index.html')
 #r = requests.delete('http://localhost:8080/test/test.html')
 #r = requests.head('http://localhost:8080/index.html')
 
@@ -92,7 +95,7 @@ r = requests.options('http://localhost:8080/')
  		# CODE ERREUR 204 No Content:
 
 
-printResponse(r)
+# printResponse(r)
 
 ###############################################################################
 ###############################################################################

@@ -4,6 +4,27 @@
 #include <map>
 #include <string>
 
+/*
+** Const
+*/
+
+#define OK_200							200
+#define CREATED_201						201
+#define ACCEPTED_202					202
+#define NO_CONTENT_204					204
+#define BAD_REQUEST_400					400
+#define UNAUTHORIZED_401				401
+#define NOT_FOUND_404 					404
+#define METHOD_NOT_ALLOWED_405			405
+#define REQUEST_ENTITY_TOO_LARGE_413	413
+#define SERVICE_UNAVAILABLE_503			503
+#define NOT_IMPLEMENTED_501				501
+#define INTERNAL_ERROR_500				500
+
+/*
+** status_code => reason_phrase
+*/
+
 static std::map<int, std::string> code_to_reason = {
 
 		{ 100, "Continue" },

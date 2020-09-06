@@ -47,6 +47,7 @@ class Request
 		std::string			_buffer;
 		std::string 		_file; // faire une fonction qui recupere le path du fichier a traiter dans la requete
 		Location			*_location;
+		int					_body_length;
 	
 		/*
 		** Request Line
