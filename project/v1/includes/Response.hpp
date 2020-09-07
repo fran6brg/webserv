@@ -115,6 +115,7 @@ class Response
 		void			put(Request *req);
 		void			ft_delete(Request *req);
 		void			option(Request *req);
+		
 		int				bad_request(Request *req);
 		int				method_not_allowed(Request *req);
 	

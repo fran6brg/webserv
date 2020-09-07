@@ -11,21 +11,21 @@ def printResponse(r):
 
 	print ("-------- REQUEST")
 	# print (props(r.request))
-	print r.request.method, "on", r.request.url
+	print (r.request.method, "on", r.request.url)
 	print
 	for h in r.request.headers:
 		print (h + ": " + r.request.headers[h])
 	print
-	print "Body:", r.request.body
+	print ("Body:", r.request.body)
 
 	print
 	print ("-------- RESPONSE")
-	print "Status code:", r.status_code
+	print ("Status code:", r.status_code)
 	print
 	for h in r.headers:
 		print (h + ": " + r.headers[h])
 	print
-	print "Body:", r.text
+	print ("Body:", r.text)
 
 	# print ("-------- ENCODING")
 	# print (r.encoding)
@@ -34,8 +34,8 @@ def printResponse(r):
 
 # GET -------------------------------------------------------------------------
 
-r = requests.get('http://localhost:4443')
-printResponse(r)
+#r = requests.get('http://localhost:4443')
+#printResponse(r)
 
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
@@ -121,7 +121,7 @@ printResponse(r)
 
 		# CODE ERREUR 200 Ok:
 
-#r = requests.get('http://localhost:8080/')
+r = requests.get('http://localhost:8080/bonjour')
 # print ("GET :8080/index.html")
 # r = requests.options('http://localhost:8080/index.html')
 # r = requests.get('http://localhost:8080/index.html')
@@ -138,7 +138,7 @@ printResponse(r)
  		# CODE ERREUR 204 No Content:
 
 
-# printResponse(r)
+printResponse(r)
 
 ###############################################################################
 ###############################################################################

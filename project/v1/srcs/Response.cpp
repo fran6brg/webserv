@@ -86,33 +86,37 @@ int Response::format_to_send(Request *req)
     // Status Line
     _http_version = "HTTP/1.1";
     _reason_phrase = code_to_reason[_status_code];
-	// Request Headers, dans l'ordre du sujet
-    _content_language.clear();
-    _content_length = _body.size();
-    _content_location.clear();
-    //	Pas de content type dans toutes les methodes (OPTIONS par exemple)	
-	_content_type[1] = "text/html";
-    //	revoir les header en cas d'erreur (404, 405 ..) genre date, last_modif etc..
-	_last_modified = get_last_modif(req->_file);
-    _location.clear();
+	
+	// Request Headers, dans l'ordre du	 sujet
     _date = get_date();
-    _retry_after.clear();
     _server = "webserv";
+    _content_length = _body.size();
+	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT"
+		|| req->_method == "POST") && (_status_code == 200 || _status_code == 201))
+		 _content_type[1] = get_content_type(req->_file);
+	
+	_content_language.clear();
+    _content_location.clear();
+	_location.clear();
+    _retry_after.clear();
     _transfer_encoding.clear();
     _www_authenticate.clear();
 	
 	if (req->_method == "HEAD")
 		_body.clear();
-
     concat_to_send();
-
     return (1);
 }
 
 void		Response::handle_response(Request *req)
 {
 	if (method_not_allowed(req))
+	{
+		if (req->_method != "GET" || req->_method != "HEAD" || req->_method != "PUT"
+			|| req->_method != "POST" || req->_method != "DELETE" || req->_method != "OPTIONS")
+			bad_request(req);
 		return ;
+	}
 	else if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
 	else if (req->_method == "POST")
@@ -123,8 +127,6 @@ void		Response::handle_response(Request *req)
 		ft_delete(req);
 	else if (req->_method == "OPTIONS")
 		option(req);
-	else
-        bad_request(req);
 }
 
 void			Response::get(Request *req)
@@ -133,8 +135,8 @@ void			Response::get(Request *req)
 	if (file.good())
 	{
 		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-		// gerer le cas ou la requete definie content-size (copier dans le body que les size premier caracteres ?)
 		_body = buffer;
+		_last_modified = get_last_modif(req->_file);
 		_status_code = OK_200;
 	}
 	else
@@ -207,7 +209,7 @@ void			Response::ft_delete(Request *req)
 		}
 		else
 		{
-			_status_code = ACCEPTED_202; // ?
+			_status_code = ACCEPTED_202; // requete accepte mais la supression a echoue (pas sur d'en avoir besoin)
 		}
 	}
 	else
@@ -248,6 +250,7 @@ int				Response::method_not_allowed(Request *req)
 
 int				Response::bad_request(Request *req)
 {
+	(void)req;
     _status_code = BAD_REQUEST_400;
 	std::string path = "./www/error/400.html";
     std::ifstream error400(path);
