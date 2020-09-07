@@ -158,7 +158,7 @@ void			Response::put(Request *req)
 
     if (req->_content_length == -1)
     {
-	    std::cout << "inside put: BAD_REQUEST_400" << std::endl;
+	    // std::cout << "inside put: BAD_REQUEST_400" << std::endl;
         _status_code = BAD_REQUEST_400;
         return ;
     }
@@ -184,7 +184,7 @@ void			Response::put(Request *req)
 	std::ofstream f2(req->_file);
 	if (f2.good())
 	{
-	    std::cout << "inside put: writing body in _file" << std::endl;
+	    // std::cout << "inside put: writing body in _file" << std::endl;
         f2 << req->_body[0].second.substr(0, req->_content_length) << std::endl;
     }
 	else
@@ -238,21 +238,20 @@ int				Response::method_not_allowed(Request *req)
 		if ((req->_location->_method)[i] == req->_method)
 			return (0);
 	}
-	std::string error = "./www/error/405.html";
-    std::ifstream error405(error); // method not allowed
+    _status_code = METHOD_NOT_ALLOWED_405;
+	std::string path = "./www/error/405.html";
+    std::ifstream error405(path);
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
     _body = buffer;
-    _status_code = METHOD_NOT_ALLOWED_405;
 	return (1);
 }
 
 int				Response::bad_request(Request *req)
 {
-    (void)req;
-	std::string error = "./www/error/400.html";
-    std::ifstream error400(error); // bad request
+    _status_code = BAD_REQUEST_400;
+	std::string path = "./www/error/400.html";
+    std::ifstream error400(path);
     std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
     _body = buffer;
-    _status_code = BAD_REQUEST_400;
 	return (1);
 }
