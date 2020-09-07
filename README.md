@@ -20,6 +20,7 @@ cd project/v1 && python test.py
 - select() in the details https://notes.shichao.io/unp/ch6/#readset-writeset-and-exceptset-as-value-result-
 - nice schema https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzab6/xnonblock.htm
 - select() vs threads https://www.lowtek.com/sockets/select.html
+- TCP 3-way handshake schema ; Blocking vs non-blocking socket https://www.bogotobogo.com/cplusplus/sockets_server_client_2.php
 
 ### HTTP protocol
 - RFCs big picture, in french http://abcdrfc.online.fr/rfc-vf/pdf/rfc2616.pdf
