@@ -141,15 +141,22 @@ int Server::recvRequest(Client *c)
     // - EAGAIN originally indicated when a "temporary resource shortage made an operation impossible"
         // Because the resource shortage was expected to be temporary, a subsequent attempt to perform the action might succeed (hence the name "again").
     
+    // If we try to read from a non-blocking socket and there's no data there,
+    // it's not allowed to block-it will return -1 and errno will be set to EWOULDBLOCK.
+    // The non-blocking mode is set by changing one of the socket's flags.
+
     if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) < 0)
     {
-        std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+        if (errno == EWOULDBLOCK || errno == EAGAIN)
+            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret -1): " << std::string(strerror(errno)) << std::endl;
+        else
+            std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
         return (0);
     }
     else if (ret == 0)
     {
         if (errno == EWOULDBLOCK || errno == EAGAIN)
-            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret 0): " << std::string(strerror(errno)) << std::endl;
         else
         {
             std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
