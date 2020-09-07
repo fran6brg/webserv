@@ -11,8 +11,9 @@ cd project/v1 && python test.py
 # quality readings to start the project
 
 ### web socket
+- nice article https://www.bogotobogo.com/cplusplus/sockets_server_client.php
 - Beej's Guide to Network Programming http://beej.us/guide/bgnet/html/
-- build http server from scratch in C https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa
+- "build http server from scratch in C" https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa
 - Les sockets en C https://broux.developpez.com/articles/c/sockets/
 - select() http://manpages.ubuntu.com/manpages/xenial/fr/man2/select_tut.2.html
 - select() example https://man.developpez.com/man2/select_tut/
