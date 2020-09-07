@@ -59,7 +59,7 @@ class Response
 		*/
 
 		// - Contexte de réponse
-		std::string  _allow; // liste les méthodes supportées par une ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Allow
+		std::string  				_allow; // liste les méthodes supportées par une ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Allow
 		// - Informations sur le corps du message:
 		std::map<int, std::string>  _content_language; // pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
 		int                         _content_length; // indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length

@@ -34,8 +34,8 @@ def printResponse(r):
 
 # GET -------------------------------------------------------------------------
 
-r = requests.get('http://localhost:4443')
-printResponse(r)
+# r = requests.get('http://localhost:4443')
+# printResponse(r)
 
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
@@ -76,6 +76,9 @@ printResponse(r)
 # HEAD ------------------------------------------------------------------------
 
 # POST ------------------------------------------------------------------------
+
+r = requests.post('http://localhost:80/im_cgi.bla')
+printResponse(r)
 
 # PUT -------------------------------------------------------------------------
 
