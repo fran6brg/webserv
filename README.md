@@ -23,7 +23,7 @@ cd project/v1 && python test.py
 - TCP 3-way handshake schema ; Blocking vs non-blocking socket https://www.bogotobogo.com/cplusplus/sockets_server_client_2.php
 - more socket theory to waste time https://www.bogotobogo.com/cplusplus/sockets_server_client_3.php
 
-### HTTP protocol
+### http protocol
 - RFCs big picture, in french http://abcdrfc.online.fr/rfc-vf/pdf/rfc2616.pdf
 - RFCs 7230-7235 overview, in french https://www.bortzmeyer.org/http-11-reecrit.html
 - overview http://www.iprelax.fr/http/http_art.php
@@ -31,6 +31,9 @@ cd project/v1 && python test.py
 - Request and Response format https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
 - another overview https://www.coozook.com/static/book-samples/B212934F6A-sample.pdf
 
-### headers in details
+### http headers in details
 - MIME list https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 - What HTTP response headers are required https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required
+
+## CGI programming
+- https://perso.liris.cnrs.fr/lionel.medini/enseignement/M1IF03/Tutoriels/Tutoriel_CGI_SSI.pdf
