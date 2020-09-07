@@ -1,4 +1,4 @@
-#include "../includes/Utils.hpp"
+#include "../includes/Headers.hpp"
 
 std::string 	get_last_modif(std::string file)
 {
@@ -57,3 +57,19 @@ std::string		get_content_type(std::string file)
 	}
 	return ("text/plain");
 }
+
+std::string		get_location_header(Request *req)
+{
+	int				i = req->_file.size() - 1;
+	int				j = req->_location->_uri.size() - 1;
+	std::string		temp;
+	while (req->_file[i] != '/')
+		i--;
+	if (req->_location->_uri[j] == '/')
+		temp = req->_location->_uri + req->_file.substr(i + 1, req->_file.size());
+	else
+		temp = req->_location->_uri + "/" + req->_file.substr(i + 1, req->_file.size());
+	return (temp);
+}
+
+

@@ -167,7 +167,6 @@ int Request::parse_request_line()
         _method = tokens[0];
         _uri = tokens[1];
         _http_version = tokens[2];
-//		_file = "./www" + _uri;
     }
     return (1);
 }
@@ -266,6 +265,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			if (locations[i]->_uri == uri_tmp)
 			{
 				_file = (*uri).substr(j + 1, (*uri).size());
+				_file_name = (*uri).substr(j + 1, (*uri).size());
 				_location = locations[i];
 				return (1);
 			}

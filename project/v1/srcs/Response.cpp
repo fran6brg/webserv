@@ -49,20 +49,22 @@ int Response::concat_to_send(void)
     ss << _reason_phrase << "\r\n";
     // Request Headers, dans l'ordre du sujet
     // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
-    if (_content_length > 0)            { ss << "Content-Length: " << _content_length << "\r\n"; }
+    ss << "Content-Length: " << _content_length << "\r\n";
     // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
     if (!_allow.empty())     { ss << "allow: " << _allow << "\r\n"; }
-    ss << "Content-Type:";
-    while (i < _content_type.size())
-    {
-        ss << " " << _content_type[i++];
-        if (i + 1 < _content_type.size())
-            ss << ";";
-    }
-    ss << "\r\n";
-    
+    if (!_content_type.empty())
+	{
+		ss << "Content-Type:";
+    	while (i < _content_type.size())
+    	{
+    	    ss << " " << _content_type[i++];
+    	    if (i + 1 < _content_type.size())
+    	        ss << ";";
+    	}
+    	ss << "\r\n";
+	}
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
-    if (!_location.empty())             { ss << "Location: " << _location << "\r\n"; }
+    if (!_location.empty() && _status_code == 201)             { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
@@ -73,7 +75,6 @@ int Response::concat_to_send(void)
     if (!_body.empty())                 { ss << _body << " "; }
     // Convert
     _to_send = ss.str();
-    // _to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 44\n\n<html><body><h1>It works!</h1></body></html>";
     return (1);
 }
 
@@ -86,18 +87,18 @@ int Response::format_to_send(Request *req)
     // Status Line
     _http_version = "HTTP/1.1";
     _reason_phrase = code_to_reason[_status_code];
+    _content_length = _body.size();
 	
 	// Request Headers, dans l'ordre du	 sujet
     _date = get_date();
     _server = "webserv";
-    _content_length = _body.size();
 	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT"
 		|| req->_method == "POST") && (_status_code == 200 || _status_code == 201))
 		 _content_type[1] = get_content_type(req->_file);
-	
+	if (_status_code == 201)
+		_location = get_location_header(req);	
 	_content_language.clear();
     _content_location.clear();
-	_location.clear();
     _retry_after.clear();
     _transfer_encoding.clear();
     _www_authenticate.clear();
@@ -140,14 +141,7 @@ void			Response::get(Request *req)
 		_status_code = OK_200;
 	}
 	else
-	{
-		// ERREUR 404
-		std::string error = "./www/error/404.html";
-		std::ifstream error404(error);
-		std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
-		_body = buffer;
-		_status_code = NOT_FOUND_404;
-	}
+		bad_request(req);
 }
 
 void			Response::post(Request *req)
@@ -202,20 +196,14 @@ void			Response::ft_delete(Request *req)
 	std::ifstream file(req->_file);
 	if (file.good())
 	{
-		ret = remove(req->_file.c_str());
+		ret = remove(req->_file.c_str()); // A remplacer par unlink() ? pourquoi ? A voir
 		if (!ret)
-		{
 			_status_code = OK_200;
-		}
 		else
-		{
 			_status_code = ACCEPTED_202; // requete accepte mais la supression a echoue (pas sur d'en avoir besoin)
-		}
 	}
 	else
-	{
 		_status_code = NO_CONTENT_204;
-	}
 }
 
 void			Response::option(Request *req)
