@@ -7,6 +7,9 @@
 
 #include <string>
 #include <iostream>
+#include <sys/socket.h> // inet_ntoa()
+#include <netinet/in.h> // inet_ntoa()
+#include <arpa/inet.h> // inet_ntoa()
 
 /*
 ** Headers
@@ -33,9 +36,13 @@ class Client
 
     public:
         int         _accept_fd;
-        char        _buffer[1000];
+        std::string	_ip;
+        int         _port;
+
+        char        _buffer[1000]; // todo: quelle taille ? taille max des headers pour récup à minima le content_length
         Request     _request;
         Response    _response;
+
         bool        _is_connected;
 
     /*
@@ -49,7 +56,7 @@ class Client
         //
 
     public:
-        Client(int accept_fd);
+        Client(int accept_fd, struct sockaddr_in addr);
         ~Client();
 
         int parse_request(void);
@@ -58,8 +65,9 @@ class Client
     ** friends
     */
 
-    // friend class Conf;
     friend class Server;
+    friend class Request;
+    friend class Response;
 };
 
 #endif

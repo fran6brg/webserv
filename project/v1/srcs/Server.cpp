@@ -99,9 +99,12 @@ int Server::start(void)
 
 int Server::connectClient(void)
 {
-    int ret = 0;
+    int accept_fd = 0;
+    struct sockaddr_in	client_addr;
+    int addrlen = sizeof(client_addr);
 
-    if ((ret = accept(_socket_fd, NULL, NULL)) == -1)
+    bzero(&client_addr, sizeof(client_addr));
+    if ((accept_fd = accept(_socket_fd, (struct sockaddr *)&client_addr, (socklen_t*)&addrlen)) == -1)
     {
         if (errno != EWOULDBLOCK)
         {
@@ -114,9 +117,9 @@ int Server::connectClient(void)
     }
     else
     {
-        std::cout << _name << "(" << _port << ")" << ": accepted client on fd " << ret << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": accepted client on fd " << accept_fd << std::endl;
 
-        Client *c = new Client(ret);
+        Client *c = new Client(accept_fd, client_addr);
         _clients.push_back(c);
 
         return (1);
@@ -145,23 +148,30 @@ int Server::recvRequest(Client *c)
     // it's not allowed to block-it will return -1 and errno will be set to EWOULDBLOCK.
     // The non-blocking mode is set by changing one of the socket's flags.
 
-    if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) < 0)
+    if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
     {
         if (errno == EWOULDBLOCK || errno == EAGAIN)
             std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret -1): " << std::string(strerror(errno)) << std::endl;
         else
+        {
             std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+            // todo: close socket
+            close(c->_accept_fd);
+            c->_is_connected = false;
+        }
         return (0);
     }
     else if (ret == 0)
     {
-        if (errno == EWOULDBLOCK || errno == EAGAIN)
-            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret 0): " << std::string(strerror(errno)) << std::endl;
-        else
-        {
-            std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
-            c->_is_connected = false;
-        }
+        // todo: close socket
+        close(c->_accept_fd);
+        // if (errno == EWOULDBLOCK || errno == EAGAIN)
+        //     std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret 0): " << std::string(strerror(errno)) << std::endl;
+        // else
+        // {
+        std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
+        c->_is_connected = false;
+        // }
         return (0);
     }
     else

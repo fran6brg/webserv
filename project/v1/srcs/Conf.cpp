@@ -15,7 +15,7 @@ Conf::Conf()
 	FD_ZERO(&_save_writefds);
 	FD_ZERO(&_exceptfds);
 	FD_ZERO(&_save_exceptfds);
-    _timeout.tv_sec = 4;
+    _timeout.tv_sec = 5;
 	_timeout.tv_usec = 0;
 }
 
@@ -62,7 +62,8 @@ int Conf::run_select(void)
 {
     reset_fd_sets(); // la fonction select() exclue les fds qui ne sont pas prêts donc il faut pouvoir reconstituer le pool de fd à chaque tour de boucle
     
-    return (select(get_nfds(), &_readfds, &_writefds, &_exceptfds, &_timeout));
+    return (select(get_nfds(), &_readfds, &_writefds, &_exceptfds, NULL)); // todo: quid du timeout
+    // return (select(get_nfds(), &_readfds, &_writefds, &_exceptfds, &_timeout));
 
     /*
     ** http://manpagesfr.free.fr/man/man2/select.2.html

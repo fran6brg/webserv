@@ -1,4 +1,5 @@
 #include "../includes/Headers.hpp"
+
 /*
 ** constructors / destructors
 */
@@ -49,7 +50,8 @@ int Response::concat_to_send(void)
     ss << _reason_phrase << "\r\n";
     // Request Headers, dans l'ordre du sujet
     // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
-    ss << "Content-Length: " << _content_length << "\r\n";
+    if (_content_length != -1)
+        ss << "Content-Length: " << _content_length << "\r\n";
     // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
     if (!_allow.empty())     { ss << "allow: " << _allow << "\r\n"; }
     if (!_content_type.empty())
@@ -89,20 +91,20 @@ int Response::format_to_send(Request *req)
     _reason_phrase = code_to_reason[_status_code];
     _content_length = _body.size();
 	
-	// Request Headers, dans l'ordre du	 sujet
+	// Response headers, dans l'ordre du sujet
     _date = get_date();
     _server = "webserv";
-	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT"
-		|| req->_method == "POST") && (_status_code == 200 || _status_code == 201))
+	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT" || req->_method == "POST")
+    && (_status_code == OK_200 || _status_code == CREATED_201))
 		 _content_type[1] = get_content_type(req->_file);
-	if (_status_code == 201)
+	if (_status_code == CREATED_201)
 		_location = get_location_header(req);	
 	_content_language.clear();
     _content_location.clear();
     _retry_after.clear();
     _transfer_encoding.clear();
     _www_authenticate.clear();
-	
+	// Response body
 	if (req->_method == "HEAD")
 		_body.clear();
     concat_to_send();
@@ -111,13 +113,10 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
-	if (method_not_allowed(req))
-	{
-		if (req->_method != "GET" || req->_method != "HEAD" || req->_method != "PUT"
-			|| req->_method != "POST" || req->_method != "DELETE" || req->_method != "OPTIONS")
-			bad_request(req);
+    if (bad_request(req))
 		return ;
-	}
+	else if (method_not_allowed(req))
+		return ;
 	else if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
 	else if (req->_method == "POST")
@@ -140,13 +139,18 @@ void			Response::get(Request *req)
 		_last_modified = get_last_modif(req->_file);
 		_status_code = OK_200;
 	}
-	else
-		bad_request(req);
+	// else
+	// 	bad_request(req);
 }
 
 void			Response::post(Request *req)
 {
 	(void)req;
+    // set env vars
+    // create args
+    // fork
+    // pipe
+    // launch execve
 }
 
 void			Response::put(Request *req)
@@ -236,9 +240,20 @@ int				Response::method_not_allowed(Request *req)
 	return (1);
 }
 
+int		Response::accepted_method(Request *req)
+{
+    return (req->_method == "GET"
+         || req->_method == "HEAD"
+         || req->_method == "PUT"
+         || req->_method == "POST"
+         || req->_method == "DELETE"
+         || req->_method == "OPTIONS");
+}
+
 int				Response::bad_request(Request *req)
 {
-	(void)req;
+	if (accepted_method(req))
+        return (0);
     _status_code = BAD_REQUEST_400;
 	std::string path = "./www/error/400.html";
     std::ifstream error400(path);

@@ -26,6 +26,9 @@
 
 #include "Server.hpp"
 #include "Location.hpp"
+// #include "Client.hpp"
+
+class Client;
 
 /*
 ** Class
@@ -44,6 +47,7 @@ class Request
 		//
 	
 	public:
+		Client				*_client;
 		std::string			_buffer;
 		std::string 		_file;
 		std::string			_file_name;
@@ -64,6 +68,8 @@ class Request
 
 		// - Négociation de contenu:
 		std::map<int, std::string> 							_accept_charset; // 4 indique le jeu de caractères que le client est capable de comprendre. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Accept-Charset
+		// { 1: "utf-8", 2: "iso-8859-1;q=0.5" }
+		
 		std::map<int, std::string> 							_accept_language; // 5 indique quelles sont les langues que le client est capable de comprendre, et quelle variante locale est préférée https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Accept-Language
 		// - Authentification:
 		std::string 										_authorization; // 6 contient les identifiants permettant l'authentification d'un utilisateur https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Authorization

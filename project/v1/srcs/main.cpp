@@ -45,7 +45,9 @@ int main(int argc, char *argv[])
 
 
 			// 1
-			if (FD_ISSET(s->_socket_fd, &g_conf._readfds)) // check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
+			// FD_ISSET(): check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
+			// the socket is "readable" if the remote peer (the client) closes it / select() returns if a read() will not block, not only when there's data available (meaning also if EOF) (https://stackoverflow.com/questions/6453149/select-says-socket-is-ready-to-read-when-it-is-definitely-not-actually-is-close)
+			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
 				printf("fd %i is set\n", s->_socket_fd);
 				s->connectClient(); // connexion et création du nouveau client

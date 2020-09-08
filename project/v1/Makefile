@@ -1,6 +1,6 @@
 CC			=	clang++
 
-VERSION		= 	# -std=c++98
+VERSION		= 	-std=c++11 # -std=c++98
 
 CPPFLAGS	=	-Wall -Werror -Wextra -g
 
@@ -14,12 +14,13 @@ SRCS		=	srcs/main.cpp \
 				srcs/Request.cpp \
 				srcs/Response.cpp \
 				srcs/Utils.cpp
+				# srcs/CGI.cpp
 
 OBJS		= 	$(SRCS:.cpp=.o)
 EXEC		=	webserv
 
 all:
-	${CC} ${VERSION} ${CPPFLAGS} -o $(EXEC) $(SRCS) -std=c++11
+	${CC} ${VERSION} ${CPPFLAGS} -o $(EXEC) $(SRCS)
 
 clean:
 	$(RM) $(OBJS)

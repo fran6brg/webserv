@@ -20,13 +20,16 @@
 #include <fstream>
 #include <sstream>
 
-#include "Utils.hpp"
-#include "Request.hpp"
-#include "Code.hpp"
 
 /*
 ** Headers
 */
+
+#include "Utils.hpp"
+#include "Request.hpp"
+#include "Code.hpp"
+// #include "Client.hpp"
+class Client;
 
 /*
 ** Class
@@ -50,8 +53,9 @@ class Response
 		** Status Line
 		*/
 
+		Client 		*_client;
 		std::string _http_version;
-		int _status_code;
+		int 		_status_code;
 		std::string _reason_phrase;
 
 		/*
@@ -117,7 +121,10 @@ class Response
 		void			option(Request *req);
 		
 		int				bad_request(Request *req);
+		int				accepted_method(Request *req);
 		int				method_not_allowed(Request *req);
+
+		char			**create_env_tab(Request *req);
 	
 	/*
 	** friends
