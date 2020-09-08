@@ -24,6 +24,7 @@ cd project/v1 && python test.py
 - more socket theory to waste time https://www.bogotobogo.com/cplusplus/sockets_server_client_3.php
 
 ### http protocol
+- How the web works http://www.garshol.priv.no/download/text/http-tut.html
 - RFCs big picture, in french http://abcdrfc.online.fr/rfc-vf/pdf/rfc2616.pdf
 - RFCs 7230-7235 overview, in french https://www.bortzmeyer.org/http-11-reecrit.html
 - overview http://www.iprelax.fr/http/http_art.php
