@@ -12,10 +12,10 @@ Server::Server(std::string serverName, int port):
 	// --- > location et error a definir dans le prasing de la conf
 	_error = "./www/error";
 	
-    Location *location1 = new Location("/", "./www", "index.html", "GET,POST,HEAD,OPTIONS");
+    Location *location1 = new Location("/", "./old/www", "index.html", "GET,POST,HEAD,OPTIONS");
 	_locations.push_back(location1);
 
-	Location *location2 = new Location("/test", "./www/test", "index.html", "DELETE");
+	Location *location2 = new Location("/old/test", "./www/test", "index.html", "DELETE");
 	_locations.push_back(location2);
 }
 
