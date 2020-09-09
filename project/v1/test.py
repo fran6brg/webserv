@@ -34,14 +34,14 @@ def printResponse(r):
 
 # GET -------------------------------------------------------------------------
 
-r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
-printResponse(r)
+#r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
+#printResponse(r)
 
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
 
-r = requests.get('http://localhost:8080/CGI/test_cgi_env.cgi')
-printResponse(r)
+# r = requests.get('http://localhost:8080/CGI/test_cgi_env.cgi')
+# printResponse(r)
 
 # headers = {'Accept-Language': 'fr'}
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
@@ -124,9 +124,9 @@ printResponse(r)
 
 		# CODE ERREUR 200 Ok:
 
-# r = requests.get('http://localhost:8080/')
+#r = requests.get('http://localhost:8080/')
 #r = requests.options('http://localhost:8080/index.html')
-#r = requests.get('http://localhost:8080/index.html')
+r = requests.get('http://localhost:8080/index.html')
 #r = requests.delete('http://localhost:8080/test/test.html')
 #r = requests.head('http://localhost:8080/index.html')
 

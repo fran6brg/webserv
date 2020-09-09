@@ -41,9 +41,10 @@ char			**Response::create_env_tab(Request *req)
 	args_to_map["REQUEST_METHOD"] = req->_method; // méthode associée à la requête en cours de traitement
 	args_to_map["REMOTE_HOST"] = req->_host; // nom de la machine d'où vient la requête 
 	args_to_map["REMOTE_ADDR"] = req->_client->_ip; // adresse IP de la machine d'où vient la requête
+	// Ajouter le nom du fichier au path ???
 	args_to_map["PATH_INFO"] = req->_uri; // chaîne entre SCRIPT_PATH et QUERY_STRING dans l'URL
 	// args_to_map["PATH_TRANSLATED"] = client.conf["path"];
-	args_to_map["CONTENT_LENGTH"] = "0"; // std::to_string(req->_body.size()); // longueur des données véhiculées dans la requête (POST)
+	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_body.size()); // longueur des données véhiculées dans la requête (POST)
 
 	if (req->_uri.find('?') != std::string::npos)
 		args_to_map["QUERY_STRING"] = req->_uri.substr(req->_uri.find('?') + 1); // données transmises au CGI via l'URL (GET)
@@ -122,7 +123,6 @@ void		Response::ft_cgi(Request *req)
 		close(tubes[1]);
 		if ((pid = fork()) == 0)
 		{
-			// pipe de la sortie standard du fork vers un fichier temporaire ?
 			dup2(temp_fd, 1);
 			if (stat(req->_location->_cgi_root.c_str(), &php) != 0 ||
 			!(php.st_mode & S_IFREG))
