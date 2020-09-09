@@ -5,7 +5,7 @@ Conf g_conf;
 void	shutdown(int sig)
 {
 	(void)sig;
-	printf("\33[2K\r%s is off\n", g_conf._webserv.c_str());
+	LOG_WRT(Logger::INFO, g_conf._webserv + " status off");
 	g_conf._on = false;
 	exit(EXIT_SUCCESS);
 }
@@ -16,13 +16,7 @@ int main(int argc, char *argv[])
 	Client *c;
 
 	//logger start
-	LOGGER_START(Logger::DEBUG, "", true);
-
-	//*** test logger ***
-	LOGGER_WRITE(Logger::DEBUG, "test debug");
-	LOGGER_WRITE(Logger::INFO, "test info");
-	LOGGER_WRITE(Logger::ERROR, "test error");
-	//*******************
+	LOG_START(Logger::DEBUG, "", false);
 	
 	(void)argc;
 	(void)argv;
@@ -35,11 +29,11 @@ int main(int argc, char *argv[])
     // loop
     while (g_conf._on)
     {
-		printf("\nselect()\n");
+		LOG_WRT(Logger::DEBUG, "select()");
 		if (g_conf.run_select() == -1)
 			break;
 
-		printf("iterating over existing servers ...\n");
+		LOG_WRT(Logger::DEBUG, "iterating over existing servers ...");
         std::vector<Server*>::iterator it_s = g_conf._servers.begin();
 		for (; it_s != g_conf._servers.end(); it_s++)
 		{
@@ -54,7 +48,7 @@ int main(int argc, char *argv[])
 			// the socket is "readable" if the remote peer (the client) closes it / select() returns if a read() will not block, not only when there's data available (meaning also if EOF) (https://stackoverflow.com/questions/6453149/select-says-socket-is-ready-to-read-when-it-is-definitely-not-actually-is-close)
 			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
-				printf("fd %i is set <=> incoming connection from a client\n", s->_socket_fd);
+				LOG_WRT(Logger::INFO, "New client=" + std::to_string( s->_socket_fd));
 				s->acceptNewClient(); // connexion et création du nouveau client
 			}
 
@@ -67,7 +61,7 @@ int main(int argc, char *argv[])
 				if (!c->_is_connected) // on supprime le client
 				{
 					it_c = s->_clients.erase(it_c);
-			        printf("%s has now %lu clients connected\n", s->_name.c_str(), s->_clients.size());
+							LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " clients connected");
 					if (s->_clients.empty())
 						break;
 				}

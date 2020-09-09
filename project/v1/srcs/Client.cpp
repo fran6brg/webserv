@@ -18,13 +18,12 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 
 Client::~Client()
 {
-	std::cout << "destructor client" << std::endl;
+	LOG_WRT(Logger::INFO, "destructor client");
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_readfds);
 	close(_accept_fd);
 	_accept_fd = -1;
-	std::cout << "connection closed" << std::endl;
-
+	LOG_WRT(Logger::INFO, "connection closed");
 }
 
 /*

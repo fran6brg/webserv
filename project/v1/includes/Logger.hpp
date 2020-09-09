@@ -9,9 +9,9 @@
 # include <iostream>
 # include <iomanip>
 
-#define LOGGER_START(MIN_PRIORITY, FILE, DATE) Logger::Start(MIN_PRIORITY, FILE, DATE);
-#define LOGGER_STOP() Logger::Stop();
-#define LOGGER_WRITE(PRIORITY, MESSAGE) Logger::Write(PRIORITY, MESSAGE);
+#define LOG_START(MIN_PRIORITY, FILE, DATE) Logger::Start(MIN_PRIORITY, FILE, DATE);
+#define LOG_STOP() Logger::Stop();
+#define LOG_WRT(PRIORITY, MESSAGE) Logger::Write(PRIORITY, MESSAGE);
  
 class Logger
 {
