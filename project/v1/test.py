@@ -40,7 +40,7 @@ printResponse(r)
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
 
-r = requests.get('http://localhost:8080/index.html')
+r = requests.get('http://localhost:8080/CGI/test_cgi_env.cgi')
 printResponse(r)
 
 # headers = {'Accept-Language': 'fr'}
