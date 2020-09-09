@@ -126,7 +126,7 @@ class Response
 		int				method_not_allowed(Request *req);
 
 		char			**create_env_tab(Request *req);
-	
+		void			ft_cgi(Request *req);	
 	/*
 	** friends
 	*/

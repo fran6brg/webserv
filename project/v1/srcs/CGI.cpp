@@ -42,7 +42,7 @@ char			**Response::create_env_tab(Request *req)
 	// 	args_to_map["SCRIPT_NAME"] = client.conf["exec"]; // chemin du CGI à partir de la racine du serveur HTTP
 	// else
 	// 	args_to_map["SCRIPT_NAME"] = client.conf["path"]; // chemin du CGI à partir de la racine du serveur HTTP
-	args_to_map["SCRIPT_NAME"] = "?"; // chemin du CGI à partir de la racine du serveur HTTP
+	args_to_map["SCRIPT_NAME"] = req->_location->_cgi_root; // chemin du CGI à partir de la racine du serveur HTTP
 
 	args_to_map["SERVER_NAME"] = req->_client->_server->_name; // nom ou adresse IP de la machine serveur HTTP
 	args_to_map["SERVER_PORT"] = std::to_string(req->_client->_server->_port); // numéro du port (TCP) vers lequel la requête a été envoyée
@@ -81,4 +81,41 @@ char			**Response::create_env_tab(Request *req)
 	args_to_tab[i] = NULL;
 
 	return (args_to_tab);
+}
+
+void		Response::ft_cgi(Request *req)
+{
+	char 	**env;
+    char 	**args;
+    int  	tubes[2];
+    int		ret;
+	int		pid;
+
+	int CGI = 0; // TEMPORAIRE
+    if (CGI)
+    {
+        env = create_env_tab(req);
+        args = (char **)(malloc(sizeof(char *) * 3));
+        args[0] = strdup(req->_location->_cgi_root.c_str());
+        args[1] = strdup(req->_file.c_str());
+        args[2] = NULL;
+		pipe(tubes);
+		if ((pid = fork()) == 0)
+		{
+			close(tubes[1]);
+			dup2(tubes[0], 0);
+			// pipe de la sortie standard du fork vers un fichier temporaire ?
+			if ((ret = execve(req->_location->_cgi_root.c_str(), args, env)) == -1)
+			{
+				std::cout << "ERREUR CGI\n" ;
+				exit(1);
+			}
+		}
+		else
+		{
+			close(tubes[0]);
+
+
+		}
+    }
 }
