@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     // loop
     while (g_conf._on)
     {
-		printf("\nselect()\n");
+		usleep(2000);
+		printf("\nselect(nfds=%i, readfds, writefds, NULL, timeout)\n", g_conf.get_nfds());
 		if (g_conf.run_select() == -1)
 			break;
 
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
 				if (!c->_is_connected) // on supprime le client
 				{
 					it_c = s->_clients.erase(it_c);
+					delete c;
 			        printf("%s has now %lu clients connected\n", s->_name.c_str(), s->_clients.size());
 					if (s->_clients.empty())
 						break;
