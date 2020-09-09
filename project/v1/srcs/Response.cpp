@@ -134,7 +134,16 @@ void			Response::get(Request *req)
 	std::ifstream file(req->_file);
 	int	CGI = 0; // TEMPORAIRE
 	if (CGI)
+	{
 		ft_cgi(req);
+		std::ifstream temp("./www/temp_file");
+		std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());
+
+		_body = buffer;
+		_status_code = OK_200;
+		remove("./www/temp_file");
+		req->_file = "./www/temp_file";
+	}
 	else if (file.good())
 	{
 		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
