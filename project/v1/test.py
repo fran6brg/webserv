@@ -40,7 +40,7 @@ def printResponse(r):
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
 
-r = requests.get('http://localhost:8080/index.html')
+r = requests.get('http://localhost:8080/CGI/test_cgi_env.cgi')
 printResponse(r)
 
 # headers = {'Accept-Language': 'fr'}
@@ -82,10 +82,10 @@ printResponse(r)
 
 # PUT -------------------------------------------------------------------------
 
-body = "Some random text to see if put is working"
-r = requests.put('http://localhost:8080/test/put.txt', data=body)
-printResponse(r)
-prettyPrint(r)
+#body = "Some random text to see if put is working"
+#r = requests.put('http://localhost:8080/test/put.txt', data=body)
+#printResponse(r)
+#prettyPrint(r)
 
 # body = "Some5text5to5test"
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
