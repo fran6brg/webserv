@@ -48,10 +48,10 @@ class Request
 	
 	public:
 		Client				*_client;
+		Location			*_location;
 		std::string			_buffer;
 		std::string 		_file;
 		std::string			_file_name;
-		Location			*_location;
 		int					_body_length;
 	
 		/*
@@ -76,7 +76,7 @@ class Request
 		// - informations sur le corps du message:
 		std::map<int, std::string> 							_content_language; // 7 pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
 		int			 										_content_length; // 8 indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
-		std::map<int, std::string> 							_content_location; // 9 indicates an alternate location for the returned data. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Location
+		std::string				 							_content_location; // 9 indicates an alternate location for the returned data. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Location
 		std::map<int, std::string> 							_content_type; // 10 sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
 		// - Autres:
 		std::string 										_date; // 11 la date et l'heure d'origine du message. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Date
@@ -105,6 +105,7 @@ class Request
 		Request();
 		void 				init();
 
+		std::map<std::string, std::string>	headers_to_map(void);
     	int 				parse_request_line(void);
     	int 				parse_headers(void);
     	int 				parse_body(void);

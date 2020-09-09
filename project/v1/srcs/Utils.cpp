@@ -72,4 +72,29 @@ std::string		get_location_header(Request *req)
 	return (temp);
 }
 
+std::string map_to_string(std::map<int, std::string> map, char delim)
+{
+    std::stringstream ret;
+    size_t i = 0;
 
+    ret.clear();    
+    while (i < map.size())
+    {
+        ret << map[int(i)];
+        if ((i + 1) < map.size())
+            ret << delim << " ";
+        ++i;
+    }
+    return (ret.str());
+}
+
+void displayMap(std::map<std::string, std::string> map)
+{
+	std::map<std::string, std::string>::iterator it = map.begin();
+	int i = 0;
+	while (it != map.end())
+	{
+		std::cout << ++i << ") " << it->first << "=" << it->second << std::endl;
+		++it;
+	}
+}

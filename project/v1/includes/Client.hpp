@@ -17,10 +17,12 @@
 
 #include "Request.hpp"
 #include "Response.hpp"
+class Server;
 
 /*
 ** Class
 */
+
 
 class Client
 {
@@ -35,6 +37,7 @@ class Client
         //
 
     public:
+        Server     *_server;
         int         _accept_fd;
         std::string	_ip;
         int         _port;
@@ -56,7 +59,7 @@ class Client
         //
 
     public:
-        Client(int accept_fd, struct sockaddr_in addr);
+        Client(Server *server, int accept_fd, struct sockaddr_in addr);
         ~Client();
 
         int parse_request(void);

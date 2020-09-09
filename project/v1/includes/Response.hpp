@@ -49,11 +49,12 @@ class Response
 	
 	public:
 
+		Client 		*_client;
+
 		/*
 		** Status Line
 		*/
 
-		Client 		*_client;
 		std::string _http_version;
 		int 		_status_code;
 		std::string _reason_phrase;

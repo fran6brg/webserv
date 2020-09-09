@@ -97,7 +97,7 @@ int Server::start(void)
 }
 
 
-int Server::connectClient(void)
+int Server::acceptNewClient(void)
 {
     int accept_fd = 0;
     struct sockaddr_in	client_addr;
@@ -108,20 +108,20 @@ int Server::connectClient(void)
     {
         if (errno != EWOULDBLOCK)
         {
-            perror("  accept() failed");
+            perror("accept() failed");
             g_conf._on = false;
         }
         else
-            std::cout << "error " << _name << "/connectClient/accept: " << std::string(strerror(errno)) << std::endl;
+            std::cout << "error " << _name << "/acceptNewClient/accept: " << std::string(strerror(errno)) << std::endl;
         return (0);
     }
     else
     {
         std::cout << _name << "(" << _port << ")" << ": accepted client on fd " << accept_fd << std::endl;
 
-        Client *c = new Client(accept_fd, client_addr);
+        Client *c = new Client(this, accept_fd, client_addr);
         _clients.push_back(c);
-
+        printf("%s has now %lu clients connected\n", _name.c_str(), _clients.size());
         return (1);
     }
 }
@@ -155,29 +155,22 @@ int Server::recvRequest(Client *c)
         else
         {
             std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
-            // todo: close fd & erase client
-            close(c->_accept_fd);
+            // close(c->_accept_fd);
             c->_is_connected = false;
         }
         return (0);
     }
     else if (ret == 0)
     {
-        // todo: close fd & erase client
-        close(c->_accept_fd);
-        // if (errno == EWOULDBLOCK || errno == EAGAIN)
-        //     std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret 0): " << std::string(strerror(errno)) << std::endl;
-        // else
-        // {
+        // close(c->_accept_fd);
         std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
         c->_is_connected = false;
-        // }
         return (0);
     }
     else
         std::cout << _name << "(" << _port << ")" << ": recv() is ok" << std::endl;
 
-    printf("\n\n****** request *******\n%s\n**********************\n\n", c->_buffer);
+    printf("\n\nRAW REQUEST:\n----------------------\n%s----------------------\n\n", c->_buffer);
 
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse(_locations);
@@ -217,11 +210,11 @@ int Server::sendResponse(Client *c)
 
 int Server::handleClientRequest(Client *c)
 {
-    printf("handling request of client %i\n", c->_accept_fd);
-
     if (!recvRequest(c))
         return (0);
         
+    printf("handling request of client %i\n", c->_accept_fd);
+
     if (!sendResponse(c))
         return (0);
 

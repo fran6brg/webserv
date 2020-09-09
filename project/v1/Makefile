@@ -13,8 +13,8 @@ SRCS		=	srcs/main.cpp \
 				srcs/Logger.cpp \
 				srcs/Request.cpp \
 				srcs/Response.cpp \
+				srcs/CGI.cpp \
 				srcs/Utils.cpp
-				# srcs/CGI.cpp
 
 OBJS		= 	$(SRCS:.cpp=.o)
 EXEC		=	webserv

@@ -83,9 +83,9 @@ void Request::fill_request(std::string key, std::string value)
     size_t i = 0;
     std::vector<std::string> tokens;
 
-    if (key == "Accept-Charset") // 4
+    if (key == "Accept-Charset") // 4 example: Accept-Charset: utf-8, iso-8859-1;q=0.5
     {
-        tokens = split(value, ' ');
+        tokens = split(value, ',');
         if (!tokens.empty())
         {
             while (i < tokens.size())
@@ -95,9 +95,9 @@ void Request::fill_request(std::string key, std::string value)
             }
         }
     }
-    else if (key == "Accept-Language") // 5
+    else if (key == "Accept-Language") // 5 example: Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
     {
-        tokens = split(value, ' ');
+        tokens = split(value, ',');
         if (!tokens.empty())
         {
             while (i < tokens.size())
@@ -109,10 +109,40 @@ void Request::fill_request(std::string key, std::string value)
     }
     else if (key == "Authorization") // 6
         _authorization = value;
+    else if (key == "Content-Language") // 7 example: Content-Language: de-DE || Content-Language: en-US || Content-Language: de-DE, en-CA
+    {
+        tokens = split(value, ',');
+        if (!tokens.empty())
+        {
+            while (i < tokens.size())
+            {
+                _content_language[i] = tokens[i];
+                i++;
+            }
+        }
+    }        
     else if (key == "Content-Length") // 8
         _content_length = std::stoi(value);
+    else if (key == "Content-Location") // 9 example: Content-Location: <url>
+        _content_location = value;
+    else if (key == "Content-Type") // 10 example: Content-Type: text/html; charset=utf-8 || Content-Type: multipart/form-data; boundary=something
+    {
+        tokens = split(value, ';');
+        if (!tokens.empty())
+        {
+            while (i < tokens.size())
+            {
+                _content_type[i] = tokens[i];
+                i++;
+            }
+        }
+    }  
+    else if (key == "Date") // 11
+        _date = value;
     else if (key == "Host") // 12
         _host = value;
+    else if (key == "Referer") // 13
+        _referer = value;
     else if (key == "User-Agent") // 14
         _user_agent = value;
 
@@ -152,6 +182,29 @@ void Request::init(void)
 
     // autres variables qui ne sont pas des headers
     _body_length = -1;
+}
+
+std::map<std::string, std::string> Request::headers_to_map(void)
+{
+    std::map<std::string, std::string> ret;
+
+    /*
+    ** Request Headers, dans l'ordre du sujet
+    */ 
+
+   ret["ACCEPT-CHARSET"] = map_to_string(_accept_charset, ';');
+   ret["ACCEPT-LANGUAGE"] = map_to_string(_accept_language, ',');
+   ret["AUTHORIZATION"] = _authorization;
+   ret["CONTENT-LANGUAGE"] = map_to_string(_content_language, ',');
+   ret["CONTENT-LENGTH"] = std::to_string(_content_length);
+   ret["CONTENT-LOCATION"] = _content_location;
+   ret["CONTENT-TYPE"] = map_to_string(_content_type, ';');
+   ret["DATE"] = _date;
+   ret["HOST"] = _host;
+   ret["REFERER"] = _referer;
+   ret["USER-AGENT"] = _user_agent;
+
+   return (ret);
 }
 
 int Request::parse_request_line()
@@ -338,8 +391,7 @@ void Request::display(void)
     ss1 << " 7) _content_language:"; // 7
     print_map(ss1, _content_language);
     ss1 << " 8) _content_length: " << _content_length << std::endl; // 8
-    ss1 << " 9) _content_location:"; // 9
-    print_map(ss1, _content_location);
+    ss1 << " 9) _content_location:" << _content_location << std::endl; // 9
     ss1 << "10) _content_type:"; // 10
     print_map(ss1, _content_type);
     ss1 << "11) _date: " << _date << std::endl; // 11
@@ -347,8 +399,6 @@ void Request::display(void)
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
     ss1 << "15) _body:" << std::endl; // 15
-    ss1 << "16) _file: " << _file << std::endl;
-    
     if (_body.empty())
         ss1 << std::endl;
     else
@@ -361,6 +411,7 @@ void Request::display(void)
         }
         ss1 << std::endl;
     }
+    ss1 << "16) _file: " << _file << std::endl;
 
     std::cout << ss1.str() << std::endl;
 }

@@ -93,7 +93,7 @@ int Response::format_to_send(Request *req)
 	
 	// Response headers, dans l'ordre du sujet
     _date = get_date();
-    _server = "webserv";
+    _server = g_conf._webserv;
 	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT" || req->_method == "POST")
     && (_status_code == OK_200 || _status_code == CREATED_201))
 		 _content_type[1] = get_content_type(req->_file);
@@ -145,12 +145,24 @@ void			Response::get(Request *req)
 
 void			Response::post(Request *req)
 {
-	(void)req;
-    // set env vars
-    // create args
-    // fork
-    // pipe
-    // launch execve
+	char **env;
+    char **args;
+    int ret;
+	int	tubes[2];
+
+    // if (CGI)
+    // {
+        // set env vars
+        env = create_env_tab(req);
+        // create args
+        args = (char **)(malloc(sizeof(char *) * 3));
+        // args[0] = strdup(?);
+        // args[1] = strdup(?);
+        args[2] = NULL;
+        // fork
+        // pipe
+        // launch execve
+    // }
 }
 
 void			Response::put(Request *req)
