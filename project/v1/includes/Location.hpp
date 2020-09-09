@@ -23,7 +23,7 @@ class Location
             _root = root;
             _index = index;
             _method = split(method, ',');
-			_cgi_root = "./www/CGI/test_cgi_env.cgi"; // TEMPORAIRE 
+			_cgi_root = "./www/CGI/perl_test"; // TEMPORAIRE 
         };
     };
 
