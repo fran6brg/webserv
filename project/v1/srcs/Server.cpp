@@ -155,7 +155,7 @@ int Server::recvRequest(Client *c)
         else
         {
             std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
-            // todo: close socket
+            // todo: close fd & erase client
             close(c->_accept_fd);
             c->_is_connected = false;
         }
@@ -163,7 +163,7 @@ int Server::recvRequest(Client *c)
     }
     else if (ret == 0)
     {
-        // todo: close socket
+        // todo: close fd & erase client
         close(c->_accept_fd);
         // if (errno == EWOULDBLOCK || errno == EAGAIN)
         //     std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret 0): " << std::string(strerror(errno)) << std::endl;
@@ -193,14 +193,22 @@ int Server::sendResponse(Client *c)
 	c->_response.handle_response(&(c->_request));
     c->_response.format_to_send(&(c->_request));
     
-    if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) < 0)
+    if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) == -1)
     {
-        std::cout << "error " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
+        if (errno == EWOULDBLOCK || errno == EAGAIN)
+            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/send (ret -1): " << std::string(strerror(errno)) << std::endl;
+        else
+        {
+            std::cout << "error (send - 1) " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
+            // todo: close fd & erase client
+            close(c->_accept_fd);
+            c->_is_connected = false;
+        }
         return (0);
     }
     else
     {
-        std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
+        std::cout << _name << "(" << _port << ")" << ": send(q) is ok" << std::endl;
         // c->_is_connected = false;
     }
 
