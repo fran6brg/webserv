@@ -145,13 +145,24 @@ void			Response::get(Request *req)
 
 void			Response::post(Request *req)
 {
-	(void)req;
-    // set env vars
-    create_env_tab(req);
-    // create args
-    // fork
-    // pipe
-    // launch execve
+	char **env;
+    char **args;
+    int ret;
+	int	tubes[2];
+
+    // if (CGI)
+    // {
+        // set env vars
+        env = create_env_tab(req);
+        // create args
+        args = (char **)(malloc(sizeof(char *) * 3));
+        // args[0] = strdup(?);
+        // args[1] = strdup(?);
+        args[2] = NULL;
+        // fork
+        // pipe
+        // launch execve
+    // }
 }
 
 void			Response::put(Request *req)
