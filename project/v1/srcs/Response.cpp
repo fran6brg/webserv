@@ -147,8 +147,8 @@ void			Response::post(Request *req)
 {
 	char **env;
     char **args;
-    int ret;
-	int	tubes[2];
+    // int ret;
+	// int	tubes[2];
 
     // if (CGI)
     // {
