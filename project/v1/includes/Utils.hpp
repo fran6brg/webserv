@@ -15,5 +15,6 @@ std::string		get_date(void);
 std::string		get_content_type(std::string file);
 std::string     get_location_header(Request *req);
 std::string     map_to_string(std::map<int, std::string> map, char delim);
+void            displayMap(std::map<std::string, std::string> map);
 
 #endif

@@ -18,7 +18,7 @@ void ft_putfd(int fd, char *str)
 void	shutdown(int sig)
 {
 	(void)sig;
-	printf("\n%s is off\n", g_conf._webserv.c_str());
+	printf("\33[2K\r%s is off\n", g_conf._webserv.c_str());
 	g_conf._on = false;
 	exit(EXIT_SUCCESS);
 }

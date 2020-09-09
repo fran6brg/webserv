@@ -34,8 +34,8 @@ def printResponse(r):
 
 # GET -------------------------------------------------------------------------
 
-r = requests.get('http://localhost:4443/index.html')
-printResponse(r)
+# r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
+# printResponse(r)
 
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
@@ -77,8 +77,8 @@ printResponse(r)
 
 # POST ------------------------------------------------------------------------
 
-# r = requests.post('http://localhost:80/im_cgi.bla')
-# printResponse(r)
+r = requests.post('http://localhost:8080/im_cgi.bla', auth=HTTPBasicAuth('test', 'test'))
+printResponse(r)
 
 # PUT -------------------------------------------------------------------------
 

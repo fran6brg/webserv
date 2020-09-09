@@ -147,6 +147,7 @@ void			Response::post(Request *req)
 {
 	(void)req;
     // set env vars
+    create_env_tab(req);
     // create args
     // fork
     // pipe

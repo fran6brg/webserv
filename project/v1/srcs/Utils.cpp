@@ -87,3 +87,14 @@ std::string map_to_string(std::map<int, std::string> map, char delim)
     }
     return (ret.str());
 }
+
+void displayMap(std::map<std::string, std::string> map)
+{
+	std::map<std::string, std::string>::iterator it = map.begin();
+	int i = 0;
+	while (it != map.end())
+	{
+		std::cout << ++i << ") " << it->first << "=" << it->second << std::endl;
+		++it;
+	}
+}
