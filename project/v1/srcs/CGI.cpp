@@ -12,6 +12,20 @@
 ** 3 convertir la mpa en un char **env à passer en 3ème argument de execve
 */
 
+// AUTH_TYPE
+// CONTENT_LENGTH
+// CONTENT_TYPE
+// GATEWAY_INTERFACE
+// PATH_INFO
+// PATH_TRANSLATED
+// QUERY_STRING
+// REMOTE_ADDR
+// REMOTE_IDENT
+// REMOTE_USER
+// REQUEST_METHOD
+// REQUEST_URI
+// SCRIPT_NAME
+
 char			**Response::create_env_tab(Request *req)
 {
 	char											**args_to_tab;

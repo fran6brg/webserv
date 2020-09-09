@@ -2,19 +2,6 @@
 
 Conf g_conf;
 
-int ft_strlen(char *str)
-{
-	int i = -1;
-	while (str[++i])
-		;
-	return (i);
-}
-
-void ft_putfd(int fd, char *str)
-{
-	write(fd, str, ft_strlen(str));
-}
-
 void	shutdown(int sig)
 {
 	(void)sig;
