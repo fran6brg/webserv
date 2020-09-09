@@ -132,7 +132,10 @@ void		Response::handle_response(Request *req)
 void			Response::get(Request *req)
 {
 	std::ifstream file(req->_file);
-	if (file.good())
+	int	CGI = 1; // TEMPORAIRE
+	if (CGI)
+		ft_cgi(req);
+	else if (file.good())
 	{
 		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		_body = buffer;
