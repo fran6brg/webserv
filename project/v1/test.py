@@ -51,9 +51,9 @@ def printResponse(r):
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
 # printResponse(r)
 
-# headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-# printResponse(r)
+headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
+r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+printResponse(r)
 
 # headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
