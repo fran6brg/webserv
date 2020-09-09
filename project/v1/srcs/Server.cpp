@@ -68,7 +68,7 @@ int Server::start(void)
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> bind=OK");
 
-    if (listen(_socket_fd, 10) == -1)
+    if (listen(_socket_fd, 42) == -1)
 	{
 		LOG_WRT(Logger::ERROR, "Server::start -> listen(): " + std::string(strerror(errno)));
         return (0);
@@ -108,7 +108,7 @@ int Server::acceptNewClient(void)
     bzero(&client_addr, sizeof(client_addr));
     if ((accept_fd = accept(_socket_fd, (struct sockaddr *)&client_addr, (socklen_t*)&addrlen)) == -1)
     {
-        if (errno != EWOULDBLOCK)
+        if (errno != EWOULDBLOCK && errno != EAGAIN)
         {
 			LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
             g_conf._on = false;
