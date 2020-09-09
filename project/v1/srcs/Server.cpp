@@ -21,7 +21,7 @@ Server::Server(std::string serverName, int port):
 
 Server::~Server()
 {
-	std::cout << "server killed" << std::endl;
+	LOG_WRT(Logger::INFO, _name + "status killed");
     g_conf.set_nfds(_socket_fd, 0);
 }
 
@@ -36,11 +36,11 @@ int Server::start(void)
     // socket
 	if ((_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-        std::cout << "error " << _name << "/start/socket(): " << std::string(strerror(errno)) << std::endl;
+		LOG_WRT(Logger::ERROR, "Server::start -> socket(): " + std::string(strerror(errno)));
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << ": socket_fd created (" << _socket_fd << ")" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> socket=" + std::to_string(_socket_fd));
 
 	
 	// SO_REUSEADDR option on the listening socket: to avoid “Address already in use” error when binding(). 
@@ -49,11 +49,11 @@ int Server::start(void)
     int value = 1; // This will set the SO_REUSEADDR in my socket to 1.
     if (setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) == -1)
 	{
-        std::cout << "error " << _name << "/start/setsockopt(): " << std::string(strerror(errno)) << std::endl;
+		LOG_WRT(Logger::ERROR, "Server::start -> setsockopt(): " + std::string(strerror(errno)));
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << ": setsockopt() is ok" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> setsockopt=OK");
 
 	// set struct sockaddr_in
 	_addr.sin_family = AF_INET;
@@ -62,19 +62,19 @@ int Server::start(void)
 
 	if (bind(_socket_fd, (struct sockaddr *)&_addr, sizeof(_addr)) == -1)
 	{
-        std::cout << "error " << _name << "/start/bind(): " << std::string(strerror(errno)) << std::endl;
+		LOG_WRT(Logger::ERROR, "Server::start -> bind(): " + std::string(strerror(errno)));
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << ": bind() is ok" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> bind=OK");
 
     if (listen(_socket_fd, 10) == -1)
 	{
-        std::cout << "error " << _name << "/start/listen(): " << std::string(strerror(errno)) << std::endl;
+		LOG_WRT(Logger::ERROR, "Server::start -> listen(): " + std::string(strerror(errno)));
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << ": listen() is ok" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> listen=OK");
 
 	// http://beej.us/guide/bgnet/html/#selectman
 	// Note for Linux users: Linux’s select() can return “ready-to-read” and then not actually be ready to read, thus causing the subsequent read() call to block.
@@ -86,11 +86,11 @@ int Server::start(void)
 	// Pour la manipulation des FIFO (tubes nommés), voir également fifo(7). Pour une discussion sur l'effet de O_NONBLOCK conjointement aux verrouillages de fichier impératifs et aux baux de fichiers, voir fcntl(2).
 	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1) // cf. subject
 	{
-        std::cout << "error " << _name << "/start/fcntl: " << std::string(strerror(errno)) << std::endl;
+		LOG_WRT(Logger::ERROR, "Server::start -> fcntl(): " + std::string(strerror(errno)));
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << ": fcntl() is ok" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> fcntl=OK");
 	
     // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
 	FD_SET(_socket_fd, &g_conf._save_readfds);
@@ -110,20 +110,20 @@ int Server::acceptNewClient(void)
     {
         if (errno != EWOULDBLOCK)
         {
-            perror("accept() failed");
+			LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
             g_conf._on = false;
         }
         else
-            std::cout << "error " << _name << "/acceptNewClient/accept: " << std::string(strerror(errno)) << std::endl;
+			LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
         return (0);
     }
     else
     {
-        std::cout << _name << "(" << _port << ")" << ": accepted client on fd " << accept_fd << std::endl;
-
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept=" + std::to_string(accept_fd));
         Client *c = new Client(this, accept_fd, client_addr);
         _clients.push_back(c);
-        printf("%s has now %lu clients connected\n", _name.c_str(), _clients.size());
+		LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
+
         return (1);
     }
 }
@@ -152,26 +152,21 @@ int Server::recvRequest(Client *c)
 
     if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
     {
-        if (errno == EWOULDBLOCK || errno == EAGAIN)
-            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/recv (ret -1): " << std::string(strerror(errno)) << std::endl;
-        else
-        {
-            std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
+		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
+        if (errno != EWOULDBLOCK && errno != EAGAIN)
             c->_is_connected = false;
-        }
         return (0);
     }
     else if (ret == 0)
     {
-        std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> client(" + std::to_string(c->_accept_fd) + ") closed");
         c->_is_connected = false;
         return (0);
     }
     else
-        std::cout << _name << "(" << _port << ")" << ": recv() is ok" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
 
-    printf("\n\nRAW REQUEST:\n----------------------\n%s----------------------\n\n", c->_buffer);
-
+	LOG_WRT(Logger::INFO, "RAW REQUEST:\n----------------------\n" + std::string(c->_buffer) + "----------------------");
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse(_locations);
     
@@ -195,18 +190,14 @@ int Server::sendResponse(Client *c)
     
     if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) == -1)
     {
-        if (errno == EWOULDBLOCK || errno == EAGAIN)
-            std::cout << "error (EWOULDBLOCK || EAGAIN) " << _name << "/handleClientRequest/send (ret -1): " << std::string(strerror(errno)) << std::endl;
-        else
-        {
-            std::cout << "error (send - 1) " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
+        LOG_WRT(Logger::ERROR, "Server::sendResponse -> send(): " + std::string(strerror(errno)));
+        if (errno != EWOULDBLOCK && errno != EAGAIN)
             c->_is_connected = false;
-        }
         return (0);
     }
     else
     {
-        std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send=OK");
         c->_is_connected = false;
     }
 
@@ -225,7 +216,6 @@ int Server::handleClientRequest(Client *c)
     }
     else
         printf("reading not set %i\n", c->_accept_fd);
-        
 
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {

@@ -12,13 +12,13 @@ def printResponse(r):
 	print ("-------- REQUEST")
 	# print (props(r.request))
 	print (r.request.method, "on", r.request.url)
-	print
+	print ()
 	for h in r.request.headers:
 		print (h + ": " + r.request.headers[h])
 	print ()
 	print ("Body:", r.request.body)
 
-	print
+	print ()
 	print ("-------- RESPONSE")
 	print ("Status code:", r.status_code)
 	print ()
