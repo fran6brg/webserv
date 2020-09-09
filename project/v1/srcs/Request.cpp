@@ -385,6 +385,7 @@ void Request::display(void)
     ss1 << " 3) _http_version: " << _http_version << std::endl; // 3
     ss1 << " 4) _accept_charset:"; // 4
     print_map(ss1, _accept_charset);
+	
      ss1 << " 5) _accept_language:"; // 5
     print_map(ss1, _accept_language);
     ss1 << " 6) _authorization: " << _authorization << std::endl; // 6
@@ -412,6 +413,5 @@ void Request::display(void)
         ss1 << std::endl;
     }
     ss1 << "16) _file: " << _file << std::endl;
-
-    std::cout << ss1.str() << std::endl;
+	LOG_WRT(Logger::INFO, ss1.str());
 }

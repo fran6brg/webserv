@@ -22,7 +22,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 
 Client::~Client()
 {
-	std::cout << "closing connection for client " << _accept_fd << std::endl;
+	LOG_WRT(Logger::INFO, "closing connection for client" + std::to_string(_accept_fd));
 	// FD_CLR(_accept_fd, &g_conf._save_readfds);
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	g_conf.set_nfds(_accept_fd, 0);
