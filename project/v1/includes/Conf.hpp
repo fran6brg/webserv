@@ -39,6 +39,7 @@ class Conf
         std::string             _webserv;
 
         // select() related
+        int                     _nfds;
         fd_set					_readfds;
         fd_set					_save_readfds;
         fd_set					_writefds;
@@ -46,7 +47,6 @@ class Conf
         fd_set					_exceptfds;
         fd_set					_save_exceptfds;
         struct timeval			_timeout;
-        // int                     _nfds;
         
         // other variables
         std::vector<Server*>	    _servers;
@@ -69,6 +69,7 @@ class Conf
         int parse(void);
         void reset_fd_sets(void);
         int get_nfds(void) const;
+        void set_nfds(int fd, int increase);
         int run_select();
 };
 

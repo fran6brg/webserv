@@ -14,17 +14,20 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
     _ip = inet_ntoa(addr.sin_addr); // todo: à recoder si non authorisée
 	_port = htons(addr.sin_port); // todo: à recoder si non authorisée
 	_request._client = this;
+	// select():
+	// FD_SET(_accept_fd, &g_conf._save_readfds);
+	FD_SET(_accept_fd, &g_conf._readfds);
+	g_conf.set_nfds(_accept_fd, 1);
 }
 
 Client::~Client()
 {
-	std::cout << "destructor client" << std::endl;
+	std::cout << "closing connection for client " << _accept_fd << std::endl;
+	// FD_CLR(_accept_fd, &g_conf._save_readfds);
 	FD_CLR(_accept_fd, &g_conf._readfds);
-	FD_CLR(_accept_fd, &g_conf._save_readfds);
+	g_conf.set_nfds(_accept_fd, 0);
 	close(_accept_fd);
 	_accept_fd = -1;
-	std::cout << "connection closed" << std::endl;
-
 }
 
 /*
