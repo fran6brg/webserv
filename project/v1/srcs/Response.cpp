@@ -228,7 +228,7 @@ int				Response::method_not_allowed(Request *req)
 			return (0);
 	}
     _status_code = METHOD_NOT_ALLOWED_405;
-	std::string path = "./www/error/405.html";
+	std::string path = "./www/old/error/405.html";
     std::ifstream error405(path);
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
     _body = buffer;
@@ -250,7 +250,7 @@ int				Response::bad_request(Request *req)
 	if (accepted_method(req))
         return (0);
     _status_code = BAD_REQUEST_400;
-	std::string path = "./www/error/400.html";
+	std::string path = "./www/old/error/400.html";
     std::ifstream error400(path);
     std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
     _body = buffer;
