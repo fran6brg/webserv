@@ -347,8 +347,6 @@ void Request::display(void)
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
     ss1 << "15) _body:" << std::endl; // 15
-    ss1 << "16) _file: " << _file << std::endl;
-    
     if (_body.empty())
         ss1 << std::endl;
     else
@@ -361,6 +359,7 @@ void Request::display(void)
         }
         ss1 << std::endl;
     }
+    ss1 << "16) _file: " << _file << std::endl;
 
     std::cout << ss1.str() << std::endl;
 }

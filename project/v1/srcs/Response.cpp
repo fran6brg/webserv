@@ -93,7 +93,7 @@ int Response::format_to_send(Request *req)
 	
 	// Response headers, dans l'ordre du sujet
     _date = get_date();
-    _server = "webserv";
+    _server = g_conf._webserv;
 	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT" || req->_method == "POST")
     && (_status_code == OK_200 || _status_code == CREATED_201))
 		 _content_type[1] = get_content_type(req->_file);

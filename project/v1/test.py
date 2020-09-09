@@ -7,7 +7,7 @@ def props(cls):
 # https://stackoverflow.com/questions/9058305/getting-attributes-of-a-class
 
 def printResponse(r):
-	print (props(r))
+	# print (props(r))
 
 	print ("-------- REQUEST")
 	# print (props(r.request))
@@ -124,7 +124,7 @@ printResponse(r)
 
 		# CODE ERREUR 200 Ok:
 
-r = requests.get('http://localhost:8080/')
+# r = requests.get('http://localhost:8080/')
 #r = requests.options('http://localhost:8080/index.html')
 #r = requests.get('http://localhost:8080/index.html')
 #r = requests.delete('http://localhost:8080/test/test.html')
@@ -140,7 +140,7 @@ r = requests.get('http://localhost:8080/')
  		# CODE ERREUR 204 No Content:
 
 
-printResponse(r)
+# printResponse(r)
 
 ###############################################################################
 ###############################################################################

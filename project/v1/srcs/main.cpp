@@ -15,26 +15,35 @@ void ft_putfd(int fd, char *str)
 	write(fd, str, ft_strlen(str));
 }
 
+void	shutdown(int sig)
+{
+	(void)sig;
+	printf("\n%s is off\n", g_conf._webserv.c_str());
+	g_conf._on = false;
+	exit(EXIT_SUCCESS);
+}
 
 int main(int argc, char *argv[])
 {
 	Server *s;
 	Client *c;
 
-    // parsing
 	(void)argc;
 	(void)argv;
+	signal(SIGINT, shutdown);
+
+    // parsing
 	if (/*argc != 2 || */!g_conf.parse(/*argv[1]*/))
         return (EXIT_ERROR);
 
     // loop
     while (g_conf._on)
     {
-		printf("\nrun_select()\n");
+		printf("\nselect()\n");
 		if (g_conf.run_select() == -1)
 			break;
 
-		printf("iterating over existing servers\n");
+		printf("iterating over existing servers ...\n");
         std::vector<Server*>::iterator it_s = g_conf._servers.begin();
 		for (; it_s != g_conf._servers.end(); it_s++)
 		{
@@ -49,21 +58,20 @@ int main(int argc, char *argv[])
 			// the socket is "readable" if the remote peer (the client) closes it / select() returns if a read() will not block, not only when there's data available (meaning also if EOF) (https://stackoverflow.com/questions/6453149/select-says-socket-is-ready-to-read-when-it-is-definitely-not-actually-is-close)
 			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
-				printf("fd %i is set\n", s->_socket_fd);
-				s->connectClient(); // connexion et création du nouveau client
+				printf("fd %i is set <=> incoming connection from a client\n", s->_socket_fd);
+				s->acceptNewClient(); // connexion et création du nouveau client
 			}
 
 			// 2
 			std::vector<Client*>::iterator it_c = s->_clients.begin();
-			printf("%s has now %lu clients connected\n", s->_name.c_str(), s->_clients.size());
 			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
-				if (c->_is_connected)
-					s->handleClientRequest(c);
-				else // sinon on supprime le client
+				s->handleClientRequest(c);
+				if (!c->_is_connected) // on supprime le client
 				{
 					it_c = s->_clients.erase(it_c);
+			        printf("%s has now %lu clients connected\n", s->_name.c_str(), s->_clients.size());
 					if (s->_clients.empty())
 						break;
 				}

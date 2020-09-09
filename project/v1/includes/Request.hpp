@@ -48,10 +48,10 @@ class Request
 	
 	public:
 		Client				*_client;
+		Location			*_location;
 		std::string			_buffer;
 		std::string 		_file;
 		std::string			_file_name;
-		Location			*_location;
 		int					_body_length;
 	
 		/*

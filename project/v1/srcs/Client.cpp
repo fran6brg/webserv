@@ -4,8 +4,8 @@
 ** constructors / destructors
 */
 
-Client::Client(int accept_fd, struct sockaddr_in addr):
-    _accept_fd(accept_fd), _is_connected(true)
+Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
+    _server(server), _accept_fd(accept_fd), _is_connected(true)
 {
 	// convertit l'adresse Internet de l'hôte cp depuis la notation IPv4 décimale pointée
 	// vers une forme binaire (dans l'ordre d'octet du réseau),

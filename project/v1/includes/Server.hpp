@@ -63,7 +63,7 @@ class Server
 		~Server();
     
         int start(void);
-        int connectClient(void);
+        int acceptNewClient(void);
         int recvRequest(Client *c);
         int sendResponse(Client *c);
         int handleClientRequest(Client *c);

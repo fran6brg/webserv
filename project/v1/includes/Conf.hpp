@@ -34,7 +34,8 @@ class Conf
 
     public:
         // loop
-        bool                     _on;
+        bool                    _on;
+        std::string             _webserv;
 
         // select() related
         fd_set					_readfds;
