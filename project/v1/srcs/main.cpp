@@ -21,6 +21,15 @@ int main(int argc, char *argv[])
 	Server *s;
 	Client *c;
 
+	//logger start
+	LOGGER_START(Logger::DEBUG, "", true);
+
+	//*** test logger ***
+	LOGGER_WRITE(Logger::DEBUG, "test debug");
+	LOGGER_WRITE(Logger::INFO, "test info");
+	LOGGER_WRITE(Logger::ERROR, "test error");
+	//*******************
+
     // parsing
 	(void)argc;
 	(void)argv;
