@@ -34,8 +34,8 @@ def printResponse(r):
 
 # GET -------------------------------------------------------------------------
 
-# r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
-# printResponse(r)
+r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
+printResponse(r)
 
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
@@ -51,9 +51,9 @@ def printResponse(r):
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
 # printResponse(r)
 
-headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
-r = requests.get('http://localhost:8080/test/index.html', headers=headers)
-printResponse(r)
+# headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
+# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+# printResponse(r)
 
 # headers = {'Accept-Language': 'en', 'Accept-Charset': 'utf8'}
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
@@ -77,15 +77,15 @@ printResponse(r)
 
 # POST ------------------------------------------------------------------------
 
-r = requests.post('http://localhost:8080/im_cgi.bla', auth=HTTPBasicAuth('test', 'test'))
-printResponse(r)
+# r = requests.post('http://localhost:8080/im_cgi.bla', auth=HTTPBasicAuth('test', 'test'))
+# printResponse(r)
 
 # PUT -------------------------------------------------------------------------
 
-body = "Some random text to see if put is working"
-r = requests.put('http://localhost:8080/test/put.txt', data=body)
-printResponse(r)
-prettyPrint(r)
+# body = "Some random text to see if put is working"
+# r = requests.put('http://localhost:8080/test/put.txt', data=body)
+# printResponse(r)
+# prettyPrint(r)
 
 # body = "Some5text5to5test"
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)

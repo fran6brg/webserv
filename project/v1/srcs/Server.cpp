@@ -12,16 +12,17 @@ Server::Server(std::string serverName, int port):
 	// --- > location et error a definir dans le prasing de la conf
 	_error = "./www/error";
 	
-    Location *location1 = new Location("/", "./www", "index.html", "GET,POST,HEAD,OPTIONS");
+    Location *location1 = new Location("/", "./www/old", "index.html", "GET,POST,HEAD,OPTIONS");
 	_locations.push_back(location1);
 
-	Location *location2 = new Location("/test", "./www/test", "index.html", "DELETE");
+	Location *location2 = new Location("/test", "./www/old/test", "index.html", "DELETE");
 	_locations.push_back(location2);
 }
 
 Server::~Server()
 {
 	std::cout << "server killed" << std::endl;
+    g_conf.set_nfds(_socket_fd, 0);
 }
 
 /*
@@ -92,7 +93,8 @@ int Server::start(void)
         std::cout << _name << "(" << _port << ")" << ": fcntl() is ok" << std::endl;
 	
     // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
-	FD_SET(_socket_fd, &g_conf._save_readfds);    
+	FD_SET(_socket_fd, &g_conf._save_readfds);
+    g_conf.set_nfds(_socket_fd, 1);
     return (1);
 }
 
@@ -155,14 +157,12 @@ int Server::recvRequest(Client *c)
         else
         {
             std::cout << "error (recv - 1) " << _name << "/handleClientRequest/recv: " << std::string(strerror(errno)) << std::endl;
-            // close(c->_accept_fd);
             c->_is_connected = false;
         }
         return (0);
     }
     else if (ret == 0)
     {
-        // close(c->_accept_fd);
         std::cout << _name << "(" << _port << ")" << " connection has been closed by the client (no error: " << std::string(strerror(errno)) << ")" << std::endl;
         c->_is_connected = false;
         return (0);
@@ -174,6 +174,13 @@ int Server::recvRequest(Client *c)
 
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse(_locations);
+    
+    // FD_CLR(c->_accept_fd, &g_conf._save_readfds);
+    FD_CLR(c->_accept_fd, &g_conf._readfds);
+
+    // FD_SET(c->_accept_fd, &g_conf._save_writefds);
+    FD_SET(c->_accept_fd, &g_conf._writefds);
+    
     c->_request.display();    
     return (1);
 }
@@ -193,8 +200,6 @@ int Server::sendResponse(Client *c)
         else
         {
             std::cout << "error (send - 1) " << _name << "/handleClientRequest/send: " << std::string(strerror(errno)) << std::endl;
-            // todo: close fd & erase client
-            close(c->_accept_fd);
             c->_is_connected = false;
         }
         return (0);
@@ -202,21 +207,34 @@ int Server::sendResponse(Client *c)
     else
     {
         std::cout << _name << "(" << _port << ")" << ": send() is ok" << std::endl;
-        // c->_is_connected = false;
+        c->_is_connected = false;
     }
+
+
 
     return (1);
 }
 
 int Server::handleClientRequest(Client *c)
 {
-    if (!recvRequest(c))
-        return (0);
+    if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
+    {
+        printf("reading request of client %i\n", c->_accept_fd);
+        if (!recvRequest(c))
+            return (0);
+    }
+    else
+        printf("reading not set %i\n", c->_accept_fd);
         
-    printf("handling request of client %i\n", c->_accept_fd);
 
-    if (!sendResponse(c))
-        return (0);
+    if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
+    {
+        printf("sending response to client %i\n", c->_accept_fd);
+        if (!sendResponse(c))
+            return (0);
+    }
+    else
+        printf("writing not set %i\n", c->_accept_fd);
 
     return (1);
 }
