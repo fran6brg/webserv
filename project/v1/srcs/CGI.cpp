@@ -43,14 +43,14 @@ char			**Response::create_env_tab(Request *req)
 	args_to_map["REMOTE_ADDR"] = req->_client->_ip; // adresse IP de la machine d'où vient la requête
 	args_to_map["PATH_INFO"] = req->_uri; // chaîne entre SCRIPT_PATH et QUERY_STRING dans l'URL
 	// args_to_map["PATH_TRANSLATED"] = client.conf["path"];
-	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_body.size()); // longueur des données véhiculées dans la requête (POST)
+	args_to_map["CONTENT_LENGTH"] = "0"; // std::to_string(req->_body.size()); // longueur des données véhiculées dans la requête (POST)
 
 	if (req->_uri.find('?') != std::string::npos)
 		args_to_map["QUERY_STRING"] = req->_uri.substr(req->_uri.find('?') + 1); // données transmises au CGI via l'URL (GET)
 	else
 		args_to_map["QUERY_STRING"]; // données transmises au CGI via l'URL (GET)
 
-	args_to_map["CONTENT_TYPE"] = map_to_string(req->_content_type, ';'); // type MIME des données véhiculées dans la requête
+//	args_to_map["CONTENT_TYPE"] = map_to_string(req->_content_type, ';'); // type MIME des données véhiculées dans la requête
 
 	// if (client.conf.find("exec") != client.conf.end())
 	// 	args_to_map["SCRIPT_NAME"] = client.conf["exec"]; // chemin du CGI à partir de la racine du serveur HTTP
@@ -89,6 +89,7 @@ char			**Response::create_env_tab(Request *req)
 	int i = -1;
 	while (it != args_to_map.end())
 	{
+		std::cout << it->first << " = " << it->second << std::endl;
 		args_to_tab[++i] = strdup((it->first + "=" + it->second).c_str());
 		++it;
 	}
@@ -103,32 +104,47 @@ void		Response::ft_cgi(Request *req)
     char 	**args;
     int  	tubes[2];
     int		ret;
-	int		pid;
+	int		temp_fd;
+	pid_t	pid;
+	struct stat php;
 
-	int CGI = 0; // TEMPORAIRE
+	int CGI = 1; // TEMPORAIRE
     if (CGI)
     {
+		std::cout << "CGI -------------------- CGI\n\n";
         env = create_env_tab(req);
         args = (char **)(malloc(sizeof(char *) * 3));
         args[0] = strdup(req->_location->_cgi_root.c_str());
         args[1] = strdup(req->_file.c_str());
         args[2] = NULL;
+		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
 		pipe(tubes);
+		close(tubes[1]);
 		if ((pid = fork()) == 0)
 		{
-			close(tubes[1]);
-			dup2(tubes[0], 0);
 			// pipe de la sortie standard du fork vers un fichier temporaire ?
+			dup2(temp_fd, 1);
+			if (stat(req->_location->_cgi_root.c_str(), &php) != 0 ||
+			!(php.st_mode & S_IFREG))
+			{
+				std::cout << "ERREUR 1 CGI\n";
+				exit(1);
+			}
+			dup2(tubes[0], 0);
+			errno = 0;
 			if ((ret = execve(req->_location->_cgi_root.c_str(), args, env)) == -1)
 			{
-				std::cout << "ERREUR CGI\n" ;
+				std::cout << "ERREUR 2 CGI\n";
+				std::cout << "error " << std::string(strerror(errno)) << std::endl;
 				exit(1);
 			}
 		}
 		else
 		{
+			waitpid(pid, NULL, 0);
 			close(tubes[0]);
-
+			close(temp_fd);
+			std::cout << "CGI -------------------- CGI\n\n";
 
 		}
     }

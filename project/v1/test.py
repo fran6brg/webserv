@@ -12,13 +12,13 @@ def printResponse(r):
 	print ("-------- REQUEST")
 	# print (props(r.request))
 	print (r.request.method, "on", r.request.url)
-	print
+	print ()
 	for h in r.request.headers:
 		print (h + ": " + r.request.headers[h])
 	print ()
 	print ("Body:", r.request.body)
 
-	print
+	print ()
 	print ("-------- RESPONSE")
 	print ("Status code:", r.status_code)
 	print ()
@@ -34,14 +34,14 @@ def printResponse(r):
 
 # GET -------------------------------------------------------------------------
 
-# r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
-# printResponse(r)
+r = requests.get('http://localhost:4443/index.html', auth=HTTPBasicAuth('test', 'test'))
+printResponse(r)
 
 # r = requests.get('http://localhost:8080/test')
 # printResponse(r)
 
-r = requests.get('http://localhost:8080/index.html')
-printResponse(r)
+# r = requests.get('http://localhost:8080/CGI/test_cgi_env.cgi')
+# printResponse(r)
 
 # headers = {'Accept-Language': 'fr'}
 # r = requests.get('http://localhost:8080/test/index.html', headers=headers)
@@ -82,10 +82,10 @@ printResponse(r)
 
 # PUT -------------------------------------------------------------------------
 
-body = "Some random text to see if put is working"
-r = requests.put('http://localhost:8080/test/put.txt', data=body)
-printResponse(r)
-prettyPrint(r)
+# body = "Some random text to see if put is working"
+# r = requests.put('http://localhost:8080/test/put.txt', data=body)
+# printResponse(r)
+# prettyPrint(r)
 
 # body = "Some5text5to5test"
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)

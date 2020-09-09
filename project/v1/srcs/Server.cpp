@@ -22,6 +22,7 @@ Server::Server(std::string serverName, int port):
 Server::~Server()
 {
 	LOG_WRT(Logger::INFO, _name + "status killed");
+    g_conf.set_nfds(_socket_fd, 0);
 }
 
 /*
@@ -92,7 +93,8 @@ int Server::start(void)
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> fcntl=OK");
 	
     // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
-	FD_SET(_socket_fd, &g_conf._save_readfds);    
+	FD_SET(_socket_fd, &g_conf._save_readfds);
+    g_conf.set_nfds(_socket_fd, 1);
     return (1);
 }
 
@@ -152,15 +154,11 @@ int Server::recvRequest(Client *c)
     {
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
         if (errno != EWOULDBLOCK && errno != EAGAIN)
-		{
-            // close(c->_accept_fd);
             c->_is_connected = false;
-        }
         return (0);
     }
     else if (ret == 0)
     {
-        // close(c->_accept_fd);
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> client(" + std::to_string(c->_accept_fd) + ") closed");
         c->_is_connected = false;
         return (0);
@@ -171,6 +169,13 @@ int Server::recvRequest(Client *c)
 	LOG_WRT(Logger::INFO, "RAW REQUEST:\n----------------------\n" + std::string(c->_buffer) + "----------------------");
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse(_locations);
+    
+    // FD_CLR(c->_accept_fd, &g_conf._save_readfds);
+    FD_CLR(c->_accept_fd, &g_conf._readfds);
+
+    // FD_SET(c->_accept_fd, &g_conf._save_writefds);
+    FD_SET(c->_accept_fd, &g_conf._writefds);
+    
     c->_request.display();    
     return (1);
 }
@@ -187,30 +192,39 @@ int Server::sendResponse(Client *c)
     {
         LOG_WRT(Logger::ERROR, "Server::sendResponse -> send(): " + std::string(strerror(errno)));
         if (errno != EWOULDBLOCK && errno != EAGAIN)
-		{
-            // todo: close fd & erase client
-            close(c->_accept_fd);
             c->_is_connected = false;
-        }
         return (0);
     }
     else
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send=OK");
-        // c->_is_connected = false;
+        c->_is_connected = false;
     }
+
+
 
     return (1);
 }
 
 int Server::handleClientRequest(Client *c)
 {
-    if (!recvRequest(c))
-        return (0);
-        
-	LOG_WRT(Logger::INFO, "handling request of client " + std::to_string( c->_accept_fd));
-    if (!sendResponse(c))
-        return (0);
+    if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
+    {
+        printf("reading request of client %i\n", c->_accept_fd);
+        if (!recvRequest(c))
+            return (0);
+    }
+    else
+        printf("reading not set %i\n", c->_accept_fd);
+
+    if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
+    {
+        printf("sending response to client %i\n", c->_accept_fd);
+        if (!sendResponse(c))
+            return (0);
+    }
+    else
+        printf("writing not set %i\n", c->_accept_fd);
 
     return (1);
 }

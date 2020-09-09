@@ -10,6 +10,7 @@ Conf::Conf()
     _on = true;
     _webserv = "webserv";
     // select() related
+    _nfds = -1;
 	FD_ZERO(&_readfds);
 	FD_ZERO(&_save_readfds);
 	FD_ZERO(&_writefds);
@@ -56,15 +57,30 @@ int Conf::get_nfds(void) const
     **
     ** nfds est le numéro du plus grand descripteur de fichier des 3 ensembles, plus 1.
     */
-    return (10);
+    return (_nfds + 1);
+}
+
+void Conf::set_nfds(int fd, int increase)
+{
+    if (increase)
+    {
+        if (fd > _nfds)
+            _nfds = fd;
+    }
+    else
+    {
+        if (fd == _nfds)
+            _nfds -= 1;
+
+    }    
 }
 
 int Conf::run_select(void)
 {
     reset_fd_sets(); // la fonction select() exclue les fds qui ne sont pas prêts donc il faut pouvoir reconstituer le pool de fd à chaque tour de boucle
     
-    // return (select(get_nfds(), &_readfds, &_writefds, &_exceptfds, NULL)); // todo: quid du timeout
-    return (select(get_nfds(), &_readfds, &_writefds, NULL, NULL));
+    // return (select(get_nfds(), &_readfds, &_writefds, NULL, NULL)); // todo: quid du timeout
+    return (select(get_nfds(), &_readfds, &_writefds, NULL, &_timeout));
 
     /*
     ** http://manpagesfr.free.fr/man/man2/select.2.html

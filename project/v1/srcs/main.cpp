@@ -29,7 +29,9 @@ int main(int argc, char *argv[])
     // loop
     while (g_conf._on)
     {
-		LOG_WRT(Logger::DEBUG, "select()");
+		usleep(2000);
+		printf("\nselect(nfds=%i, readfds, writefds, NULL, timeout)\n", g_conf.get_nfds());
+
 		if (g_conf.run_select() == -1)
 			break;
 
@@ -61,7 +63,8 @@ int main(int argc, char *argv[])
 				if (!c->_is_connected) // on supprime le client
 				{
 					it_c = s->_clients.erase(it_c);
-							LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " clients connected");
+					delete c;
+          LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " clients connected");
 					if (s->_clients.empty())
 						break;
 				}
