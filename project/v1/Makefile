@@ -10,7 +10,7 @@ SRCS		=	srcs/main.cpp \
 				srcs/Conf.cpp \
 				srcs/Server.cpp \
 				srcs/Client.cpp \
-				srcs/Debug.cpp \
+				srcs/Logger.cpp \
 				srcs/Request.cpp \
 				srcs/Response.cpp \
 				srcs/CGI.cpp \

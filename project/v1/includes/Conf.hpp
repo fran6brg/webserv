@@ -9,6 +9,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/select.h> // select, fd_set
+#include <string.h>		// strerror linux
 
 /*
 ** Headers
