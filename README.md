@@ -35,7 +35,7 @@ cd project/v1 && python test.py
 ### http headers in details
 - MIME list https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 - What HTTP response headers are required https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required
-- response status code : https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
+- response status code https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
 
 ### CGI programming
 - https://perso.liris.cnrs.fr/lionel.medini/enseignement/M1IF03/Tutoriels/Tutoriel_CGI_SSI.pdf
