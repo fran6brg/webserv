@@ -18,9 +18,9 @@ class Logger
 public:
     enum Priority
     {
-        DEBUG, // 1
-        INFO, // 2 inclut 1
-        ERROR // 3 inclut 2
+        DEBUG,	// 1
+        INFO,	// 2 inclut 1
+        ERROR	// 3 inclut 2 et 1
     };
 
     static void Start(Priority minPriority, const std::string &logFile, bool date);
