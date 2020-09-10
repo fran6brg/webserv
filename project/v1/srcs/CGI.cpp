@@ -39,7 +39,7 @@ char			**Response::create_env_tab(Request *req)
 	args_to_map["SERVER_SOFTWARE"] = g_conf._webserv; // nom et version du démon HTTP
 	args_to_map["REQUEST_URI"] = req->_uri;
 	args_to_map["REQUEST_METHOD"] = req->_method; // méthode associée à la requête en cours de traitement
-	args_to_map["REMOTE_HOST"] = req->_host; // nom de la machine d'où vient la requête 
+	// args_to_map["REMOTE_HOST"] = req->_host; // nom de la machine d'où vient la requête 
 	args_to_map["REMOTE_ADDR"] = req->_client->_ip; // adresse IP de la machine d'où vient la requête
 	// Ajouter le nom du fichier au path ???
 	args_to_map["PATH_INFO"] = req->_uri; // chaîne entre SCRIPT_PATH et QUERY_STRING dans l'URL
@@ -90,7 +90,7 @@ char			**Response::create_env_tab(Request *req)
 	int i = -1;
 	while (it != args_to_map.end())
 	{
-//		std::cout << it->first << " = " << it->second << std::endl;
+		std::cout << it->first << " = " << it->second << std::endl;
 		args_to_tab[++i] = strdup((it->first + "=" + it->second).c_str());
 		++it;
 	}

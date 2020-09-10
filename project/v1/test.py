@@ -141,8 +141,8 @@ printResponse(r)
  		# CODE ERREUR 204 No Content:
 
 
-r = requests.get('http://localhost:8080/index.html')
-printResponse(r)
+# r = requests.get('http://localhost:8080/index.html')
+# printResponse(r)
 
 ###############################################################################
 ###############################################################################
