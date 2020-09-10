@@ -132,7 +132,7 @@ void		Response::handle_response(Request *req)
 void			Response::get(Request *req)
 {
 	std::ifstream file(req->_file);
-	int	CGI = 0; // TEMPORAIRE
+	int	CGI = 1; // TEMPORAIRE
 	if (CGI)
 	{
 		ft_cgi(req);

@@ -204,19 +204,19 @@ int Server::sendResponse(Client *c)
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send=OK");
         c->_is_connected = false;
     }
-
-
-
     return (1);
 }
 
 int Server::handleClientRequest(Client *c)
 {
+    int is_unavailable = 0;
+
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
         printf("reading request of client %i\n", c->_accept_fd);
         if (!recvRequest(c))
             return (0);
+        is_unavailable = 1;
     }
     else
         printf("reading not set %i\n", c->_accept_fd);
@@ -226,9 +226,10 @@ int Server::handleClientRequest(Client *c)
         printf("sending response to client %i\n", c->_accept_fd);
         if (!sendResponse(c))
             return (0);
+        is_unavailable = 1;
     }
     else
         printf("writing not set %i\n", c->_accept_fd);
 
-    return (1);
+    return (is_unavailable);
 }
