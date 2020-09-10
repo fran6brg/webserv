@@ -263,8 +263,8 @@ int Request::parse_body()
 
         line.clear();
         ft_getline(_buffer, line);
-        _body_length = line.length();
-        line = line.substr(0, _content_length);
+        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
+            return (1);
         tokens = split(line, '&');
         while (i < tokens.size())
         {
@@ -407,7 +407,9 @@ void Request::display(void)
         i = 0;
         while (i < _body.size())
         {
-            ss1 << " " << _body[i].first << "=" << _body[i].second;
+            if (i > 0)
+                ss1 << " ";
+            ss1 << _body[i].first << "=" << _body[i].second;
             i++;
         }
         ss1 << std::endl;
