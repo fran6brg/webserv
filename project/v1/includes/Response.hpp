@@ -123,7 +123,9 @@ class Response
 		void			put(Request *req);
 		void			ft_delete(Request *req);
 		void			option(Request *req);
-		
+		void            trace(Request *req);
+		void			connect(Request *req);
+
 		int				bad_request(Request *req);
 		int				accepted_method(Request *req);
 		int				method_not_allowed(Request *req);

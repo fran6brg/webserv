@@ -112,7 +112,6 @@ void		Response::ft_cgi(Request *req)
 	int CGI = 1; // TEMPORAIRE
     if (CGI)
     {
-//		std::cout << "CGI -------------------- CGI\n\n";
         env = create_env_tab(req);
         args = (char **)(malloc(sizeof(char *) * 3));
         args[0] = strdup(req->_location->_cgi_root.c_str());
@@ -143,9 +142,8 @@ void		Response::ft_cgi(Request *req)
 			waitpid(pid, NULL, 0);
 			close(tubes[0]);
 			close(temp_fd);
-//			std::cout << "CGI -------------------- CGI\n\n";
-
 		}
+		// FREE args + env !!!!!!!!
     }
 }
 

@@ -113,6 +113,8 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
+	// TEMPORAIRE
+//	req->_method = "TRACE";
     if (bad_request(req))
 		return ;
 	else if (method_not_allowed(req))
@@ -127,6 +129,10 @@ void		Response::handle_response(Request *req)
 		ft_delete(req);
 	else if (req->_method == "OPTIONS")
 		option(req);
+	else if (req->_method == "TRACE")
+		trace(req);
+	else if (req->_method == "CONNECT")
+		connect(req);
 }
 
 void			Response::get(Request *req)
@@ -230,6 +236,28 @@ void			Response::option(Request *req)
 	_allow = buffer;
 }
 
+void			Response::trace(Request *req)
+{
+	(void)req;
+	if (!_status_code)
+	{
+    	_http_version = "HTTP/1.1";
+    	_server = g_conf._webserv;
+		_status_code = OK_200;
+    	_reason_phrase = code_to_reason[_status_code];
+		_content_type[0] = "message/http";
+		_date = get_date();
+    	concat_to_send();
+		_body = _to_send;
+		// Supprimer les retour a la ligne a la fin du header avant de les envoyer dans le body ?
+	}
+}
+
+void			Response::connect(Request *req)
+{
+	(void)req;
+}
+
 int				Response::method_not_allowed(Request *req)
 {
 	// Comparaison de la methode demande avec les methodes autorise dans la location
@@ -253,7 +281,9 @@ int		Response::accepted_method(Request *req)
          || req->_method == "PUT"
          || req->_method == "POST"
          || req->_method == "DELETE"
-         || req->_method == "OPTIONS");
+         || req->_method == "OPTIONS"
+		 || req->_method == "TRACE"
+		 || req->_method == "CONNECT");
 }
 
 int				Response::bad_request(Request *req)
