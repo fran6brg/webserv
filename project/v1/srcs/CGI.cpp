@@ -148,3 +148,22 @@ void		Response::ft_cgi(Request *req)
 		}
     }
 }
+
+void		Response::get_cgi_ret(void)
+{
+	std::ifstream 				temp_file("./www/temp_file");
+	std::string					line;
+	std::vector<std::string>	split_ret;
+
+	if (temp_file.is_open())
+	{
+		getline(temp_file, line);
+		split_ret = split(line, ' ');
+		_status_code = std::stoi(split_ret[1]);
+		getline(temp_file, line);
+		split_ret.clear();
+		split_ret = split(line, ':');
+		_content_type[0] = trim(split_ret[1]);
+		split_ret.clear();
+	}
+}

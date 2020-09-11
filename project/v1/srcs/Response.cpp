@@ -95,8 +95,8 @@ int Response::format_to_send(Request *req)
     _date = get_date();
     _server = g_conf._webserv;
 	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT" || req->_method == "POST")
-    && (_status_code == OK_200 || _status_code == CREATED_201))
-		 _content_type[1] = get_content_type(req->_file);
+    && (_status_code == OK_200 || _status_code == CREATED_201) && _content_type[0] == "")
+		 _content_type[0] = get_content_type(req->_file);
 	if (_status_code == CREATED_201)
 		_location = get_location_header(req);	
 	_content_language.clear();
@@ -132,17 +132,16 @@ void		Response::handle_response(Request *req)
 void			Response::get(Request *req)
 {
 	std::ifstream file(req->_file);
-	int	CGI = 1; // TEMPORAIRE
+	int	CGI = 0; // TEMPORAIRE
 	if (CGI)
 	{
 		ft_cgi(req);
+		get_cgi_ret();
 		std::ifstream temp("./www/temp_file");
 		std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());
 
 		_body = buffer;
-		_status_code = OK_200;
 		remove("./www/temp_file");
-		req->_file = "./www/temp_file";
 	}
 	else if (file.good())
 	{
