@@ -15,6 +15,8 @@
 ** Libraries
 */
 
+#include <sys/wait.h> //linux waitpid
+
 /*
 ** Other headers
 */

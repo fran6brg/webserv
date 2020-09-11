@@ -1,0 +1,10 @@
+
+server {
+    location /images/ {
+        root /data;
+    }
+
+    location / {
+        proxy_pass http://www.example.com;
+    }
+}

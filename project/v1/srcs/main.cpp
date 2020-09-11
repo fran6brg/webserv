@@ -12,8 +12,8 @@ void	shutdown(int sig)
 
 int main(int argc, char *argv[])
 {
-	Server *s;
-	Client *c;
+	//Server *s;
+	//Client *c;
 
 	//logger start
 	LOG_START(Logger::DEBUG, "", false);
@@ -22,10 +22,9 @@ int main(int argc, char *argv[])
 	(void)argv;
 	signal(SIGINT, shutdown);
 
-    // parsing
 	if (/*argc != 2 || */!g_conf.parse(argv[1]))
         return (EXIT_ERROR);
-
+/*
     // loop
     while (g_conf._on)
     {
@@ -69,6 +68,6 @@ int main(int argc, char *argv[])
 				}
 			}
 		}
-    }
+    }*/
     return (EXIT_SUCCESS);
 }
