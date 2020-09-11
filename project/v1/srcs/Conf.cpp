@@ -27,7 +27,6 @@ Conf::Conf()
 
 int Conf::parse(char *file)
 {
-
 	/*************************/
 
 	Config_parser conf(file);

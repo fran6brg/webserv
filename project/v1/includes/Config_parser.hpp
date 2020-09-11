@@ -10,6 +10,8 @@
 //# include "Utils.hpp"
 # include "../srcs/get_next_line/get_next_line.hpp"
 
+//still reachable byte when exit with wrong input file
+
 typedef struct	s_loc
 {
 	std::string					uri;
@@ -48,7 +50,7 @@ class Config_parser
 private:
 	char	*conf;
 	int		fd;
-	int		ligne_count;
+	int		line_count;
 	std::vector<t_serv> serv;
 
 	static const std::string SERV[];
