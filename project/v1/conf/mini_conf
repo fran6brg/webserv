@@ -1,6 +1,9 @@
 
 server {
-    location /images/ {
+    listen 	8080;
+    error 	PWD/www/errorPages;
+   #lafamille
+   location /images/ {
         root /data;
     }
 

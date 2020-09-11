@@ -25,3 +25,21 @@ int utils_tmp::isspace(int c)
 			return (1);
 	return (0);
 }
+
+std::vector<std::string> utils_tmp::split_string(std::string &str)
+{
+	std::vector<std::string> split;
+	std::string	set = "\t\n\v\f\r ";
+	std::size_t p1;
+	std::size_t p2 = 0;
+	
+	while (p2 < str.length() - 1)
+	{
+		if ((p1 = str.find_first_not_of(set, p2)) == std::string::npos)
+			return (split);
+		if ((p2 = str.find_first_of(set, p1)) == std::string::npos)
+			p2 = str.length();
+		split.push_back(str.substr(p1, (p2 - p1)));
+	}
+	return (split);
+}

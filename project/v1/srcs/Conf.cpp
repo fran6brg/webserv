@@ -32,7 +32,7 @@ int Conf::parse(char *file)
 
 	Config_parser conf(file);
 
-	return (conf.setup_server());
+	conf.setup_server();
 
 	/************************/
     // création à la main

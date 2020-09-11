@@ -46,9 +46,10 @@ typedef struct	s_serv
 class Config_parser
 {
 private:
-	char *conf;
+	char	*conf;
+	int		fd;
+	int		ligne_count;
 	std::vector<t_serv> serv;
-	int ligne_count;
 
 	static const std::string SERV[];
 
@@ -56,11 +57,13 @@ public:
 	Config_parser(char *conf);
 	~Config_parser();
 
-	int setup_server();//launch parsing + init server
+	void setup_server();//launch parsing + init server
 private:
-	int read_conf();
-	int parse_conf();
+	void parse_conf();
+	void parse_server();
+	void parse_location(std::string &loc_line);
 	// init servers() //new Server(); _servers.push_back(s1);
+	void fail(const std::string &message);
 };
 
 #endif
