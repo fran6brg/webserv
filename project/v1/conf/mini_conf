@@ -1,16 +1,15 @@
-
 server {
     listen 	8080
     error 	PWD/www/errorPages # good lord !
 	
 	# Hello ? HELLO !!!!
-  
+
 	location /images/ {
+		methods		GET POST
 		root /data
 	}
 
     location / {
-        proxy_pass http://www.example.com
+        root http://www.example.com
     }
 }
-

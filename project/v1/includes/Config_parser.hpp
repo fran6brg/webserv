@@ -1,6 +1,9 @@
 #ifndef CONFIG_PARSER_HPP
 # define CONFIG_PARSER_HPP
 
+// DEBUG
+// * still reachable byte when exit with wrong input file
+
 # include <string>
 # include <vector>
 # include <fcntl.h>
@@ -10,18 +13,16 @@
 # include "utils_tmp.hpp"
 # include "../srcs/get_next_line/get_next_line.hpp"
 
-//still reachable byte when exit with wrong input file
-
 // Server tokens
-# define PORT "port"
-# define ERROR_PAGE "error_page"
-# define BODY_SIZE "body_size"
+# define _PORT "listen"
+# define _ERROR_PAGE "error"
+# define _BODY_SIZE "body_size"
 
 // Location tokens
-# define METHOD "method"
-# define ROOT "root"
-# define INDEX "index"
-# define CGI "cgi"
+# define _METHOD "methods"
+# define _ROOT "root"
+# define _INDEX "index"
+# define _CGI "cgi"
 
 typedef struct	s_loc
 {
@@ -30,30 +31,15 @@ typedef struct	s_loc
 	std::string					root;
 	std::string					index;
 	std::string					cgi;
-
-	s_loc()
-	{
-		uri = "";
-		root = "";
-		index = "";
-		cgi = "";
-	}
 }				t_loc;
 
 typedef struct	s_serv
 {
 	//std::string	host;
-	int			port;
+	std::string	port;
 	std::string	error_page;
-	int 		body_size;
+	std::string body_size;
 	std::vector<t_loc> loc;
-
-	s_serv()
-	{
-		port = -1;
-		error_page = "";
-		body_size = -1;
-	}
 }				t_serv;
 
 class Config_parser
@@ -67,7 +53,7 @@ private:
 public:
 	Config_parser(char *conf);
 	~Config_parser();
-	void setup_server();//launch parsing + init server
+	void setup_server();
 
 private:
 	void parse_conf();
@@ -76,8 +62,9 @@ private:
 
 	void add_serv_values(std::vector<std::string> &tokens, t_serv &serv);
 	void add_loc_values(std::vector<std::string> &tokens, t_loc&loc);
-	// init servers() //new Server(); _servers.push_back(s1);
+
 	void fail(const std::string &message);
+	void fail_double_token(std::string &str);
 };
 
 #endif
