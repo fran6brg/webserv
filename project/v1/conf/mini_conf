@@ -1,13 +1,16 @@
 
 server {
-    listen 	8080;
-    error 	PWD/www/errorPages;
-   #lafamille
-   location /images/ {
-        root /data;
-    }
+    listen 	8080
+    error 	PWD/www/errorPages # good lord !
+	
+	# Hello ? HELLO !!!!
+  
+	location /images/ {
+		root /data
+	}
 
     location / {
-        proxy_pass http://www.example.com;
+        proxy_pass http://www.example.com
     }
 }
+
