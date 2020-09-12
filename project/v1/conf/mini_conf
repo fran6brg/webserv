@@ -1,0 +1,18 @@
+server {
+    listen 	8080
+    error 	PWD/www/errorPages # good lord !
+	host hfh
+	
+	# Hello ? HELLO !!!! # gd #
+#
+
+
+	location /images/ {
+		methods		GET POST
+		root /data
+	}
+
+    location / 		{
+        root http://www.example.com
+    }
+}

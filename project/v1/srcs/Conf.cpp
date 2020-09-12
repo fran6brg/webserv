@@ -25,9 +25,16 @@ Conf::Conf()
 ** other class methods
 */
 
-int Conf::parse(void)
+int Conf::parse(char *file)
 {
+	/*************************/
+
+	//Config_parser conf(file);
+	//conf.setup_server();
+
+	/************************/
     // création à la main
+
     std::string n1 ("server1");
     Server *s1 = new Server(n1, 8080);
     if (!s1->start())

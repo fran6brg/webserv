@@ -17,6 +17,7 @@
 */
 
 #include "Server.hpp"
+#include "Config_parser.hpp"
 
 /*
 ** Class
@@ -67,7 +68,7 @@ class Conf
 		// ~Conf();
 
         // int parse(char *filename);
-        int parse(void);
+        int parse(char *conf);
         void reset_fd_sets(void);
         int get_nfds(void) const;
         void set_nfds(int fd, int increase);

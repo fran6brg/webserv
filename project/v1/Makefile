@@ -6,7 +6,11 @@ CPPFLAGS	=	-Wall -Werror -Wextra -g
 
 RM			=	rm -rf
 
-SRCS		=	srcs/main.cpp \
+GNL			=	srcs/get_next_line/get_next_line.cpp \
+				srcs/get_next_line/get_next_line_utils.cpp
+
+SRCS		=	$(GNL) \
+				srcs/main.cpp \
 				srcs/Conf.cpp \
 				srcs/Server.cpp \
 				srcs/Client.cpp \
@@ -14,7 +18,9 @@ SRCS		=	srcs/main.cpp \
 				srcs/Request.cpp \
 				srcs/Response.cpp \
 				srcs/CGI.cpp \
-				srcs/Utils.cpp
+				srcs/Utils.cpp \
+				srcs/utils_tmp.cpp \
+				srcs/Config_parser.cpp
 
 OBJS		= 	$(SRCS:.cpp=.o)
 EXEC		=	webserv

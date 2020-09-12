@@ -22,8 +22,7 @@ int main(int argc, char *argv[])
 	(void)argv;
 	signal(SIGINT, shutdown);
 
-    // parsing
-	if (/*argc != 2 || */!g_conf.parse(/*argv[1]*/))
+	if (/*argc != 2 || */!g_conf.parse(argv[1]))
         return (EXIT_ERROR);
 
     // loop

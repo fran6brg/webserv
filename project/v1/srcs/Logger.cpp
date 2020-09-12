@@ -46,11 +46,21 @@ void Logger::Write(Priority priority, const std::string &message)
 		if (instance.isdate)
 		{
 			stream  << " ["
-			<< get_date()
+			<< utils_tmp::get_date()
 			<< "]";
 		}
 		stream  << ": "
                 << message
                 << std::endl;
     }
+}
+
+int Logger::Error(const std::string &message)//errno bool
+{
+	if (errno != 0)
+		Logger::Write(Logger::ERROR, message + " -> (" + std::string(strerror(errno)) + ")");
+	else
+		Logger::Write(Logger::ERROR, message);
+
+	return (EXIT_FAILURE);
 }
