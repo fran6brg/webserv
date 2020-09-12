@@ -29,13 +29,12 @@ int Conf::parse(char *file)
 {
 	/*************************/
 
-	Config_parser conf(file);
-
-	conf.setup_server();
+	//Config_parser conf(file);
+	//conf.setup_server();
 
 	/************************/
     // création à la main
-/*
+
     std::string n1 ("server1");
     Server *s1 = new Server(n1, 8080);
     if (!s1->start())
@@ -47,7 +46,7 @@ int Conf::parse(char *file)
     if (!s2->start())
         return (0);
     _servers.push_back(s2);
-*/
+
     return (1);
 }
 

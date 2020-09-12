@@ -2,7 +2,7 @@
 # define CONFIG_PARSER_HPP
 
 // DEBUG
-// * still reachable byte when exit with wrong input file
+// * still reachable byte when exit with wrong input file on linux
 
 # include <string>
 # include <vector>
@@ -13,7 +13,10 @@
 # include "utils_tmp.hpp"
 # include "../srcs/get_next_line/get_next_line.hpp"
 
+# define WHITE_SPACE "\t\n\v\f\r "
+
 // Server tokens
+# define _HOST "host"
 # define _PORT "listen"
 # define _ERROR_PAGE "error"
 # define _BODY_SIZE "body_size"
@@ -35,7 +38,7 @@ typedef struct	s_loc
 
 typedef struct	s_serv
 {
-	//std::string	host;
+	std::string	host;
 	std::string	port;
 	std::string	error_page;
 	std::string body_size;

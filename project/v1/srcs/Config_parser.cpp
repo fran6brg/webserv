@@ -12,19 +12,25 @@ Config_parser::~Config_parser()
 void Config_parser::fail(const std::string &message)
 {
 	ERROR_RET("Config_parser: " + message);
-	close(fd);//check if need to be close
-	//free
+	if (fd != -1)
+		close(fd);
 	exit(EXIT_FAILURE);
 }
 
+void Config_parser::fail_double_token(std::string &str)
+{
+	if (str.length() != 0)
+		fail("Double token [" + std::to_string(line_count) + "]");
+}
 
 void Config_parser::setup_server()
 {
 	parse_conf();
-
+	//
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
 		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
+		LOG_WRT(Logger::DEBUG, "host       = " + serv[i].host);
 		LOG_WRT(Logger::DEBUG, "port       = " + serv[i].port);
 		LOG_WRT(Logger::DEBUG, "error_page = " + serv[i].error_page);
 		LOG_WRT(Logger::DEBUG, "body_size  = " + serv[i].body_size);
@@ -61,7 +67,7 @@ void Config_parser::parse_conf()
 		if (line.length() == 7 && line.compare("server{") == 0)
 			parse_server();
 		else if (line.length() != 0)
-			fail("bad syntax line: " + std::to_string(line_count));	
+			fail("bad syntax [" + std::to_string(line_count) + "]");	
 	}
 	if (cline)
 		free(cline);
@@ -82,9 +88,12 @@ void Config_parser::parse_server()
 		//erase_semicol(line); if { or } return
 		free(cline);cline=NULL;
 		LOG_WRT(Logger::DEBUG, "Server  [" + std::to_string(line_count) + "] " + line);
-		std::vector<std::string> tokens= utils_tmp::split_string(line);
+		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
-			break ;
+		{
+			serv.push_back(new_serv);
+			return ;
+		}
 		else if (tokens.size() == 0 || tokens[0][0] == '#')
 			continue ;
 		else if (tokens[0] == "location")
@@ -92,11 +101,11 @@ void Config_parser::parse_server()
 		else 
 			add_serv_values(tokens, new_serv);
 	}
-	serv.push_back(new_serv);
 	if (cline)
 		free(cline);
 	if (ret < 0)
 		fail("fail to read config file");
+	fail("Bracket not close [" + std::to_string(line_count) + "]");
 }
 
 void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv)
@@ -115,19 +124,22 @@ void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv
 		line = cline;
 		free(cline);cline=NULL;
 		LOG_WRT(Logger::DEBUG, "Location[" + std::to_string(line_count) + "] " + line);
-		std::vector<std::string> tokens= utils_tmp::split_string(line);
+		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
-			break ;
+		{
+			serv.loc.push_back(new_loc);
+			return ;
+		}
 		else if (tokens.size() == 0 || tokens[0][0] == '#')
 			continue ;
 		else
 			add_loc_values(tokens, new_loc);
 	}
-	serv.loc.push_back(new_loc);
 	if (cline)
 		free(cline);
 	if (ret < 0)
 		fail("fail to read config file");
+	fail("Bracket not close [" + std::to_string(line_count) + "]");
 }
 
 void Config_parser::add_serv_values(std::vector<std::string> &tokens, t_serv &serv)
@@ -137,7 +149,12 @@ void Config_parser::add_serv_values(std::vector<std::string> &tokens, t_serv &se
 	if (tokens.size() > 2 && tokens[2][0] != '#')
 		fail("to many arguments [" + std::to_string(line_count) + "]");
 
-	if (tokens[0] == _PORT)
+	if (tokens[0] == _HOST)
+	{
+		fail_double_token(serv.host);
+		serv.host = tokens[1];
+	}	
+	else if (tokens[0] == _PORT)
 	{
 		fail_double_token(serv.port);
 		serv.port = tokens[1];
@@ -189,10 +206,4 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 		else
 			fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");
 	}
-}
-
-void Config_parser::fail_double_token(std::string &str)
-{
-	if (str.length() != 0)
-		fail("Double token [" + std::to_string(line_count) + "]");
 }

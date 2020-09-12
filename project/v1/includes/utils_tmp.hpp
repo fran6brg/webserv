@@ -8,12 +8,13 @@
 
 // add a std::to_string
 
+
 class utils_tmp
 {
 public:
 	static std::string	get_date(void);
-	static int isspace(int c);
-	static std::vector<std::string> split_string(std::string &str);
+	static int	isspace(int c);
+	static std::vector<std::string> split_string(std::string &str, std::string set);
 };
 
 #endif
