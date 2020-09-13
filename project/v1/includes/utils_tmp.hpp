@@ -15,6 +15,7 @@ public:
 	static std::string	get_date(void);
 	static int	isspace(int c);
 	static std::vector<std::string> split_string(std::string &str, std::string set);
+	static int ft_atoi(const char *str);
 };
 
 #endif
