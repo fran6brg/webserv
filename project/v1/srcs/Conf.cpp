@@ -29,13 +29,20 @@ int Conf::parse(char *file)
 {
 	/*************************/
 
-	//Config_parser conf(file);
-	//conf.setup_server();
+	Config_parser conf(file);
+	conf.setup_server(_servers);
+
+	for (size_t i = 0; i < _servers.size(); ++i)
+	{
+		LOG_WRT(Logger::DEBUG, "server on");
+		if (!_servers[i]->start())
+        	return (0);
+	}
 
 	/************************/
     // création à la main
 
-    std::string n1 ("server1");
+/*    std::string n1 ("server1");
     Server *s1 = new Server(n1, 8080);
     if (!s1->start())
         return (0);
@@ -45,7 +52,7 @@ int Conf::parse(char *file)
     Server *s2 = new Server(n2, 4443);
     if (!s2->start())
         return (0);
-    _servers.push_back(s2);
+    _servers.push_back(s2);*/
 
     return (1);
 }
@@ -87,7 +94,7 @@ int Conf::run_select(void)
     reset_fd_sets(); // la fonction select() exclue les fds qui ne sont pas prêts donc il faut pouvoir reconstituer le pool de fd à chaque tour de boucle
     
     // return (select(get_nfds(), &_readfds, &_writefds, NULL, NULL)); // todo: quid du timeout
-    return (select(get_nfds(), &_readfds, &_writefds, NULL, &_timeout));
+    return (select(get_nfds(), &_readfds, &_writefds, NULL, &_timeout)); // Time out is useless
 
     /*
     ** http://manpagesfr.free.fr/man/man2/select.2.html

@@ -19,6 +19,8 @@
 #include "Server.hpp"
 #include "Config_parser.hpp"
 
+class Server;
+
 /*
 ** Class
 */

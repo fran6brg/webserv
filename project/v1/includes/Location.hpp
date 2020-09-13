@@ -17,12 +17,12 @@ class Location
         std::vector<std::string>    _method;
 		std::string					_cgi_root;
         
-        Location(std::string uri, std::string root, std::string index, std::string method)
+        Location(std::string uri, std::string root, std::string index, std::vector<std::string> method)
         {
             _uri = uri;
             _root = root;
             _index = index;
-            _method = split(method, ',');
+            _method = method;
 			_cgi_root = "./www/CGI/cgi_tester"; // TEMPORAIRE 
         };
     };

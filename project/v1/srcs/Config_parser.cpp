@@ -23,12 +23,15 @@ void Config_parser::fail_double_token(std::string &str)
 		fail("Double token [" + std::to_string(line_count) + "]");
 }
 
-void Config_parser::setup_server()
+void Config_parser::setup_server(std::vector<Server *> &servers)
 {
 	parse_conf();
-	//
+
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
+		Server *server = new Server(serv[i].host, 8080);
+		servers.push_back(server);
+
 		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
 		LOG_WRT(Logger::DEBUG, "host       = " + serv[i].host);
 		LOG_WRT(Logger::DEBUG, "port       = " + serv[i].port);
@@ -36,6 +39,9 @@ void Config_parser::setup_server()
 		LOG_WRT(Logger::DEBUG, "body_size  = " + serv[i].body_size);
 		for (size_t y = 0; y < serv[i].loc.size(); ++y)
 		{
+			Location *location = new Location(serv[i].loc[y].uri, serv[i].loc[y].root, serv[i].loc[y].index, serv[i].loc[y].method);
+			server->_locations.push_back(location);
+
 			LOG_WRT(Logger::DEBUG, "LOCATION " + std::to_string(y));
 			LOG_WRT(Logger::DEBUG, "	uri    = " + serv[i].loc[y].uri);
 			for (size_t z = 0; z < serv[i].loc[y].method.size(); z++)
@@ -62,7 +68,7 @@ void Config_parser::parse_conf()
 	{
 		line = cline;
 		free(cline);cline=NULL;
-		LOG_WRT(Logger::DEBUG, "Conf    [" + std::to_string(line_count) + "] " + line);
+		//LOG_WRT(Logger::DEBUG, "Conf    [" + std::to_string(line_count) + "] " + line);
 		line.erase(std::remove_if(line.begin(), line.end(), utils_tmp::isspace), line.end());
 		if (line.length() == 7 && line.compare("server{") == 0)
 			parse_server();
@@ -87,7 +93,7 @@ void Config_parser::parse_server()
 		line = cline;
 		//erase_semicol(line); if { or } return
 		free(cline);cline=NULL;
-		LOG_WRT(Logger::DEBUG, "Server  [" + std::to_string(line_count) + "] " + line);
+		//LOG_WRT(Logger::DEBUG, "Server  [" + std::to_string(line_count) + "] " + line);
 		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
 		{
@@ -123,7 +129,7 @@ void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv
 	{
 		line = cline;
 		free(cline);cline=NULL;
-		LOG_WRT(Logger::DEBUG, "Location[" + std::to_string(line_count) + "] " + line);
+		//LOG_WRT(Logger::DEBUG, "Location[" + std::to_string(line_count) + "] " + line);
 		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
 		{
@@ -180,7 +186,8 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 
 	if (tokens[0] == _METHOD)
 	{
-		fail_double_token(loc.root);
+		if (loc.method.size() != 0)
+			fail("Double token [" + std::to_string(line_count) + "]");
 		for (size_t i = 1; i < tokens.size(); ++i)
 			loc.method.push_back(tokens[i]);
 	}
