@@ -9,9 +9,11 @@
 # include <fcntl.h>
 # include <algorithm>
 
+# include "Server.hpp"
 # include "Logger.hpp"
 # include "utils_tmp.hpp"
 # include "../srcs/get_next_line/get_next_line.hpp"
+
 
 # define WHITE_SPACE "\t\n\v\f\r "
 
@@ -22,7 +24,7 @@
 # define _BODY_SIZE "body_size"
 
 // Location tokens
-# define _METHOD "methods"
+# define _METHOD "method"
 # define _ROOT "root"
 # define _INDEX "index"
 # define _CGI "cgi"
@@ -56,7 +58,7 @@ private:
 public:
 	Config_parser(char *conf);
 	~Config_parser();
-	void setup_server();
+	void setup_server(std::vector<Server *> &servers);
 
 private:
 	void parse_conf();

@@ -1,18 +1,17 @@
 server {
     listen 	8080
-    error 	PWD/www/errorPages # good lord !
-	host hfh
+    error	./www/old/error
+	host	server1
 	
-	# Hello ? HELLO !!!! # gd #
-#
-
-
-	location /images/ {
-		methods		GET POST
-		root /data
-	}
-
     location / 		{
-        root http://www.example.com
+        root	./www/old
+		index	index.html
+		method	GET POST HEAD OPTIONS
     }
+    location /test	{
+        root	./www/old/test
+		index	index.html
+		method	DELETE
+    }
+
 }

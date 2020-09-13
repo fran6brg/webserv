@@ -10,13 +10,13 @@ Server::Server(std::string serverName, int port):
     bzero(&_addr, sizeof(_addr));
 
 	// --- > location et error a definir dans le prasing de la conf
-	_error = "./www/old/error";
+	//_error = "./www/old/error";
 	
-    Location *location1 = new Location("/", "./www/old", "index.html", "GET,POST,HEAD,OPTIONS,TRACE");
-	_locations.push_back(location1);
+    //Location *location1 = new Location("/", "./www/old", "index.html", "GET,POST,HEAD,OPTIONS,TRACE");
+	//_locations.push_back(location1);
 
-	Location *location2 = new Location("/test", "./www/old/test", "index.html", "DELETE");
-	_locations.push_back(location2);
+	//Location *location2 = new Location("/test", "./www/old/test", "index.html", "DELETE");
+	//_locations.push_back(location2);
 }
 
 Server::~Server()
