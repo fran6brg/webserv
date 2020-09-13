@@ -5,7 +5,7 @@ Conf g_conf;
 void	shutdown(int sig)
 {
 	(void)sig;
-	LOG_WRT(Logger::INFO, g_conf._webserv + " status off");
+	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
 	g_conf._on = false;
 	exit(EXIT_SUCCESS);
 }
@@ -57,8 +57,7 @@ int main(int argc, char *argv[])
 			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
-				s->handleClientRequest(c);
-				if (!c->_is_connected) // on supprime le client
+				if (!s->handleClientRequest(c) || !c->_is_connected) // si 'ressource temporary unavailable' || si le client est déconnecté
 				{
 					it_c = s->_clients.erase(it_c);
 					delete c;

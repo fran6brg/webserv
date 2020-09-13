@@ -124,10 +124,10 @@ def printResponse(r):
 
 		# CODE ERREUR 200 Ok:
 
-#r = requests.get('http://localhost:8080/')
+r = requests.get('http://localhost:8080/')
 #r = requests.options('http://localhost:8080/index.html')
-r = requests.get('http://localhost:8080/index.html')
-printResponse(r)
+#r = requests.get('http://localhost:8080/index.html')
+#printResponse(r)
 #r = requests.delete('http://localhost:8080/test/test.html')
 #r = requests.head('http://localhost:8080/index.html')
 
@@ -141,7 +141,7 @@ printResponse(r)
  		# CODE ERREUR 204 No Content:
 
 
-r = requests.get('http://localhost:8080/index.html')
+# r = requests.get('http://localhost:8080/index.html')
 printResponse(r)
 
 ###############################################################################

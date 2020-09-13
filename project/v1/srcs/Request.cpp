@@ -192,17 +192,17 @@ std::map<std::string, std::string> Request::headers_to_map(void)
     ** Request Headers, dans l'ordre du sujet
     */ 
 
-   ret["ACCEPT-CHARSET"] = map_to_string(_accept_charset, ';');
-   ret["ACCEPT-LANGUAGE"] = map_to_string(_accept_language, ',');
-   ret["AUTHORIZATION"] = _authorization;
-   ret["CONTENT-LANGUAGE"] = map_to_string(_content_language, ',');
-   ret["CONTENT-LENGTH"] = std::to_string(_content_length);
-   ret["CONTENT-LOCATION"] = _content_location;
-   ret["CONTENT-TYPE"] = map_to_string(_content_type, ';');
-   ret["DATE"] = _date;
-   ret["HOST"] = _host;
-   ret["REFERER"] = _referer;
-   ret["USER-AGENT"] = _user_agent;
+   ret["Accept-Charset"] = map_to_string(_accept_charset, ';');
+   ret["Accept-Language"] = map_to_string(_accept_language, ',');
+   ret["Authorization"] = _authorization;
+   ret["Content-Language"] = map_to_string(_content_language, ',');
+   ret["Content-Length"] = std::to_string(_content_length);
+   ret["Content-Location"] = _content_location;
+   ret["Content-Type"] = map_to_string(_content_type, ';');
+   ret["Date"] = _date;
+   ret["Host"] = _host;
+   ret["Referer"] = _referer;
+   ret["User-Agent"] = _user_agent;
 
    return (ret);
 }
@@ -263,8 +263,8 @@ int Request::parse_body()
 
         line.clear();
         ft_getline(_buffer, line);
-        _body_length = line.length();
-        line = line.substr(0, _content_length);
+        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
+            return (1);
         tokens = split(line, '&');
         while (i < tokens.size())
         {
@@ -407,7 +407,9 @@ void Request::display(void)
         i = 0;
         while (i < _body.size())
         {
-            ss1 << " " << _body[i].first << "=" << _body[i].second;
+            if (i > 0)
+                ss1 << " ";
+            ss1 << _body[i].first << "=" << _body[i].second;
             i++;
         }
         ss1 << std::endl;
