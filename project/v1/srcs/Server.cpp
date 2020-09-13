@@ -12,7 +12,7 @@ Server::Server(std::string serverName, int port):
 	// --- > location et error a definir dans le prasing de la conf
 	//_error = "./www/old/error";
 	
-    //Location *location1 = new Location("/", "./www/old", "index.html", "GET,POST,HEAD,OPTIONS");
+    //Location *location1 = new Location("/", "./www/old", "index.html", "GET,POST,HEAD,OPTIONS,TRACE");
 	//_locations.push_back(location1);
 
 	//Location *location2 = new Location("/test", "./www/old/test", "index.html", "DELETE");
@@ -150,10 +150,13 @@ int Server::recvRequest(Client *c)
     // it's not allowed to block-it will return -1 and errno will be set to EWOULDBLOCK.
     // The non-blocking mode is set by changing one of the socket's flags.
 
+    // bzero(c->_buffer, 1000);
     if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
     {
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
-        if (errno != EWOULDBLOCK && errno != EAGAIN)
+        // https://stackoverflow.com/questions/10318191/reading-socket-eagain-resource-temporarily-unavailable
+        // EAGAIN does not mean you're disconnected, it just means "there's nothing to read now; try again later".
+        if (errno != EWOULDBLOCK /*|| errno != EAGAIN*/)
             c->_is_connected = false;
         return (0);
     }
@@ -166,6 +169,7 @@ int Server::recvRequest(Client *c)
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
 
+    c->_buffer[ret] = '\0';
 	LOG_WRT(Logger::INFO, "RAW REQUEST:\n----------------------\n" + std::string(c->_buffer) + "----------------------");
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse(_locations);
@@ -200,19 +204,19 @@ int Server::sendResponse(Client *c)
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send=OK");
         c->_is_connected = false;
     }
-
-
-
     return (1);
 }
 
 int Server::handleClientRequest(Client *c)
 {
+    int is_unavailable = 0;
+
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
         printf("reading request of client %i\n", c->_accept_fd);
         if (!recvRequest(c))
             return (0);
+        is_unavailable = 1;
     }
     else
         printf("reading not set %i\n", c->_accept_fd);
@@ -222,9 +226,10 @@ int Server::handleClientRequest(Client *c)
         printf("sending response to client %i\n", c->_accept_fd);
         if (!sendResponse(c))
             return (0);
+        is_unavailable = 1;
     }
     else
         printf("writing not set %i\n", c->_accept_fd);
 
-    return (1);
+    return (is_unavailable);
 }

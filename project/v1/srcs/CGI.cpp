@@ -39,7 +39,7 @@ char			**Response::create_env_tab(Request *req)
 	args_to_map["SERVER_SOFTWARE"] = g_conf._webserv; // nom et version du démon HTTP
 	args_to_map["REQUEST_URI"] = req->_uri;
 	args_to_map["REQUEST_METHOD"] = req->_method; // méthode associée à la requête en cours de traitement
-	args_to_map["REMOTE_HOST"] = req->_host; // nom de la machine d'où vient la requête 
+	// args_to_map["REMOTE_HOST"] = req->_host; // nom de la machine d'où vient la requête 
 	args_to_map["REMOTE_ADDR"] = req->_client->_ip; // adresse IP de la machine d'où vient la requête
 	// Ajouter le nom du fichier au path ???
 	args_to_map["PATH_INFO"] = req->_uri; // chaîne entre SCRIPT_PATH et QUERY_STRING dans l'URL
@@ -90,7 +90,7 @@ char			**Response::create_env_tab(Request *req)
 	int i = -1;
 	while (it != args_to_map.end())
 	{
-//		std::cout << it->first << " = " << it->second << std::endl;
+		std::cout << it->first << " = " << it->second << std::endl;
 		args_to_tab[++i] = strdup((it->first + "=" + it->second).c_str());
 		++it;
 	}
@@ -112,7 +112,6 @@ void		Response::ft_cgi(Request *req)
 	int CGI = 1; // TEMPORAIRE
     if (CGI)
     {
-//		std::cout << "CGI -------------------- CGI\n\n";
         env = create_env_tab(req);
         args = (char **)(malloc(sizeof(char *) * 3));
         args[0] = strdup(req->_location->_cgi_root.c_str());
@@ -143,8 +142,26 @@ void		Response::ft_cgi(Request *req)
 			waitpid(pid, NULL, 0);
 			close(tubes[0]);
 			close(temp_fd);
-//			std::cout << "CGI -------------------- CGI\n\n";
-
 		}
+		// FREE args + env !!!!!!!!
     }
+}
+
+void		Response::get_cgi_ret(void)
+{
+	std::ifstream 				temp_file("./www/temp_file");
+	std::string					line;
+	std::vector<std::string>	split_ret;
+
+	if (temp_file.is_open())
+	{
+		getline(temp_file, line);
+		split_ret = split(line, ' ');
+		_status_code = std::stoi(split_ret[1]);
+		getline(temp_file, line);
+		split_ret.clear();
+		split_ret = split(line, ':');
+		_content_type[0] = trim(split_ret[1]);
+		split_ret.clear();
+	}
 }

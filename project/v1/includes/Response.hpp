@@ -29,6 +29,9 @@
 #include "Request.hpp"
 #include "Code.hpp"
 // #include "Client.hpp"
+
+std::vector<std::string>	split(const std::string& str, char delim);
+std::string 				trim(const std::string& str);
 class Client;
 
 /*
@@ -120,13 +123,16 @@ class Response
 		void			put(Request *req);
 		void			ft_delete(Request *req);
 		void			option(Request *req);
-		
+		void            trace(Request *req);
+		void			connect(Request *req);
+
 		int				bad_request(Request *req);
 		int				accepted_method(Request *req);
 		int				method_not_allowed(Request *req);
 
 		char			**create_env_tab(Request *req);
-		void			ft_cgi(Request *req);	
+		void			ft_cgi(Request *req);
+		void			get_cgi_ret(void);
 	/*
 	** friends
 	*/
