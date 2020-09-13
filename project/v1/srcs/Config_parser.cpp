@@ -29,7 +29,8 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
-		Server *server = new Server(serv[i].host, 8080);
+		Server *server = new Server(serv[i].host, utils_tmp::ft_atoi(serv[i].port.c_str()));
+		
 		servers.push_back(server);
 
 		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
