@@ -74,6 +74,7 @@ int Response::concat_to_send(void)
     // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\r\n"; }
     // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\r\n"; }
     // Request body
+    // ss << "\r\n\r\n"; // double or simple CRLF after the headers ?
     ss << "\r\n"; // CRLF et non pas \n\n https://stackoverflow.com/questions/29131727/http-header-and-message-body-separator-clarification
     if (!_body.empty())                 { ss << _body; }
     // Convert

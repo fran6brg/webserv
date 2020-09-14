@@ -67,7 +67,7 @@ os.remove(cwd + "/www/putTests/abc")
 print (bcolors.OKBLUE + "\n" + str(i) + ". PUT on uri that doesn't exist:\n" + bcolors.ENDC)
 i += 1
 body = "this uri doesn't exist (should return 404)"
-r = requests.put('http://localhost:8080/doesnottexist/abc', data=body)
+r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
 printResponse(r)
 
 # ---
