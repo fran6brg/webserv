@@ -1,9 +1,0 @@
-faire différentes fonctions pour chaque méthodes : GET~=HEAD PUT POST DELETE
-
-faire une map status code -> reason phrase
-
-cas d'erreurs à gérer :
-- tester différentes requêtes sur un serveur nginx pour voir les réponses qu'il renvoie
-- faire fichier html pour chaque type d'erreur
-
-fonction get_date() pour requêtes / réponses
