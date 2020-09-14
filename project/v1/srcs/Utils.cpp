@@ -72,17 +72,41 @@ std::string		get_location_header(Request *req)
 	return (temp);
 }
 
-std::string map_to_string(std::map<int, std::string> map, char delim)
+std::string map_to_string(std::map<int, std::string> m, char delim)
 {
     std::stringstream ret;
     size_t i = 0;
 
     ret.clear();    
-    while (i < map.size())
+    while (i < m.size())
     {
-        ret << map[int(i)];
-        if ((i + 1) < map.size())
+        ret << m[int(i)];
+        if ((i + 1) < m.size())
             ret << delim << " ";
+        ++i;
+    }
+    return (ret.str());
+}
+
+std::string vector_to_string(std::vector<std::string> v, char delim)
+{
+    std::stringstream ret;
+    size_t i = 0;
+	int delim_is_space = 0;
+
+	if (delim_is_space == ' ')
+		delim_is_space = 1;
+
+    ret.clear();    
+    while (i < v.size())
+    {
+        ret << v[int(i)];
+        if ((i + 1) < v.size())
+        {
+			ret << delim;
+			if (!delim_is_space)
+				ret << " ";
+		}
         ++i;
     }
     return (ret.str());

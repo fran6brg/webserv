@@ -204,7 +204,8 @@ void			Response::put(Request *req)
     }
 	else
 	{
-	    LOG_WRT(Logger::DEBUG, "put: failed to write body inside _file\n");
+	    LOG_WRT(Logger::DEBUG, "put: failed to write body inside _file -> 404\n");
+		not_found(req);
     }
 	f2.close();
 }
@@ -277,6 +278,7 @@ int				Response::method_not_allowed(Request *req)
 	}
 	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
     _status_code = METHOD_NOT_ALLOWED_405;
+	_allow = vector_to_string(req->_location->_method, ' ');
 	std::string path = "./www/old/error/405.html";
     std::ifstream error405(path);
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
@@ -304,6 +306,17 @@ int				Response::bad_request(Request *req)
 	std::string path = "./www/old/error/400.html";
     std::ifstream error400(path);
     std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
+    _body = buffer;
+	return (1);
+}
+
+int				Response::not_found(Request *req)
+{
+	(void)req;
+    _status_code = NOT_FOUND_404;
+	std::string path = "./www/old/error/404.html";
+    std::ifstream error404(path);
+    std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
     _body = buffer;
 	return (1);
 }

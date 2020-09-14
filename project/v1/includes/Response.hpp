@@ -129,6 +129,7 @@ class Response
 		int				bad_request(Request *req);
 		int				accepted_method(Request *req);
 		int				method_not_allowed(Request *req);
+		int				not_found(Request *req);
 
 		char			**create_env_tab(Request *req);
 		void			ft_cgi(Request *req);
