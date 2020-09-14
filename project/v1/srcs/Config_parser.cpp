@@ -29,12 +29,13 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
-		Server *server = new Server(serv[i].host, utils_tmp::ft_atoi(serv[i].port.c_str()));
+		Server *server = new Server(serv[i].name, stoi(serv[i].port));
 		
 		servers.push_back(server);
 
 		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
 		LOG_WRT(Logger::DEBUG, "host       = " + serv[i].host);
+		LOG_WRT(Logger::DEBUG, "name       = " + serv[i].name);
 		LOG_WRT(Logger::DEBUG, "port       = " + serv[i].port);
 		LOG_WRT(Logger::DEBUG, "error_page = " + serv[i].error_page);
 		LOG_WRT(Logger::DEBUG, "body_size  = " + serv[i].body_size);
@@ -161,7 +162,12 @@ void Config_parser::add_serv_values(std::vector<std::string> &tokens, t_serv &se
 	{
 		fail_double_token(serv.host);
 		serv.host = tokens[1];
-	}	
+	}
+	else if (tokens[0] == _NAME)
+	{
+		fail_double_token(serv.name);
+		serv.name = tokens[1];
+	}
 	else if (tokens[0] == _PORT)
 	{
 		fail_double_token(serv.port);
