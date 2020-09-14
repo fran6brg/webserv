@@ -16,14 +16,16 @@ class Location
         std::string                 _index;
         std::vector<std::string>    _method;
 		std::string					_cgi_root;
+		std::string					_php_root;
         
-        Location(std::string uri, std::string root, std::string index, std::vector<std::string> method)
+        Location(std::string uri, std::string root, std::string index, std::vector<std::string> method, std::string cgi_root, std::string php_root)
         {
             _uri = uri;
             _root = root;
             _index = index;
             _method = method;
-			_cgi_root = "./www/CGI/cgi_tester"; // TEMPORAIRE 
+			_cgi_root = cgi_root;
+			_php_root = php_root;
         };
     };
 

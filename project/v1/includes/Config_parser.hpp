@@ -28,16 +28,22 @@
 # define _METHOD "method"
 # define _ROOT "root"
 # define _INDEX "index"
-# define _CGI "cgi"
+# define _CGI_PATH "cgi_path"
+# define _PHP_PATH "php_path"
+
+class Conf;
+
+extern Conf g_conf;
 
 typedef struct	s_loc
 {
 	std::string					uri;
-	std::vector<std::string>	method;	// HTTP Methods
-	std::string					root;	// directory or a file from where the file should be search
-	std::string					index;	// default file
-	std::string					cgi;	// cgi
-	// turn on or off directory listing
+	std::vector<std::string>	method; // HTTP Methods
+	std::string					root;       // directory or a file from where the file should be search
+	std::string					index;      // default file
+	std::string					cgi_path;
+	std::string					php_path;
+  // turn on or off directory listing
 }				t_loc;
 
 typedef struct	s_serv
