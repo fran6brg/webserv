@@ -66,7 +66,8 @@ int Response::concat_to_send(void)
     	ss << "\r\n";
 	}
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
-    if (!_location.empty() && _status_code == 201)             { ss << "Location: " << _location << "\r\n"; }
+    if (!_location.empty()
+	&& _status_code == 201)             { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
@@ -167,7 +168,7 @@ void			Response::post(Request *req)
 
 void			Response::put(Request *req)
 {
-
+	LOG_WRT(Logger::DEBUG, "inside PUT\n");
     if (req->_content_length == -1)
     {
 	    // std::cout << "inside put: BAD_REQUEST_400" << std::endl;
@@ -190,6 +191,8 @@ void			Response::put(Request *req)
 	else // _file does not exist
 	{
         _status_code = CREATED_201;
+		_location = req->_uri;
+		_body = "Ressource created\n";
     }
 	f1.close();
 

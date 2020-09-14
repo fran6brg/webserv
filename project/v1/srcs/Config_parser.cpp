@@ -29,27 +29,29 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
-		Server *server = new Server(serv[i].host, utils_tmp::ft_atoi(serv[i].port.c_str()));
+		Server *server = new Server(serv[i].name, stoi(serv[i].port));
 		
 		servers.push_back(server);
 
 		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
 		LOG_WRT(Logger::DEBUG, "host       = " + serv[i].host);
+		LOG_WRT(Logger::DEBUG, "name       = " + serv[i].name);
 		LOG_WRT(Logger::DEBUG, "port       = " + serv[i].port);
 		LOG_WRT(Logger::DEBUG, "error_page = " + serv[i].error_page);
 		LOG_WRT(Logger::DEBUG, "body_size  = " + serv[i].body_size);
 		for (size_t y = 0; y < serv[i].loc.size(); ++y)
 		{
-			Location *location = new Location(serv[i].loc[y].uri, serv[i].loc[y].root, serv[i].loc[y].index, serv[i].loc[y].method);
+			Location *location = new Location(serv[i].loc[y].uri, serv[i].loc[y].root, serv[i].loc[y].index, serv[i].loc[y].method, serv[i].loc[y].cgi_path, serv[i].loc[y].php_path);
 			server->_locations.push_back(location);
 
 			LOG_WRT(Logger::DEBUG, "LOCATION " + std::to_string(y));
 			LOG_WRT(Logger::DEBUG, "	uri    = " + serv[i].loc[y].uri);
 			for (size_t z = 0; z < serv[i].loc[y].method.size(); z++)
-				LOG_WRT(Logger::DEBUG, "	method = " + serv[i].loc[y].method[z]);
-			LOG_WRT(Logger::DEBUG, "	root   = " + serv[i].loc[y].root);
-			LOG_WRT(Logger::DEBUG, "	index  = " + serv[i].loc[y].index);
-			LOG_WRT(Logger::DEBUG, "	cgi    = " + serv[i].loc[y].cgi);
+				LOG_WRT(Logger::DEBUG, "	method   = " + serv[i].loc[y].method[z]);
+			LOG_WRT(Logger::DEBUG, "	root     = " + serv[i].loc[y].root);
+			LOG_WRT(Logger::DEBUG, "	index    = " + serv[i].loc[y].index);
+			LOG_WRT(Logger::DEBUG, "	cgi_path = " + serv[i].loc[y].cgi_path);
+			LOG_WRT(Logger::DEBUG, "	php_path = " + serv[i].loc[y].php_path);
 		}
 		LOG_WRT(Logger::DEBUG, "");
 	}
@@ -160,7 +162,12 @@ void Config_parser::add_serv_values(std::vector<std::string> &tokens, t_serv &se
 	{
 		fail_double_token(serv.host);
 		serv.host = tokens[1];
-	}	
+	}
+	else if (tokens[0] == _NAME)
+	{
+		fail_double_token(serv.name);
+		serv.name = tokens[1];
+	}
 	else if (tokens[0] == _PORT)
 	{
 		fail_double_token(serv.port);
@@ -206,10 +213,15 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 			fail_double_token(loc.index);
 			loc.index = tokens[1];
 		}
-		else if (tokens[0] == _CGI)
+		else if (tokens[0] == _CGI_PATH)
 		{
-			fail_double_token(loc.cgi);
-			loc.cgi = tokens[1];
+			fail_double_token(loc.cgi_path);
+			loc.cgi_path = tokens[1];
+		}
+		else if (tokens[0] == _PHP_PATH)
+		{
+			fail_double_token(loc.php_path);
+			loc.php_path = tokens[1];
 		}
 		else
 			fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");

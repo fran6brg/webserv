@@ -82,10 +82,9 @@ def printResponse(r):
 
 # PUT -------------------------------------------------------------------------
 
-# body = "Some random text to see if put is working"
-# r = requests.put('http://localhost:8080/test/put.txt', data=body)
-# printResponse(r)
-# prettyPrint(r)
+body = "4.txt"
+r = requests.put('http://localhost:8080/putTests/4.txt', data=body)
+printResponse(r)
 
 # body = "Some5text5to5test"
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
@@ -124,7 +123,7 @@ def printResponse(r):
 
 		# CODE ERREUR 200 Ok:
 
-r = requests.get('http://localhost:8080/')
+# r = requests.get('http://localhost:8080/')
 #r = requests.options('http://localhost:8080/index.html')
 #r = requests.get('http://localhost:8080/index.html')
 #printResponse(r)
@@ -142,7 +141,7 @@ r = requests.get('http://localhost:8080/')
 
 
 # r = requests.get('http://localhost:8080/index.html')
-printResponse(r)
+# printResponse(r)
 
 ###############################################################################
 ###############################################################################

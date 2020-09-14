@@ -1,17 +1,23 @@
 server {
     listen 	8080
     error	./www/old/error
-	host	server1
+	name	server1
+	host	localhost
 	
     location / 		{
         root	./www/old
 		index	index.html
-		method	GET POST HEAD OPTIONS TRACE
+		method	GET POST HEAD OPTIONS
+		cgi_path test
     }
     location /test	{
         root	./www/old/test
 		index	index.html
 		method	DELETE
+		php_path test2
     }
-
+    location /putTests	{
+        root	./www/putTests
+		method	PUT
+    }
 }
