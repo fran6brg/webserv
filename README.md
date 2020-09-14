@@ -5,7 +5,7 @@ cd project/v1 && make && ./webserv conf/mini_conf
 ```
 in another shell:
 ```
-cd project/v1 && python ./tests/test.py
+cd project/v1 && python3 ./tests/test.py
 ```
 
 # quality readings to start the project
