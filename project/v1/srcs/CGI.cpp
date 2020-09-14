@@ -108,13 +108,22 @@ void		Response::ft_cgi(Request *req)
 	int		temp_fd;
 	pid_t	pid;
 	struct stat php;
+	std::string	binaire;
 
 	int CGI = 1; // TEMPORAIRE
     if (CGI)
     {
+		if (req->_location->_cgi_root != "")
+			binaire = req->_location->_cgi_root;
+		else
+			binaire = req->_location->_php_root;
+		std::cout << binaire << std::endl;
         env = create_env_tab(req);
         args = (char **)(malloc(sizeof(char *) * 3));
-        args[0] = strdup(req->_location->_cgi_root.c_str());
+		if (req->_location->_cgi_root != "")
+        	args[0] = strdup(req->_location->_cgi_root.c_str());
+		else
+        	args[0] = strdup(req->_location->_php_root.c_str());
         args[1] = strdup(req->_file.c_str());
         args[2] = NULL;
 		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
@@ -131,7 +140,7 @@ void		Response::ft_cgi(Request *req)
 			}
 			dup2(tubes[0], 0);
 			errno = 0;
-			if ((ret = execve(req->_location->_cgi_root.c_str(), args, env)) == -1)
+			if ((ret = execve(binaire.c_str(), args, env)) == -1)
 			{
 				std::cout << std::string(strerror(errno)) << std::endl;
 				exit(1);

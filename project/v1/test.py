@@ -44,7 +44,7 @@ def printResponse(r):
 # printResponse(r)
 
 # headers = {'Accept-Language': 'fr'}
-# r = requests.get('http://localhost:8080/test/index.html', headers=headers)
+#r = requests.get('http://localhost:8080/index.html', headers=headers)
 # printResponse(r)
 
 # headers = {'Accept-Language': 'en'}
@@ -82,9 +82,9 @@ def printResponse(r):
 
 # PUT -------------------------------------------------------------------------
 
-body = "4.txt"
-r = requests.put('http://localhost:8080/putTests/4.txt', data=body)
-printResponse(r)
+#body = "4.txt"
+#r = requests.put('http://localhost:8080/putTests/4.txt', data=body)
+#printResponse(r)
 
 # body = "Some5text5to5test"
 # r = requests.put('http://localhost:8080/put_test/testfile.txt', data=body)
@@ -123,7 +123,7 @@ printResponse(r)
 
 		# CODE ERREUR 200 Ok:
 
-# r = requests.get('http://localhost:8080/')
+r = requests.get('http://localhost:8080/index.html')
 #r = requests.options('http://localhost:8080/index.html')
 #r = requests.get('http://localhost:8080/index.html')
 #printResponse(r)
@@ -141,7 +141,7 @@ printResponse(r)
 
 
 # r = requests.get('http://localhost:8080/index.html')
-# printResponse(r)
+printResponse(r)
 
 ###############################################################################
 ###############################################################################

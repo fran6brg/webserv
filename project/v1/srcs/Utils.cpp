@@ -98,3 +98,16 @@ void displayMap(std::map<std::string, std::string> map)
 		++it;
 	}
 }
+
+int		is_php(std::string file)
+{
+	int			i = file.size() - 1;
+	std::string temp;
+	while (file[i] != '.')
+		i--;
+	temp = file.substr(i, file.size() - 1);
+	if (temp == ".php")
+		return (1);
+	else
+		return (0);
+}
