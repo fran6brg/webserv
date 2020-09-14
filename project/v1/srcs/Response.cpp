@@ -139,8 +139,8 @@ void		Response::handle_response(Request *req)
 void			Response::get(Request *req)
 {
 	std::ifstream file(req->_file);
-	int	CGI = 1; // TEMPORAIRE
-	if (CGI)
+//	int	CGI = 1; // TEMPORAIRE
+	if (req->_location->_cgi_root != "" || (req->_location->_php_root != "" && is_php(req->_file)))
 	{
 		ft_cgi(req);
 		get_cgi_ret();
