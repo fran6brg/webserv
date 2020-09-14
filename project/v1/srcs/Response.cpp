@@ -74,8 +74,8 @@ int Response::concat_to_send(void)
     // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\r\n"; }
     // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\r\n"; }
     // Request body
-    ss << "\n\n";
-    if (!_body.empty())                 { ss << _body << " "; }
+    ss << "\r\n"; // CRLF et non pas \n\n https://stackoverflow.com/questions/29131727/http-header-and-message-body-separator-clarification
+    if (!_body.empty())                 { ss << _body; }
     // Convert
     _to_send = ss.str();
     return (1);
@@ -90,7 +90,7 @@ int Response::format_to_send(Request *req)
     // Status Line
     _http_version = "HTTP/1.1";
     _reason_phrase = code_to_reason[_status_code];
-    _content_length = _body.size();
+    _content_length = _body.length(); // https://stackoverflow.com/questions/13821263/should-newline-be-included-in-http-response-content-length
 	
 	// Response headers, dans l'ordre du sujet
     _date = get_date();
@@ -115,7 +115,7 @@ int Response::format_to_send(Request *req)
 void		Response::handle_response(Request *req)
 {
 	// TEMPORAIRE
-	req->_method = "TRACE";
+	// req->_method = "TRACE";
     if (bad_request(req))
 		return ;
 	else if (method_not_allowed(req))
@@ -168,7 +168,7 @@ void			Response::post(Request *req)
 
 void			Response::put(Request *req)
 {
-	LOG_WRT(Logger::DEBUG, "inside PUT\n");
+	LOG_WRT(Logger::DEBUG, "inside put\n");
     if (req->_content_length == -1)
     {
 	    // std::cout << "inside put: BAD_REQUEST_400" << std::endl;
@@ -191,20 +191,20 @@ void			Response::put(Request *req)
 	else // _file does not exist
 	{
         _status_code = CREATED_201;
-		_location = req->_uri;
-		_body = "Ressource created\n";
+		// _location = req->_uri; // déjà fait dans format_to_send()
+		_body = "Ressource created";
     }
 	f1.close();
 
 	std::ofstream f2(req->_file);
 	if (f2.good())
 	{
-	    // std::cout << "inside put: writing body in _file" << std::endl;
+	    // LOG_WRT(Logger::DEBUG, "put: writing req->body inside _file\n");
         f2 << req->_body[0].second.substr(0, req->_content_length) << std::endl;
     }
 	else
 	{
-	    std::cout << "inside put: failed to write body in _file" << std::endl;
+	    LOG_WRT(Logger::DEBUG, "put: failed to write body inside _file\n");
     }
 	f2.close();
 }
@@ -271,9 +271,11 @@ int				Response::method_not_allowed(Request *req)
 	// Comparaison de la methode demande avec les methodes autorise dans la location
 	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
 	{
+		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method + "\n");
 		if ((req->_location->_method)[i] == req->_method)
 			return (0);
 	}
+	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
     _status_code = METHOD_NOT_ALLOWED_405;
 	std::string path = "./www/old/error/405.html";
     std::ifstream error405(path);
