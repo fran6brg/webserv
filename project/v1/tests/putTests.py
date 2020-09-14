@@ -45,44 +45,48 @@ def printResponse(r):
 
 i = 1;
 
-print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' == Update file 'abc' that doesn't exist:\n" + bcolors.ENDC)
-i += 1
-body = "abc"
-r = requests.put('http://localhost:8080/putTests/abc', data=body)
-printResponse(r)
-
-# ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' that already exists == Update file 'abc':\n" + bcolors.ENDC)
-i += 1
-body = "def"
-r = requests.put('http://localhost:8080/putTests/abc', data=body)
-printResponse(r)
-
-import os
-cwd = os.getcwd()
-# print (cwd)
-os.remove(cwd + "/www/putTests/abc")
-
-# ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". PUT on uri that doesn't exist:\n" + bcolors.ENDC)
-i += 1
-body = "this uri doesn't exist (should return 404)"
-r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
-printResponse(r)
-
-# ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". PUT not allowed:\n" + bcolors.ENDC)
-i += 1
-body = "not allowed"
-r = requests.put('http://localhost:8080/test/abc', data=body)
-printResponse(r)
-
-# ---
-# print (bcolors.OKBLUE + "\n" + str(i) + ". chunked PUT\n" + bcolors.ENDC)
+# print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' == Update file 'abc' that doesn't exist:\n" + bcolors.ENDC)
 # i += 1
-# body = "chunked PUT"
-# r = requests.put('http://localhost:8080/putTests/chunked.txt', data=body)
+# body = "abc"
+# r = requests.put('http://localhost:8080/putTests/abc', data=body)
 # printResponse(r)
+
+# # ---
+# print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' that already exists == Update file 'abc':\n" + bcolors.ENDC)
+# i += 1
+# body = "def"
+# r = requests.put('http://localhost:8080/putTests/abc', data=body)
+# printResponse(r)
+
+# import os
+# cwd = os.getcwd()
+# # print (cwd)
+# os.remove(cwd + "/www/putTests/abc")
+
+# ---
+# print (bcolors.OKBLUE + "\n" + str(i) + ". PUT on uri that doesn't exist:\n" + bcolors.ENDC)
+# i += 1
+# body = "this uri doesn't exist (should return 404)"
+# r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
+# printResponse(r)
+
+# ---
+# print (bcolors.OKBLUE + "\n" + str(i) + ". PUT not allowed:\n" + bcolors.ENDC)
+# i += 1
+# body = "not allowed"
+# r = requests.put('http://localhost:8080/test/abc', data=body)
+# printResponse(r)
+
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". chunked PUT\n" + bcolors.ENDC)
+i += 1
+
+def gen():
+    yield 'hi'
+    yield 'there'
+
+r = requests.put('http://localhost:8080/putTests/chunked.txt', data=gen())
+printResponse(r)
 
 # ---
 # print (bcolors.OKBLUE + "\n" + str(i) + ". invalid chunked PUT\n" + bcolors.ENDC)

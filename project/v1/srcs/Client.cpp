@@ -17,15 +17,15 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	// select():
 	// FD_SET(_accept_fd, &g_conf._save_readfds);
 	FD_SET(_accept_fd, &g_conf._readfds);
-	g_conf.set_nfds(_accept_fd, 1);
+	g_conf.add_fd(_accept_fd); 
 }
 
 Client::~Client()
 {
-	LOG_WRT(Logger::INFO, "closing connection for client" + std::to_string(_accept_fd));
+	LOG_WRT(Logger::INFO, "closing connection for client " + std::to_string(_accept_fd));
 	// FD_CLR(_accept_fd, &g_conf._save_readfds);
 	FD_CLR(_accept_fd, &g_conf._readfds);
-	g_conf.set_nfds(_accept_fd, 0);
+	g_conf.remove_fd(_accept_fd); 
 	close(_accept_fd);
 	_accept_fd = -1;
 }

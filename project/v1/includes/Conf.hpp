@@ -11,6 +11,7 @@
 #include <sys/select.h>	// select, fd_set
 #include <string.h>		// strerror linux
 #include <signal.h>		// signal linux
+#include <list>
 
 /*
 ** Headers
@@ -53,7 +54,8 @@ class Conf
         struct timeval			_timeout;
         
         // other variables
-        std::vector<Server*>	    _servers;
+        std::vector<Server*>	_servers;
+        std::list<int>          _active_fds;
 
     /*
     ** methods
@@ -73,7 +75,10 @@ class Conf
         int parse(char *conf);
         void reset_fd_sets(void);
         int get_nfds(void) const;
-        void set_nfds(int fd, int increase);
+
+        void add_fd(int fd);
+        void remove_fd(int fd);
+        
         int run_select();
 };
 

@@ -22,7 +22,7 @@ Server::Server(std::string serverName, int port):
 Server::~Server()
 {
 	LOG_WRT(Logger::INFO, _name + "status killed");
-    g_conf.set_nfds(_socket_fd, 0);
+    g_conf.remove_fd(_socket_fd); 
 }
 
 /*
@@ -94,7 +94,7 @@ int Server::start(void)
 	
     // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
 	FD_SET(_socket_fd, &g_conf._save_readfds);
-    g_conf.set_nfds(_socket_fd, 1);
+    g_conf.add_fd(_socket_fd);    
     return (1);
 }
 

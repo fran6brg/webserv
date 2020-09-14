@@ -51,7 +51,7 @@ class Request
 		Location			*_location;
 		std::string			_buffer;
 		std::string 		_file;
-		std::string			_file_name;
+		std::string			_file_name; // 16
 		int					_body_length;
 	
 		/*
@@ -85,14 +85,15 @@ class Request
 		std::string 										_host; // 12 spécifie le nom de domaine du serveur https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Host
 		std::string 										_referer; // 13 l'adresse de la page web précédente à partir de laquelle un lien a été suivi pour demander la page courante. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Referer
 		std::string 										_user_agent; // 14 string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/User-Agent
-		// Not a request header according to https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding but needed
-		std::string			 								_transfer_encoding; // specifies the form of encoding used to safely transfer the payload body to the user. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding
 
 		/*
 		** Request body
 		*/
 
 		std::map<int, std::pair<std::string, std::string> > _body; // 15
+
+		// Not a request header according to https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding but needed
+		std::string			 								_transfer_encoding; // 17 specifies the form of encoding used to safely transfer the payload body to the user. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding
 
 	/*
 	** methods

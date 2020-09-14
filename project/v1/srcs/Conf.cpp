@@ -71,22 +71,19 @@ int Conf::get_nfds(void) const
     **
     ** nfds est le numéro du plus grand descripteur de fichier des 3 ensembles, plus 1.
     */
-    return (_nfds + 1);
+    // return (_nfds + 1);
+    return (*std::max_element(_active_fds.begin(), _active_fds.end()) + 1); // https://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector
 }
 
-void Conf::set_nfds(int fd, int increase)
-{
-    if (increase)
-    {
-        if (fd > _nfds)
-            _nfds = fd;
-    }
-    else
-    {
-        if (fd == _nfds)
-            _nfds -= 1;
 
-    }    
+void Conf::add_fd(int fd)
+{
+    _active_fds.push_back(fd);
+}
+
+void Conf::remove_fd(int fd)
+{
+    _active_fds.remove(fd);
 }
 
 int Conf::run_select(void)

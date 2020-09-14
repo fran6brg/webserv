@@ -55,7 +55,7 @@ std::string trim(const std::string& str)
     if (std::string::npos == first)
         return str;
     size_t last = str.find_last_not_of(' ');
-    return (str.substr(first, (last - first + 1)));
+    return (std::string(str.substr(first, (last - first + 1)))); // std::string() autour du substr pour bien s'assurer qu'on a le \0 à la fin de value sinon ça peut bug
 }
 
 void print_map(std::stringstream &ss1, std::map<int, std::string> map)
@@ -78,7 +78,7 @@ void print_map(std::stringstream &ss1, std::map<int, std::string> map)
 
 void Request::fill_request(std::string key, std::string value)
 {
-    // std::cout << "key: " << key << ", value: " << value << std::endl;
+    std::cout << "key: " << key << ", value: -" << value << "-" << std::endl;
 
     size_t i = 0;
     std::vector<std::string> tokens;
@@ -145,6 +145,8 @@ void Request::fill_request(std::string key, std::string value)
         _referer = value;
     else if (key == "User-Agent") // 14
         _user_agent = value;
+    else if (key == "Transfer-Encoding") // 17
+        _transfer_encoding = value;
 
     // other headers not to be handled cf. subject
     else if (key == "Connection")
@@ -179,6 +181,7 @@ void Request::init(void)
     _user_agent.clear();
     // Request body
     _body.clear();
+    _transfer_encoding.clear();
 
     // autres variables qui ne sont pas des headers
     _body_length = -1;
@@ -289,31 +292,20 @@ int Request::parse_chunked_body()
 {
     std::string line;
     std::vector<std::string> tokens;
-    std::size_t pos;
-    size_t i = 0;
+    // std::size_t pos;
+    // size_t i = 0;
     std::string key;
     std::string value;
 
     line.clear();
     ft_getline(_buffer, line);
-    if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
-        return (1);
-    tokens = split(line, '&');
-    while (i < tokens.size())
-    {
-        line = tokens[i];
-        pos = line.find("=");
-        if (pos == std::string::npos) // format is not 'key=value'
-        {
-            _body[i++] = std::make_pair("", line);
-        }
-        else
-        {
-            key = trim(line.substr(0, pos));
-            value = trim(line.substr(pos + 1));
-            _body[i++] = std::make_pair(key, value);
-        }
-    }
+    // if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
+    //     return (1);
+    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+    ft_getline(_buffer, line);
+    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+    ft_getline(_buffer, line);
+    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
     return (1);
 }
 
@@ -412,7 +404,7 @@ int Request::parse(std::vector<Location*> location)
     parse_request_line();
 	parse_filename(location);
     parse_headers();
-    if (_transfer_encoding == "chunked")
+    if (_transfer_encoding.find("chunked") != std::string::npos)
         parse_chunked_body();
     else
         parse_body();
@@ -465,5 +457,6 @@ void Request::display(void)
         ss1 << std::endl;
     }
     ss1 << "16) _file: " << _file << std::endl;
+    ss1 << "17) _transfer_encoding: " << _transfer_encoding << std::endl;
 	LOG_WRT(Logger::INFO, ss1.str());
 }
