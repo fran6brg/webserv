@@ -278,7 +278,7 @@ int				Response::method_not_allowed(Request *req)
 	}
 	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
     _status_code = METHOD_NOT_ALLOWED_405;
-	_allow = vector_to_string(req->_location->_method, ' ');
+	_allow = vector_to_string(req->_location->_method, ',');
 	std::string path = "./www/old/error/405.html";
     std::ifstream error405(path);
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
