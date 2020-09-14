@@ -27,7 +27,12 @@
 # define _METHOD "method"
 # define _ROOT "root"
 # define _INDEX "index"
-# define _CGI "cgi"
+# define _CGI_PATH "cgi_path"
+# define _PHP_PATH "php_path"
+
+class Conf;
+
+extern Conf g_conf;
 
 typedef struct	s_loc
 {
@@ -35,7 +40,8 @@ typedef struct	s_loc
 	std::vector<std::string>	method;
 	std::string					root;
 	std::string					index;
-	std::string					cgi;
+	std::string					cgi_path;
+	std::string					php_path;
 }				t_loc;
 
 typedef struct	s_serv
