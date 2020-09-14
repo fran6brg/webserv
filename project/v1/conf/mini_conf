@@ -13,5 +13,8 @@ server {
 		index	index.html
 		method	DELETE
     }
-
+    location /putTests	{
+        root	./www/putTests
+		method	PUT
+    }
 }
