@@ -317,6 +317,20 @@ int Request::parse_chunked_body()
     return (1);
 }
 
+void	Request::parse_query_string()
+{
+	int				i = 0;
+	std::string		uri = _uri;	
+	
+	while (uri[i] && uri[i] != '?')
+		i++;
+	if (uri[i] == '?')
+	{
+		_query = uri.substr(i + 1, uri.size());
+		_uri = uri.substr(0, i);
+	}
+}
+
 /*
 **	Recuperer la location presente dans le fichier de config
 **	a partir de l'uri present dans la requete
@@ -368,7 +382,8 @@ int	Request::parse_filename(std::vector<Location*> locations)
 {
 	struct stat	info;
 	int			i;
-	
+
+	parse_query_string();	
 	get_location(&_uri, locations);
 	if (_location)
 	{

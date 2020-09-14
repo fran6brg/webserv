@@ -46,8 +46,8 @@ char			**Response::create_env_tab(Request *req)
 	// args_to_map["PATH_TRANSLATED"] = client.conf["path"];
 	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_body.size()); // longueur des données véhiculées dans la requête (POST)
 
-	if (req->_uri.find('?') != std::string::npos)
-		args_to_map["QUERY_STRING"] = req->_uri.substr(req->_uri.find('?') + 1); // données transmises au CGI via l'URL (GET)
+	if (req->_query != "")
+		args_to_map["QUERY_STRING"] = req->_query; // données transmises au CGI via l'URL (GET)
 	else
 		args_to_map["QUERY_STRING"]; // données transmises au CGI via l'URL (GET)
 

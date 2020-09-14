@@ -61,7 +61,8 @@ class Request
 		std::string 										_method; // 1
 		std::string 										_uri; // 2
 		std::string 										_http_version; // 3
-		
+	
+		std::string											_query;	
 		/*
 		** Request Headers, dans l'ordre du sujet
 		*/ 
@@ -112,6 +113,7 @@ class Request
     	int 				parse_headers(void);
     	int 				parse_body(void);
     	int 				parse_chunked_body(void);
+		void				parse_query_string();
 		int					get_location(std::string *uri, std::vector<Location*> location);
 		int					parse_filename(std::vector<Location*> location);
 		int 				parse(std::vector<Location*> location);
