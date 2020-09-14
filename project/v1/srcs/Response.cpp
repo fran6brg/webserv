@@ -114,7 +114,7 @@ int Response::format_to_send(Request *req)
 void		Response::handle_response(Request *req)
 {
 	// TEMPORAIRE
-//	req->_method = "TRACE";
+	req->_method = "TRACE";
     if (bad_request(req))
 		return ;
 	else if (method_not_allowed(req))
@@ -138,7 +138,7 @@ void		Response::handle_response(Request *req)
 void			Response::get(Request *req)
 {
 	std::ifstream file(req->_file);
-	int	CGI = 0; // TEMPORAIRE
+	int	CGI = 1; // TEMPORAIRE
 	if (CGI)
 	{
 		ft_cgi(req);
@@ -239,6 +239,7 @@ void			Response::option(Request *req)
 void			Response::trace(Request *req)
 {
 	(void)req;
+	int		i;
 	if (!_status_code)
 	{
     	_http_version = "HTTP/1.1";
@@ -248,6 +249,10 @@ void			Response::trace(Request *req)
 		_content_type[0] = "message/http";
 		_date = get_date();
     	concat_to_send();
+		i = _to_send.size() - 3;
+		_to_send[i] = '\0';
+		_to_send[i + 1] = '\0';
+		_to_send[i + 2] = '\0';
 		_body = _to_send;
 		// Supprimer les retour a la ligne a la fin du header avant de les envoyer dans le body ?
 	}
