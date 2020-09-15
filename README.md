@@ -1,4 +1,4 @@
-# usage
+# 1. usage
 
 ```
 cd project/v1 && make && ./webserv conf/mini_conf
@@ -8,7 +8,7 @@ in another shell:
 cd project/v1 && python3 ./tests/test.py
 ```
 
-# quality readings to start the project
+# 2. quality readings to start the project
 
 ### web socket
 - nice article https://www.bogotobogo.com/cplusplus/sockets_server_client.php
@@ -45,7 +45,7 @@ cd project/v1 && python3 ./tests/test.py
 - wiki https://fr.wikipedia.org/wiki/Chunked_transfer_encoding
 - the idea https://www.geeksforgeeks.org/http-headers-transfer-encoding/
 
-# testing
+# 3. testing
 
 - python library to make http requests https://requests.readthedocs.io/en/master/
 - quickly and easily send requests https://www.postman.com/
