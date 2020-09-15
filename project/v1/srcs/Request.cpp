@@ -292,20 +292,17 @@ int Request::parse_chunked_body()
 {
     std::string line;
     std::vector<std::string> tokens;
-    // std::size_t pos;
-    // size_t i = 0;
-    std::string key;
-    std::string value;
 
     line.clear();
     ft_getline(_buffer, line);
-    // if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
-    //     return (1);
     LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
     ft_getline(_buffer, line);
     LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
     ft_getline(_buffer, line);
     LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+
+    // todo later, if needed
+
     return (1);
 }
 

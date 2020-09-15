@@ -20,4 +20,8 @@ server {
         root	./www/putTests
 		method	PUT
     }
+    location /postTests	{
+        root	./www/postTests
+		method	POST
+    }
 }
