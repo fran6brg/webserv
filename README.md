@@ -42,4 +42,5 @@ cd project/v1 && python3 ./tests/test.py
 - https://www.developpez.net/forums/d151285/php/langage/php-js-quoi-sert-php-cgi-exe-repertoire-php/
 
 ### chunked encoding
+- https://fr.wikipedia.org/wiki/Chunked_transfer_encoding
 - https://www.geeksforgeeks.org/http-headers-transfer-encoding/
