@@ -51,7 +51,7 @@ char			**Response::create_env_tab(Request *req)
 	else
 		args_to_map["QUERY_STRING"]; // données transmises au CGI via l'URL (GET)
 
-	args_to_map["CONTENT_TYPE"] = map_to_string(req->_content_type, ';'); // type MIME des données véhiculées dans la requête
+	args_to_map["CONTENT_TYPE"] = req->_content_type; // type MIME des données véhiculées dans la requête
 
 	// if (client.conf.find("exec") != client.conf.end())
 	// 	args_to_map["SCRIPT_NAME"] = client.conf["exec"]; // chemin du CGI à partir de la racine du serveur HTTP

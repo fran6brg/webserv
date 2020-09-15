@@ -9,7 +9,12 @@ RM			=	rm -rf
 GNL			=	srcs/get_next_line/get_next_line.cpp \
 				srcs/get_next_line/get_next_line_utils.cpp
 
-METHODS		=	srcs/methods/put.cpp
+METHODS		=	srcs/methods/connect.cpp \
+				srcs/methods/delete.cpp \
+				srcs/methods/head.cpp \
+				srcs/methods/option.cpp \
+				srcs/methods/put.cpp \
+				srcs/methods/trace.cpp
 
 SRCS		=	$(GNL) \
 				$(METHODS) \

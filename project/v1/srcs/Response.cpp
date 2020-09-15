@@ -167,63 +167,6 @@ void			Response::post(Request *req)
 	(void)req;
 }
 
-void			Response::ft_delete(Request *req)
-{
-	int	ret;
-	std::ifstream file(req->_file);
-	if (file.good())
-	{
-		ret = remove(req->_file.c_str()); // A remplacer par unlink() ? pourquoi ? A voir
-		if (!ret)
-			_status_code = OK_200;
-		else
-			_status_code = ACCEPTED_202; // requete accepte mais la supression a echoue (pas sur d'en avoir besoin)
-	}
-	else
-		_status_code = NO_CONTENT_204;
-}
-
-void			Response::option(Request *req)
-{
-	std::string buffer;
-
-	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
-	{
-		buffer = buffer + (req->_location->_method)[i];
-		if (i != (req->_location->_method).size() - 1)
-			buffer = buffer + ", ";
-	}
-	_status_code = OK_200;
-	_allow = buffer;
-}
-
-void			Response::trace(Request *req)
-{
-	(void)req;
-	int		i;
-	if (!_status_code)
-	{
-    	_http_version = "HTTP/1.1";
-    	_server = g_conf._webserv;
-		_status_code = OK_200;
-    	_reason_phrase = code_to_reason[_status_code];
-		_content_type[0] = "message/http";
-		_date = get_date();
-    	concat_to_send();
-		i = _to_send.size() - 3;
-		_to_send[i] = '\0';
-		_to_send[i + 1] = '\0';
-		_to_send[i + 2] = '\0';
-		_body = _to_send;
-		// Supprimer les retour a la ligne a la fin du header avant de les envoyer dans le body ?
-	}
-}
-
-void			Response::connect(Request *req)
-{
-	(void)req;
-}
-
 int				Response::method_not_allowed(Request *req)
 {
 	// Comparaison de la methode demande avec les methodes autorise dans la location

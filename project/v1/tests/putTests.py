@@ -56,7 +56,7 @@ i = 0;
 i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' == Update file 'abc' that doesn't exist:\n" + bcolors.ENDC)
 body = "abc"
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.put('http://localhost:8080/putTests/abc', data=body)
 	printResponse(r, i)
 
@@ -64,12 +64,12 @@ if len(tests_to_run) > 0 and i in tests_to_run:
 i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' that already exists == Update file 'abc':\n" + bcolors.ENDC)
 body = "def"
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.put('http://localhost:8080/putTests/abc', data=body)
 	printResponse(r, i)
 
----
-if len(tests_to_run) > 0 and (1 in tests_to_run or 2 in tests_to_run):
+# ---
+if len(tests_to_run) == 0 or (1 in tests_to_run or 2 in tests_to_run):
 	cwd = os.getcwd()
 	# print (cwd)
 	os.remove(cwd + "/www/methods/put/abc")
@@ -78,7 +78,7 @@ if len(tests_to_run) > 0 and (1 in tests_to_run or 2 in tests_to_run):
 i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". PUT on uri that doesn't exist:\n" + bcolors.ENDC)
 body = "this uri doesn't exist (should return 404)"
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
 	printResponse(r, i)
 
@@ -86,8 +86,8 @@ if len(tests_to_run) > 0 and i in tests_to_run:
 i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". PUT not allowed:\n" + bcolors.ENDC)
 body = "not allowed"
-if len(tests_to_run) > 0 and i in tests_to_run:
-	r = requests.put('http://localhost:8080/test/abc', data=body)
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.put('http://localhost:8080/postTests/abc', data=body)
 	printResponse(r, i)
 
 # ---
