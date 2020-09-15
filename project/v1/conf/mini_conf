@@ -13,7 +13,6 @@ server {
     location /test	{
         root    ./www/old/test
 		index	index.html
-		method	DELETE
-		php_path test2
+		method	GET POST HEAD OPTIONS PUT
     }
 }
