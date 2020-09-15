@@ -89,8 +89,10 @@ class Request
 		/*
 		** Request body
 		*/
-
+		// std::string 										_body;
 		std::map<int, std::pair<std::string, std::string> > _body; // 15
+		// si post body = "a=1&b=2" -> {1: {"a": "1"}, 2: {"b": "2"}}
+		// ou alors simple body = "abc" -> {1: {"": "abc"}}
 
 		// Not a request header according to https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding but needed
 		std::string			 								_transfer_encoding; // 17 specifies the form of encoding used to safely transfer the payload body to the user. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding
