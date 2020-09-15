@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 			// the socket is "readable" if the remote peer (the client) closes it / select() returns if a read() will not block, not only when there's data available (meaning also if EOF) (https://stackoverflow.com/questions/6453149/select-says-socket-is-ready-to-read-when-it-is-definitely-not-actually-is-close)
 			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
-				LOG_WRT(Logger::INFO, "New client=" + std::to_string( s->_socket_fd));
+				LOG_WRT(Logger::INFO, "new client on server " + s->_name);
 				s->acceptNewClient(); // connexion et création du nouveau client
 			}
 
@@ -57,11 +57,12 @@ int main(int argc, char *argv[])
 			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
-				if (!s->handleClientRequest(c) || !c->_is_connected) // si 'ressource temporary unavailable' || si le client est déconnecté
+				s->handleClientRequest(c);
+				if (!c->_is_connected) // si 'ressource temporary unavailable' || si le client est déconnecté
 				{
 					it_c = s->_clients.erase(it_c);
 					delete c;
-          			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " clients connected");
+          			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected\n");
 					if (s->_clients.empty())
 						break;
 				}

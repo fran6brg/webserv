@@ -9,7 +9,10 @@ RM			=	rm -rf
 GNL			=	srcs/get_next_line/get_next_line.cpp \
 				srcs/get_next_line/get_next_line_utils.cpp
 
+METHODS		=	srcs/methods/put.cpp
+
 SRCS		=	$(GNL) \
+				$(METHODS) \
 				srcs/main.cpp \
 				srcs/Conf.cpp \
 				srcs/Server.cpp \

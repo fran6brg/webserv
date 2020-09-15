@@ -15,9 +15,9 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	_port = htons(addr.sin_port); // todo: à recoder si non authorisée
 	_request._client = this;
 	// select():
-	// FD_SET(_accept_fd, &g_conf._save_readfds);
-	FD_SET(_accept_fd, &g_conf._readfds);
-	g_conf.add_fd(_accept_fd); 
+	FD_SET(_accept_fd, &g_conf._save_readfds);
+	// FD_SET(_accept_fd, &g_conf._readfds);
+	g_conf.add_fd(_accept_fd);
 }
 
 Client::~Client()

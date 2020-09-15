@@ -123,7 +123,7 @@ def printResponse(r):
 
 		# CODE ERREUR 200 Ok:
 
-r = requests.get('http://localhost:8080/index.html?bonjour=5')
+r = requests.get('http://localhost:8080/directory/nop/other.pouac')
 #r = requests.options('http://localhost:8080/index.html')
 #r = requests.get('http://localhost:8080/index.html')
 #printResponse(r)

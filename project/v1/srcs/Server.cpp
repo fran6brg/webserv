@@ -119,7 +119,7 @@ int Server::acceptNewClient(void)
     }
     else
     {
-		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept=" + std::to_string(accept_fd));
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));
         Client *c = new Client(this, accept_fd, client_addr);
         _clients.push_back(c);
 		LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
@@ -209,27 +209,30 @@ int Server::sendResponse(Client *c)
 
 int Server::handleClientRequest(Client *c)
 {
-    int is_unavailable = 0;
+    int ok_read = 0;
+    int ok_write = 0;
 
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
-        printf("reading request of client %i\n", c->_accept_fd);
+        LOG_WRT(Logger::INFO, "reading request of client " + std::to_string(c->_accept_fd) + "\n");
         if (!recvRequest(c))
             return (0);
-        is_unavailable = 1;
+        else
+            ok_read = 1;
     }
     else
-        printf("reading not set %i\n", c->_accept_fd);
+        LOG_WRT(Logger::INFO, "reading not set for client " + std::to_string(c->_accept_fd) + "\n");
 
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {
-        printf("sending response to client %i\n", c->_accept_fd);
+        LOG_WRT(Logger::INFO, "sending response to client " + std::to_string(c->_accept_fd) + "\n");
         if (!sendResponse(c))
             return (0);
-        is_unavailable = 1;
+        else
+            ok_write = 1;
     }
     else
-        printf("writing not set %i\n", c->_accept_fd);
+        LOG_WRT(Logger::INFO, "writing not set for client " + std::to_string(c->_accept_fd) + "\n");
 
-    return (is_unavailable);
+    return (ok_read && ok_write);
 }

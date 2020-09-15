@@ -1,5 +1,14 @@
 import requests
 from requests.auth import HTTPBasicAuth
+import os
+import sys
+
+tests_to_run = []
+ac = len(sys.argv)
+if ac > 1:
+	for av in sys.argv[1:]:
+		# print ("to run: test", av)
+		tests_to_run.append(int(av))
 
 class bcolors:
     HEADER = '\033[95m'
@@ -16,8 +25,7 @@ def props(cls):
 # https://stackoverflow.com/questions/16923898/how-to-get-the-raw-content-of-a-response-in-requests-with-python
 # https://stackoverflow.com/questions/9058305/getting-attributes-of-a-class
 
-def printResponse(r):
-	# print (props(r))
+def printResponse(r, i):
 
 	print ("-------- REQUEST")
 	# print (props(r.request))
@@ -39,49 +47,54 @@ def printResponse(r):
 
 	# print ("-------- ENCODING")
 	# print (r.encoding)
-	print ("******************\n")
+	print ("------------------\n")
 
 # PUT -------------------------------------------------------------------------
 
-i = 1;
+i = 0;
 
+i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' == Update file 'abc' that doesn't exist:\n" + bcolors.ENDC)
-i += 1
 body = "abc"
-r = requests.put('http://localhost:8080/putTests/abc', data=body)
-printResponse(r)
+if len(tests_to_run) > 0 and i in tests_to_run:
+	r = requests.put('http://localhost:8080/putTests/abc', data=body)
+	printResponse(r, i)
 
 # ---
+i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' that already exists == Update file 'abc':\n" + bcolors.ENDC)
-i += 1
 body = "def"
-r = requests.put('http://localhost:8080/putTests/abc', data=body)
-printResponse(r)
-
-import os
-cwd = os.getcwd()
-# print (cwd)
-os.remove(cwd + "/www/putTests/abc")
+if len(tests_to_run) > 0 and i in tests_to_run:
+	r = requests.put('http://localhost:8080/putTests/abc', data=body)
+	printResponse(r, i)
 
 # ---
+if len(tests_to_run) > 0 and (1 in tests_to_run or 2 in tests_to_run):
+	cwd = os.getcwd()
+	# print (cwd)
+	os.remove(cwd + "/www/methods/put/abc")
+
+# ---
+i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". PUT on uri that doesn't exist:\n" + bcolors.ENDC)
-i += 1
 body = "this uri doesn't exist (should return 404)"
-r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
-printResponse(r)
+if len(tests_to_run) > 0 and i in tests_to_run:
+	r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
+	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". PUT not allowed:\n" + bcolors.ENDC)
 i += 1
+print (bcolors.OKBLUE + "\n" + str(i) + ". PUT not allowed:\n" + bcolors.ENDC)
 body = "not allowed"
-r = requests.put('http://localhost:8080/test/abc', data=body)
-printResponse(r)
+if len(tests_to_run) > 0 and i in tests_to_run:
+	r = requests.put('http://localhost:8080/test/abc', data=body)
+	printResponse(r, i)
 
 # ---
 # requests for chunked body doesn't work
 # idem for postman https://community.postman.com/t/how-to-send-chunked-request/9010
-# print (bcolors.OKBLUE + "\n" + str(i) + ". chunked PUT\n" + bcolors.ENDC)
 # i += 1
+# print (bcolors.OKBLUE + "\n" + str(i) + ". chunked PUT\n" + bcolors.ENDC)
 
 # def gen():
 #     yield 'h'
@@ -89,14 +102,14 @@ printResponse(r)
 #     yield 'there'
 
 # r = requests.put('http://localhost:8080/putTests/chunked.txt', data=gen())
-# printResponse(r)
+# printResponse(r, i)
 
 # ---
 # requests for chunked body doesn't work
 # idem for postman https://community.postman.com/t/how-to-send-chunked-request/9010
-# print (bcolors.OKBLUE + "\n" + str(i) + ". invalid chunked PUT\n" + bcolors.ENDC)
 # i += 1
+# print (bcolors.OKBLUE + "\n" + str(i) + ". invalid chunked PUT\n" + bcolors.ENDC)
 # body = "invalid chunked PUT"
 # r = requests.put('http://localhost:8080/putTests/chunked.txt', data=body)
-# printResponse(r)
+# printResponse(r, i)
 

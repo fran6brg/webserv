@@ -11,17 +11,9 @@ server {
 		cgi_path ./www/CGI/cgi_tester
     }
     location /test	{
-        root	./www/old/test
+        root    ./www/old/test
 		index	index.html
 		method	DELETE
 		php_path test2
-    }
-    location /putTests	{
-        root	./www/putTests
-		method	PUT
-    }
-    location /postTests	{
-        root	./www/postTests
-		method	POST
     }
 }
