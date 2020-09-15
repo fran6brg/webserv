@@ -28,8 +28,6 @@ int main(int argc, char *argv[])
     // loop
     while (g_conf._on)
     {
-		LOG_WRT(Logger::DEBUG, "select(nfds=" + std::to_string(g_conf.get_nfds()) + ", readfds, writefds, NULL, timeout)\n");
-
 		if (g_conf.run_select() == -1)
 			break;
 

@@ -68,7 +68,7 @@ if len(tests_to_run) > 0 and i in tests_to_run:
 	r = requests.put('http://localhost:8080/putTests/abc', data=body)
 	printResponse(r, i)
 
-# ---
+---
 if len(tests_to_run) > 0 and (1 in tests_to_run or 2 in tests_to_run):
 	cwd = os.getcwd()
 	# print (cwd)

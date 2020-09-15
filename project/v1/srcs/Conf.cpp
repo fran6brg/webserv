@@ -90,8 +90,11 @@ int Conf::run_select(void)
 {
     reset_fd_sets(); // la fonction select() exclue les fds qui ne sont pas prêts donc il faut pouvoir reconstituer le pool de fd à chaque tour de boucle
     
-    // return (select(get_nfds(), &_readfds, &_writefds, NULL, NULL)); // todo: quid du timeout
-    return (select(get_nfds(), &_readfds, &_writefds, NULL, &_timeout)); // Time out is useless
+    LOG_WRT(Logger::DEBUG, "select(nfds=" + std::to_string(g_conf.get_nfds()) + ", readfds, writefds, NULL, NULL)\n");
+    return (select(get_nfds(), &_readfds, &_writefds, NULL, NULL)); // todo: quid du timeout
+
+    // LOG_WRT(Logger::DEBUG, "select(nfds=" + std::to_string(g_conf.get_nfds()) + ", readfds, writefds, NULL, timeout)\n");
+    // return (select(get_nfds(), &_readfds, &_writefds, NULL, &_timeout)); // Time out is useless
 
     /*
     ** http://manpagesfr.free.fr/man/man2/select.2.html
