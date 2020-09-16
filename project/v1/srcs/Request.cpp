@@ -126,17 +126,7 @@ void Request::fill_request(std::string key, std::string value)
     else if (key == "Content-Location") // 9 example: Content-Location: <url>
         _content_location = value;
     else if (key == "Content-Type") // 10 example: Content-Type: text/html; charset=utf-8 || Content-Type: multipart/form-data; boundary=something
-    {
-        tokens = split(value, ';');
-        if (!tokens.empty())
-        {
-            while (i < tokens.size())
-            {
-                _content_type[i] = tokens[i];
-                i++;
-            }
-        }
-    }  
+        _content_type = value;
     else if (key == "Date") // 11
         _date = value;
     else if (key == "Host") // 12
@@ -185,6 +175,7 @@ void Request::init(void)
 
     // autres variables qui ne sont pas des headers
     _body_length = -1;
+    _body_type = -1;
 }
 
 std::map<std::string, std::string> Request::headers_to_map(void)
@@ -201,7 +192,7 @@ std::map<std::string, std::string> Request::headers_to_map(void)
    ret["Content-Language"] = map_to_string(_content_language, ',');
    ret["Content-Length"] = std::to_string(_content_length);
    ret["Content-Location"] = _content_location;
-   ret["Content-Type"] = map_to_string(_content_type, ';');
+   ret["Content-Type"] = _content_type;
    ret["Date"] = _date;
    ret["Host"] = _host;
    ret["Referer"] = _referer;
@@ -252,9 +243,27 @@ int Request::parse_headers()
     return (1);
 }
 
-int Request::parse_body()
+int Request::parse_chunked_body()
 {
+    std::string line;
+    std::vector<std::string> tokens;
 
+    line.clear();
+    ft_getline(_buffer, line);
+    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+    ft_getline(_buffer, line);
+    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+    ft_getline(_buffer, line);
+    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+
+    // todo later, if needed
+
+    return (1);
+}
+
+int Request::parse_application_type_body()
+{
+    _body_type = APPLICATION;
     if (_content_length) // meaning if value > 0 <=> a body exists
     {
         std::string line;
@@ -288,21 +297,46 @@ int Request::parse_body()
     return (1);
 }
 
-int Request::parse_chunked_body()
+int Request::parse_form_type_body()
 {
-    std::string line;
-    std::vector<std::string> tokens;
+    _body_type = FORM;
+    // todo après validation du tester
+    return (1);
+}
 
-    line.clear();
-    ft_getline(_buffer, line);
-    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
-    ft_getline(_buffer, line);
-    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
-    ft_getline(_buffer, line);
-    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+int Request::parse_text_type_body()
+{
+    _body_type = TEXT;
+    if (_content_length) // meaning if value > 0 <=> a body exists
+    {
+        std::string line;
+        std::vector<std::string> tokens;
+        std::size_t pos;
+        size_t i = 0;
+        std::string key;
+        std::string value;
 
-    // todo later, if needed
-
+        line.clear();
+        ft_getline(_buffer, line);
+        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
+            return (1);
+        tokens = split(line, '&');
+        while (i < tokens.size())
+        {
+            line = tokens[i];
+            pos = line.find("=");
+            if (pos == std::string::npos) // format is not 'key=value'
+            {
+                _body[i++] = std::make_pair("", line);
+            }
+            else
+            {
+                key = trim(line.substr(0, pos));
+                value = trim(line.substr(pos + 1));
+                _body[i++] = std::make_pair(key, value);
+            }
+        }
+    }
     return (1);
 }
 
@@ -403,8 +437,12 @@ int Request::parse(std::vector<Location*> location)
     parse_headers();
     if (_transfer_encoding.find("chunked") != std::string::npos)
         parse_chunked_body();
-    else
-        parse_body();
+    else if (_content_type.find("application/x-www-form-urlencoded") != std::string::npos)
+        parse_application_type_body();
+    else if (_content_type.find("multipart/form-data") != std::string::npos)
+        parse_form_type_body();
+    else // _content_type == text/plain
+        parse_text_type_body();
     return (1);
 }
 
@@ -432,8 +470,7 @@ void Request::display(void)
     print_map(ss1, _content_language);
     ss1 << " 8) _content_length: " << _content_length << std::endl; // 8
     ss1 << " 9) _content_location:" << _content_location << std::endl; // 9
-    ss1 << "10) _content_type:"; // 10
-    print_map(ss1, _content_type);
+    ss1 << "10) _content_type:" << _content_type << std::endl; // 10
     ss1 << "11) _date: " << _date << std::endl; // 11
     ss1 << "12) _host: " << _host << std::endl; // 12
     ss1 << "13) _referer: " << _referer << std::endl; // 13

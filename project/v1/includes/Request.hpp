@@ -26,9 +26,16 @@
 
 #include "Server.hpp"
 #include "Location.hpp"
-// #include "Client.hpp"
-
 class Client;
+
+/*
+** Const
+*/
+
+# define CHUNKED		0
+# define APPLICATION 	1
+# define FORM 			2
+# define TEXT 			3
 
 /*
 ** Class
@@ -78,7 +85,7 @@ class Request
 		std::map<int, std::string> 							_content_language; // 7 pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
 		int			 										_content_length; // 8 indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
 		std::string				 							_content_location; // 9 indicates an alternate location for the returned data. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Location
-		std::map<int, std::string> 							_content_type; // 10 sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
+		std::string				 							_content_type; // 10 sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
 		// - Autres:
 		std::string 										_date; // 11 la date et l'heure d'origine du message. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Date
 		// - Contexte de requête:
@@ -90,6 +97,7 @@ class Request
 		** Request body
 		*/
 		// std::string 										_body;
+		int			 										_body_type;
 		std::map<int, std::pair<std::string, std::string> > _body; // 15
 		// si post body = "a=1&b=2" -> {1: {"a": "1"}, 2: {"b": "2"}}
 		// ou alors simple body = "abc" -> {1: {"": "abc"}}
@@ -112,9 +120,13 @@ class Request
 		void 				init();
 
 		std::map<std::string, std::string>	headers_to_map(void);
+
     	int 				parse_request_line(void);
     	int 				parse_headers(void);
-    	int 				parse_body(void);
+    	int 				parse_application_type_body(void);
+    	int 				parse_form_type_body(void);
+    	int 				parse_text_type_body(void);
+
     	int 				parse_chunked_body(void);
 		void				parse_query_string();
 		int					get_location(std::string *uri, std::vector<Location*> location);

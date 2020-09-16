@@ -78,8 +78,14 @@ int				set_laguage(Request *req)
 	size_t		j;
 	std::string temp;
 
+//	std::cout << req->_file << std::endl;
+//	std::cout << req->_accept_language.size() << "##########" << std::endl;
+//	std::cout << req->_accept_language[0] << "##########" << std::endl;
+//	std::cout << req->_accept_language[1] << "##########" << std::endl;
+//	std::cout << req->_accept_language[2] << "##########" << std::endl;
 	while (i < req->_accept_language.size())
 	{
+//		std::cout << req->_accept_language[i] << "##########" << std::endl;
 		if (req->_accept_language[i] != "")
 		{
 			temp = req->_accept_language[i];
