@@ -311,31 +311,12 @@ int Request::parse_text_type_body()
     {
         std::string line;
         std::vector<std::string> tokens;
-        std::size_t pos;
-        size_t i = 0;
-        std::string key;
-        std::string value;
 
         line.clear();
         ft_getline(_buffer, line);
         if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
             return (1);
-        tokens = split(line, '&');
-        while (i < tokens.size())
-        {
-            line = tokens[i];
-            pos = line.find("=");
-            if (pos == std::string::npos) // format is not 'key=value'
-            {
-                _body[i++] = std::make_pair("", line);
-            }
-            else
-            {
-                key = trim(line.substr(0, pos));
-                value = trim(line.substr(pos + 1));
-                _body[i++] = std::make_pair(key, value);
-            }
-        }
+        _text_body = line;
     }
     return (1);
 }
@@ -435,6 +416,7 @@ int Request::parse(std::vector<Location*> location)
     parse_request_line();
 	parse_filename(location);
     parse_headers();
+
     if (_transfer_encoding.find("chunked") != std::string::npos)
         parse_chunked_body();
     else if (_content_type.find("application/x-www-form-urlencoded") != std::string::npos)
@@ -443,6 +425,7 @@ int Request::parse(std::vector<Location*> location)
         parse_form_type_body();
     else // _content_type == text/plain
         parse_text_type_body();
+    
     return (1);
 }
 
