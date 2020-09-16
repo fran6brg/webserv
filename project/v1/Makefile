@@ -45,6 +45,9 @@ fclean: clean
 	$(RM) $(EXEC)
 	$(RM) webserv.dSYM
 
+tester: 
+	../../intra/tester http://localhost:8080
+
 re:	fclean all
 
 .PHONY:	all clean fclean re
