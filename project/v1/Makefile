@@ -11,6 +11,7 @@ GNL			=	srcs/get_next_line/get_next_line.cpp \
 
 METHODS		=	srcs/methods/connect.cpp \
 				srcs/methods/delete.cpp \
+				srcs/methods/get.cpp \
 				srcs/methods/head.cpp \
 				srcs/methods/option.cpp \
 				srcs/methods/put.cpp \

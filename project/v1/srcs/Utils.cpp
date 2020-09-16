@@ -72,6 +72,76 @@ std::string		get_location_header(Request *req)
 	return (temp);
 }
 
+int				set_laguage(Request *req)
+{
+	size_t		i = 0;
+	size_t		j;
+	std::string temp;
+
+//	std::cout << req->_file << std::endl;
+//	std::cout << req->_accept_language.size() << "##########" << std::endl;
+//	std::cout << req->_accept_language[0] << "##########" << std::endl;
+//	std::cout << req->_accept_language[1] << "##########" << std::endl;
+//	std::cout << req->_accept_language[2] << "##########" << std::endl;
+	while (i < req->_accept_language.size())
+	{
+//		std::cout << req->_accept_language[i] << "##########" << std::endl;
+		if (req->_accept_language[i] != "")
+		{
+			temp = req->_accept_language[i];
+			if ((j = temp.find(';')) != std::string::npos)
+				temp = temp.substr(0, i);
+			req->_file = req->_file + "." + temp;
+			std::ifstream file(req->_file);
+			if (file.good())
+			{
+				file.close();
+				return (1);
+			}
+			else
+				unset_extension(req);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int				set_charset(Request *req)
+{
+	size_t		i = 0;
+	size_t		j;
+	std::string temp;
+
+	while (i < req->_accept_charset.size())
+	{
+		if (req->_accept_charset[i] != "")
+		{
+			temp = req->_accept_language[i];
+			if ((j = temp.find(';')) != std::string::npos)
+				temp = temp.substr(0, i);
+			req->_file = req->_file + "." + temp;
+			std::ifstream file(req->_file);
+			if (file.good())
+			{
+				file.close();
+				return (1);
+			}
+			else
+				unset_extension(req);
+		}
+		i++;
+	}
+	return (0);
+}
+
+void			unset_extension(Request *req)
+{
+	int		i = req->_file.size() - 1;
+	while (req->_file[i] && req->_file[i] != '.')
+		i--;
+	req->_file = req->_file.substr(0, i);
+}
+
 std::string map_to_string(std::map<int, std::string> m, char delim)
 {
     std::stringstream ret;
@@ -116,6 +186,7 @@ void displayMap(std::map<std::string, std::string> map)
 {
 	std::map<std::string, std::string>::iterator it = map.begin();
 	int i = 0;
+
 	while (it != map.end())
 	{
 		std::cout << ++i << ") " << it->first << "=" << it->second << std::endl;
