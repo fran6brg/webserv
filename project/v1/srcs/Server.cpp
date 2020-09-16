@@ -156,7 +156,7 @@ int Server::recvRequest(Client *c)
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
         // https://stackoverflow.com/questions/10318191/reading-socket-eagain-resource-temporarily-unavailable
         // EAGAIN does not mean you're disconnected, it just means "there's nothing to read now; try again later".
-        if (errno != EWOULDBLOCK /*|| errno != EAGAIN*/)
+        // if (errno != EWOULDBLOCK /*|| errno != EAGAIN*/)
             c->_is_connected = false;
         return (0);
     }
@@ -195,7 +195,7 @@ int Server::sendResponse(Client *c)
     if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) == -1)
     {
         LOG_WRT(Logger::ERROR, "Server::sendResponse -> send(): " + std::string(strerror(errno)));
-        if (errno != EWOULDBLOCK && errno != EAGAIN)
+        // if (errno != EWOULDBLOCK && errno != EAGAIN)
             c->_is_connected = false;
         return (0);
     }

@@ -33,8 +33,16 @@ void			Response::put(Request *req)
 	std::ofstream f2(req->_file);
 	if (f2.good())
 	{
-	    // LOG_WRT(Logger::DEBUG, "put: writing req->body inside _file\n");
-        f2 << req->_body[0].second.substr(0, req->_content_length) << std::endl;
+        if (req->_content_type == "application/x-www-form-urlencoded")
+		{
+		    LOG_WRT(Logger::DEBUG, "put: writing req->body inside _file\n");
+			f2 << req->_body[0].second.substr(0, req->_content_length) << std::endl;
+		}
+        else
+		{
+			LOG_WRT(Logger::DEBUG, "put: writing req->text_body inside _file\n");
+			f2 << req->_text_body << std::endl;
+		}
     }
 	else
 	{

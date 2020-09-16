@@ -178,6 +178,7 @@ void Request::init(void)
     _referer.clear();
     _user_agent.clear();
     // Request body
+    _text_body.clear();
     _body.clear();
     _transfer_encoding.clear();
 
@@ -287,12 +288,14 @@ int Request::parse_application_type_body()
         ft_getline(_buffer, line);
         if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
             return (1);
+        else
+            line = line.substr(0, _content_length);
         tokens = split(line, '&');
         while (i < tokens.size())
         {
             line = tokens[i];
             pos = line.find("=");
-            if (pos == std::string::npos) // format is not 'key=value'
+            if (pos == std::string::npos) // format is not 'key=value' // should not happen since content_type = application
             {
                 _body[i++] = std::make_pair("", line);
             }
@@ -326,7 +329,7 @@ int Request::parse_text_type_body()
         ft_getline(_buffer, line);
         if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
             return (1);
-        _text_body = line;
+        _text_body = line.substr(0, _content_length);
     }
     return (1);
 }
@@ -433,7 +436,7 @@ int Request::parse(std::vector<Location*> location)
         parse_application_type_body();
     else if (_content_type == "multipart/form-data")
         parse_form_type_body();
-    else // _content_type == text/plain
+    else // _content_type == text/plain || _content_type.empty()
         parse_text_type_body();
     
     return (1);

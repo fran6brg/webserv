@@ -69,10 +69,10 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-if len(tests_to_run) == 0 or (1 in tests_to_run or 2 in tests_to_run):
-	cwd = os.getcwd()
-	# print (cwd)
-	os.remove(cwd + "/www/methods/put/abc")
+# if len(tests_to_run) == 0 or (1 in tests_to_run or 2 in tests_to_run):
+# 	cwd = os.getcwd()
+# 	# print (cwd)
+# 	os.remove(cwd + "/www/methods/put/abc")
 
 # ---
 i += 1
