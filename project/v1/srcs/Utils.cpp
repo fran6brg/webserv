@@ -78,16 +78,6 @@ int				set_laguage(Request *req)
 	size_t		j;
 	std::string temp;
 
-//	std::cout << req->_file << std::endl;
-	std::cout << req->_accept_language.size() << std::endl;
-	// std::cout << "----" << std::endl;
-	// std::cout << req->_accept_language[0] << std::endl;
-	// std::cout << "----" << std::endl;
-	// std::cout << req->_accept_language[1] << std::endl;
-	// std::cout << "----" << std::endl;
-	// std::cout << map_to_string(req->_accept_language, ' ') << std::endl;
-	// std::cout << "----" << std::endl;
-
 	while (i < req->_accept_language.size())
 	{
 //		std::cout << req->_accept_language[i] << "##########" << std::endl;
@@ -121,13 +111,18 @@ int				set_charset(Request *req)
 	{
 		if (req->_accept_charset[i] != "")
 		{
-			temp = req->_accept_language[i];
+			temp = req->_accept_charset[i];
 			if ((j = temp.find(';')) != std::string::npos)
 				temp = temp.substr(0, i);
+			std::cout << req->_accept_charset[i] << "}" << std::endl;
+			std::cout << temp << "}" << std::endl;
+			std::cout << req->_file << "}" << std::endl;
 			req->_file = req->_file + "." + temp;
+			std::cout << req->_file << "}" << std::endl;
 			std::ifstream file(req->_file);
 			if (file.good())
 			{
+				std::cout << req->_file << "-ICI-" << std::endl;
 				file.close();
 				return (1);
 			}

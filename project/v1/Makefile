@@ -1,45 +1,75 @@
-CC			=	clang++
+.PHONY: all clean fclean re norme
 
-VERSION		= 	-std=c++11 # -std=c++98
+CC = clang++
 
-CPPFLAGS	=	-Wall -Werror -Wextra -g
+FLAGS = -Wall -Wextra -Werror -g
 
-RM			=	rm -rf
+VERSION     =   -std=c++11 # -std=c++98
 
-GNL			=	srcs/get_next_line/get_next_line.cpp \
-				srcs/get_next_line/get_next_line_utils.cpp
+NAME = webserv
 
-METHODS		=	srcs/methods/connect.cpp \
-				srcs/methods/delete.cpp \
-				srcs/methods/get.cpp \
-				srcs/methods/head.cpp \
-				srcs/methods/option.cpp \
-				srcs/methods/put.cpp \
-				srcs/methods/trace.cpp
+SRC_PATH = ./srcs
+LIB_PATH = ./srcs/methods
+GNL_PATH = ./srcs/get_next_line
+OBJ_PATH = ./obj
+OBJLIB_PATH = ./obj
+OBJGNL_PATH = ./obj
 
-SRCS		=	$(GNL) \
-				$(METHODS) \
-				srcs/main.cpp \
-				srcs/Conf.cpp \
-				srcs/Server.cpp \
-				srcs/Client.cpp \
-				srcs/Logger.cpp \
-				srcs/Request.cpp \
-				srcs/Response.cpp \
-				srcs/CGI.cpp \
-				srcs/Utils.cpp \
-				srcs/utils_tmp.cpp \
-				srcs/Config_parser.cpp
+SRC_NAME =  Conf.cpp \
+			main.cpp \
+            Server.cpp \
+            Client.cpp \
+            Logger.cpp \
+            Request.cpp \
+            Response.cpp \
+            CGI.cpp \
+            Utils.cpp \
+            utils_tmp.cpp \
+            Config_parser.cpp
 
-OBJS		= 	$(SRCS:.cpp=.o)
-EXEC		=	webserv
+LIB_NAME = connect.cpp \
+           delete.cpp \
+           get.cpp \
+           head.cpp \
+           option.cpp \
+           put.cpp \
+           trace.cpp
 
-all:
-	${CC} ${VERSION} ${CPPFLAGS} -o $(EXEC) $(SRCS)
+GNL_NAME =  get_next_line.cpp \
+			get_next_line_utils.cpp
+
+OBJGNL_NAME = $(GNL_NAME:.cpp=.o)
+OBJ_NAME = $(SRC_NAME:.cpp=.o)
+OBJLIB_NAME = $(LIB_NAME:.cpp=.o)
+
+SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
+LIB = $(addprefix $(LIB_PATH)/, $(LIB_NAME))
+GNL = $(addprefix $(GNL_PATH)/, $(GNL_NAME))
+OBJ = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME))
+OBJLIB = $(addprefix $(OBJLIB_PATH)/,$(OBJLIB_NAME))
+OBJGNL = $(addprefix $(OBJGNL_PATH)/,$(OBJGNL_NAME))
+
+RM = rm -rf
+
+all: $(NAME)
+
+$(NAME): $(OBJ) $(OBJLIB) $(OBJGNL)
+	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJGNL} ${OBJLIB} ${OBJ}
+
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp
+	@mkdir $(OBJ_PATH) 2> /dev/null || true
+	${CC} ${VERSION} -o $@ -c $<
+
+$(OBJLIB_PATH)/%.o: $(LIB_PATH)/%.cpp
+	@mkdir $(OBJLIB_PATH) 2> /dev/null || true
+	$(CC) ${VERSION} -o $@ -c $<
+
+$(OBJGNL_PATH)/%.o: $(GNL_PATH)/%.cpp
+	@mkdir $(OBJGNL_PATH) 2> /dev/null || true
+	$(CC) ${VERSION} -o $@ -c $<
 
 clean:
-	$(RM) $(OBJS)
-	$(RM) ./a.out.dSYM
+	$(RM) $(OBJ) $(OBJLIB) $(OBJGNL)
 
 fclean: clean
 	$(RM) $(EXEC)
@@ -50,4 +80,4 @@ tester:
 
 re:	fclean all
 
-.PHONY:	all clean fclean re
+re: fclean all

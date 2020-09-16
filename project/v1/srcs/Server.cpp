@@ -202,6 +202,8 @@ int Server::sendResponse(Client *c)
     else
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send=OK");
+        // LOG_WRT(Logger::DEBUG, "sendResponse: date: " + c->_response._date);
+        // LOG_WRT(Logger::DEBUG, "sendResponse: to_send: " + c->_response._to_send);
         c->_is_connected = false;
     }
     return (1);

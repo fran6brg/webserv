@@ -23,7 +23,7 @@ void Response::init(void)
     // Request Headers, dans l'ordre du sujet
     _allow.clear();
     _content_language.clear();
-    _content_length = -1; // est-ce qu'on peut avoir un content_length de 0 ?
+    _content_length = 0; // est-ce qu'on peut avoir un content_length de 0 ?
     _content_location.clear();
     _content_type.clear();
     _last_modified.clear();
@@ -50,10 +50,12 @@ int Response::concat_to_send(void)
     ss << _reason_phrase << "\r\n";
     // Request Headers, dans l'ordre du sujet
     // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
-    if (_content_length != -1)
+    // if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
+    if (_content_length >= 0)
         ss << "Content-Length: " << _content_length << "\r\n";
     // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
-    if (!_allow.empty())     { ss << "allow: " << _allow << "\r\n"; }
+    if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
+    // if (!_content_type.empty())         { ss << "Content-Type: " << _content_type << "\r\n"; }
     if (!_content_type.empty())
 	{
 		ss << "Content-Type:";
@@ -66,8 +68,7 @@ int Response::concat_to_send(void)
     	ss << "\r\n";
 	}
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
-    if (!_location.empty()
-	&& _status_code == 201)             { ss << "Location: " << _location << "\r\n"; }
+    if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
@@ -95,6 +96,8 @@ int Response::format_to_send(Request *req)
 	
 	// Response headers, dans l'ordre du sujet
     _date = get_date();
+    // LOG_WRT(Logger::DEBUG, "format_to_send: " + _date);
+
     _server = g_conf._webserv;
 	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT" || req->_method == "POST")
     && (_status_code == OK_200 || _status_code == CREATED_201) && _content_type[0] == "")

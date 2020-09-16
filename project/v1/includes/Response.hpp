@@ -72,7 +72,7 @@ class Response
 		std::map<int, std::string>  _content_language; // pour décrire quels langages sont destinés au public, de sorte que cela permette à l'utilisateur de se différencier en fonction de la langue préférée des utilisateurs. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Language
 		int                         _content_length; // indique la taille en octets (exprimée en base 10) du corps de la réponse envoyée au client. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Length
 		std::map<int, std::string>  _content_location; // indicates an alternate location for the returned data. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Location
-		std::map<int, std::string>  _content_type; // sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
+		std::map<int, std::string>	_content_type; // sert à indiquer le type MIME de la ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Content-Type
 		// - Conditionnels:
 		std::string                 _last_modified; //  la date et l'heure à laquelle le serveur d'origine pense que la ressource a été modifiée pour la dernière fois. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Last-Modified
 		// - Redirection:

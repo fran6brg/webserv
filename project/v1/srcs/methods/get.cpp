@@ -11,10 +11,16 @@ void			Response::get(Request *req)
 //	std::cout << req->_file << std::endl;
 //	std::cout << "language = " << language << std::endl;
 	std::ifstream file(req->_file);
-	if (req->_method == "GET" && (req->_location->_cgi_root != "" || (req->_location->_php_root != "" && is_php(req->_file))))
+	if ((req->_method == "GET" 
+		&& (req->_location->_cgi_root != "" 
+			|| (req->_location->_php_root != ""
+			&& is_php(req->_file))))
+	&& file.good())
 	{
+		LOG_WRT(Logger::DEBUG, "get: cgi\n");
 		ft_cgi(req);
 		get_cgi_ret();
+		_last_modified = get_last_modif(req->_file);
 		std::ifstream temp("./www/temp_file");
 		std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());
 
@@ -30,7 +36,7 @@ void			Response::get(Request *req)
 	}
 	else
 		not_found(req);
-//	std::cout << req->_file << std::endl;
+
 	if (charset)
 		unset_extension(req);
 	if (language)
