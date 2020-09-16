@@ -93,6 +93,7 @@ void Request::fill_request(std::string key, std::string value)
 
     if (key == "Accept-Charset") // 4 example: Accept-Charset: utf-8, iso-8859-1;q=0.5
     {
+		std::cout << "ICI" << std::endl;
         tokens = split(value, ',');
         if (!tokens.empty())
         {
