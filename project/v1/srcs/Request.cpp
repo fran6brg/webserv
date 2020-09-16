@@ -58,6 +58,14 @@ std::string trim(const std::string& str)
     return (std::string(str.substr(first, (last - first + 1)))); // std::string() autour du substr pour bien s'assurer qu'on a le \0 à la fin de value sinon ça peut bug
 }
 
+void remove_return(std::string& str)
+{
+    size_t pos = str.find_last_of('\r');
+
+    if (pos != std::string::npos)
+        str.erase(pos);
+}
+
 void print_map(std::stringstream &ss1, std::map<int, std::string> map)
 {
     size_t i = 0;
@@ -234,7 +242,9 @@ int Request::parse_headers()
         if (pos == std::string::npos)
             break ;
         key = trim(line.substr(0, pos));
+        remove_return(key);
         value = trim(line.substr(pos + 1));
+        remove_return(value);
         if (key.empty())
             break ; 
         // fill corresponding request member variable with value
@@ -417,11 +427,11 @@ int Request::parse(std::vector<Location*> location)
 	parse_filename(location);
     parse_headers();
 
-    if (_transfer_encoding.find("chunked") != std::string::npos)
+    if (_transfer_encoding == "chunked")
         parse_chunked_body();
-    else if (_content_type.find("application/x-www-form-urlencoded") != std::string::npos)
+    else if (_content_type == "application/x-www-form-urlencoded")
         parse_application_type_body();
-    else if (_content_type.find("multipart/form-data") != std::string::npos)
+    else if (_content_type == "multipart/form-data")
         parse_form_type_body();
     else // _content_type == text/plain
         parse_text_type_body();

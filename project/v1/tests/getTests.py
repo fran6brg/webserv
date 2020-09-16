@@ -54,34 +54,34 @@ def printResponse(r, i):
 i = 0;
 
 i += 1
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/')
 	printResponse(r, i)
 
 # ---
 i += 1
 headers = {'Accept-Language': 'fr'}
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
 # ---
 i += 1
 headers = {'Accept-Language': 'en'}
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
 # ---
 i += 1
 headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
 # ---
 i += 1
 headers = {'Accept-Charset': 'iso-8859-1'}
-if len(tests_to_run) > 0 and i in tests_to_run:
+if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)

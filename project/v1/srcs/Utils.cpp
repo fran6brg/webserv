@@ -79,10 +79,15 @@ int				set_laguage(Request *req)
 	std::string temp;
 
 //	std::cout << req->_file << std::endl;
-//	std::cout << req->_accept_language.size() << "##########" << std::endl;
-//	std::cout << req->_accept_language[0] << "##########" << std::endl;
-//	std::cout << req->_accept_language[1] << "##########" << std::endl;
-//	std::cout << req->_accept_language[2] << "##########" << std::endl;
+	std::cout << req->_accept_language.size() << std::endl;
+	// std::cout << "----" << std::endl;
+	// std::cout << req->_accept_language[0] << std::endl;
+	// std::cout << "----" << std::endl;
+	// std::cout << req->_accept_language[1] << std::endl;
+	// std::cout << "----" << std::endl;
+	// std::cout << map_to_string(req->_accept_language, ' ') << std::endl;
+	// std::cout << "----" << std::endl;
+
 	while (i < req->_accept_language.size())
 	{
 //		std::cout << req->_accept_language[i] << "##########" << std::endl;
