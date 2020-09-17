@@ -19,7 +19,7 @@
 #include <utility> // std::pair, std::make_pair
 #include <fstream>
 #include <sstream>
-
+#include <unistd.h>
 
 /*
 ** Headers

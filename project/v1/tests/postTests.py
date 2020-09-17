@@ -51,7 +51,7 @@ payload = {'some': 'data2'}
 headers_adds = {
     "Content-Type": "application/json",
 }
-r = requests.post('http://localhost:80/postTests/lol', data=json.dumps(payload), headers=headers_adds)
+r = requests.post('http://localhost:8080/', data=json.dumps(payload), headers=headers_adds)
 printResponse(r, 0)
 
 #payload = "hello world ! icici le monde"

@@ -170,7 +170,7 @@ int Server::recvRequest(Client *c)
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
 
     c->_buffer[ret] = '\0';
-	LOG_WRT(Logger::INFO, "RAW REQUEST:\n----------------------\n" + std::string(c->_buffer) + "\n----------------------");
+	LOG_WRT(Logger::INFO, "RAW REQUEST:\n--------" + std::to_string(ret) + "--------------\n" + std::string(c->_buffer) + "\n----------------------");
     c->_request._buffer = std::string(c->_buffer, 1000);
     c->_request.parse(_locations);
     

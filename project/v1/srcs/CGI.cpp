@@ -128,8 +128,8 @@ void		Response::ft_cgi(Request *req)
         args[2] = NULL;
 		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
 		pipe(tubes);
-//		RECUPERER LE BODY NON PARSER (std::string)
-//		write(tube[1], req->_body, req->_body.size());
+		if (req->_method == "POST")
+			write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
 		close(tubes[1]);
 		if ((pid = fork()) == 0)
 		{
