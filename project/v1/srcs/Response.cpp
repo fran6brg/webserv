@@ -140,11 +140,6 @@ void		Response::handle_response(Request *req)
 		connect(req);
 }
 
-void			Response::post(Request *req)
-{
-	(void)req;
-}
-
 int				Response::method_not_allowed(Request *req)
 {
 	// Comparaison de la methode demande avec les methodes autorise dans la location

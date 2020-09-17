@@ -4,13 +4,6 @@ import os
 import sys
 import json
 
-tests_to_run = []
-ac = len(sys.argv)
-if ac > 1:
-	for av in sys.argv[1:]:
-		# print ("to run: test", av)
-		tests_to_run.append(int(av))
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -52,15 +45,37 @@ def printResponse(r, i):
 
 # PUT -------------------------------------------------------------------------
 
-i = 0;
+#i = 0;
+#i += 1
+#print (bcolors.OKBLUE + "\n" + str(i) + ".1 requete post avec json \n" + bcolors.ENDC)
+#
+#payload = {'some': 'data2'}
+#headers_adds = {
+#    "Content-Type": "application/json",
+#}
+#r = requests.post('http://localhost:80/postTests/', data=json.dumps(payload), headers=headers_adds)
+#printResponse(r, i)
 
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ".1 requete post avec json \n" + bcolors.ENDC)
+#payload = "hello world ! icici le monde"
+#headers_adds = {
+#    "Content-Type": "sqfqsfsq",
+#}
+#
+#r = requests.post('http://localhost:80/postTests/rzq', payload, headers=headers_adds)
+#printResponse(r, 0)
 
-payload = {'some': 'data2'}
+files = {'file': open('babouin.png', 'rb')}
 headers_adds = {
-    "Content-Type": "application/json",
+    "Content-Type": "image/png",
 }
-if len(tests_to_run) > 0 and i in tests_to_run:
-	r = requests.post('http://localhost:8080/postTests/', data=json.dumps(payload), headers=headers_adds)
-	printResponse(r, i)
+r = requests.post('http://localhost:80/postTests/photo', files=files,  headers=headers_adds)
+printResponse(r, 0) 
+
+
+#payload = ""
+#headers_adds = {
+#    "Content-Type": "application/x-www-form-urlencoded",
+#}
+#
+#r = requests.post('http://localhost:80/postTests/rzq', payload, headers=headers_adds)
+#printResponse(r, 0)

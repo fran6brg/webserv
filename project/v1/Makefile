@@ -33,7 +33,8 @@ LIB_NAME = connect.cpp \
            head.cpp \
            option.cpp \
            put.cpp \
-           trace.cpp
+           trace.cpp \
+		   post.cpp
 
 GNL_NAME =  get_next_line.cpp \
 			get_next_line_utils.cpp
