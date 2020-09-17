@@ -72,7 +72,7 @@ clean:
 	$(RM) $(OBJ) $(OBJLIB) $(OBJGNL)
 
 fclean: clean
-	$(RM) $(EXEC)
+	$(RM) $(NAME)
 	$(RM) webserv.dSYM
 
 tester: 
