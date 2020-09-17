@@ -30,6 +30,7 @@
 # define _INDEX "index"
 # define _CGI_PATH "cgi_path"
 # define _PHP_PATH "php_path"
+// # define _LISTING "autoindex"
 
 class Conf;
 

@@ -96,7 +96,6 @@ class Request
 		/*
 		** Request body
 		*/
-		// std::string 										_body;
 		int			 										_body_type;
 		std::string 										_text_body;
 		std::map<int, std::pair<std::string, std::string> > _body; // 15

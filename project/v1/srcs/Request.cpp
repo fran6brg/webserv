@@ -437,7 +437,7 @@ int Request::parse(std::vector<Location*> location)
         parse_application_type_body();
     else if (_content_type == "multipart/form-data")
         parse_form_type_body();
-    else // _content_type == text/plain || _content_type.empty()
+    // else // _content_type == text/plain || _content_type.empty()
         parse_text_type_body();
     
     return (1);
