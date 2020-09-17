@@ -70,3 +70,9 @@ int		utils_tmp::ft_atoi(const char *str)
 		out *= -1;
 	return (out);
 }
+
+bool utils_tmp::file_exists(const char *filename)
+{
+	struct stat	buffer;
+	return (stat (filename, &buffer) == 0);
+}

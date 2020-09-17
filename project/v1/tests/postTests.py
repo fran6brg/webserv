@@ -45,16 +45,14 @@ def printResponse(r, i):
 
 # PUT -------------------------------------------------------------------------
 
-#i = 0;
-#i += 1
 #print (bcolors.OKBLUE + "\n" + str(i) + ".1 requete post avec json \n" + bcolors.ENDC)
 #
-#payload = {'some': 'data2'}
-#headers_adds = {
-#    "Content-Type": "application/json",
-#}
-#r = requests.post('http://localhost:80/postTests/', data=json.dumps(payload), headers=headers_adds)
-#printResponse(r, i)
+payload = {'some': 'data2'}
+headers_adds = {
+    "Content-Type": "application/json",
+}
+r = requests.post('http://localhost:80/postTests/lol', data=json.dumps(payload), headers=headers_adds)
+printResponse(r, 0)
 
 #payload = "hello world ! icici le monde"
 #headers_adds = {
@@ -64,12 +62,12 @@ def printResponse(r, i):
 #r = requests.post('http://localhost:80/postTests/rzq', payload, headers=headers_adds)
 #printResponse(r, 0)
 
-files = {'file': open('babouin.png', 'rb')}
-headers_adds = {
-    "Content-Type": "image/png",
-}
-r = requests.post('http://localhost:80/postTests/photo', files=files,  headers=headers_adds)
-printResponse(r, 0) 
+#files = {'file': open('babouin.png', 'rb')}
+#headers_adds = {
+#    "Content-Type": "image/png",
+#}
+#r = requests.post('http://localhost:80/postTests/photo', files=files,  headers=headers_adds)
+#printResponse(r, 0) 
 
 
 #payload = ""

@@ -5,7 +5,9 @@
 # include <sys/time.h>	//get_date
 # include <string.h>	//get_date
 # include <vector>
-
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
 // add a std::to_string
 
 
@@ -16,6 +18,7 @@ public:
 	static int	isspace(int c);
 	static std::vector<std::string> split_string(std::string &str, std::string set);
 	static int ft_atoi(const char *str);
+	static bool file_exists(const char *filename);
 };
 
 #endif
