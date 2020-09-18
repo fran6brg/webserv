@@ -19,7 +19,7 @@
 #include <utility> // std::pair, std::make_pair
 #include <sstream>
 #include <sys/stat.h> 
-
+#include <dirent.h>
 /*
 ** Headers
 */
@@ -133,7 +133,7 @@ class Request
 		int					parse_filename(std::vector<Location*> location);
 		int 				parse(std::vector<Location*> location);
 		void 				display(void);
-
+		void    			creat_autoindex();
 	/*
 	** friends
 	*/

@@ -44,7 +44,7 @@ typedef struct	s_loc
 	std::string					index;      // default file
 	std::string					cgi_path;
 	std::string					php_path;
-  // turn on or off directory listing
+//	int							autoindex;
 }				t_loc;
 
 typedef struct	s_serv
