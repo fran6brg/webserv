@@ -400,6 +400,29 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 **	a partir de l'uri present dans la requete, et de la location
 */
 
+void	Request::creat_autoindex()
+{
+	DIR				*dir;
+	struct dirent	*dent;
+
+	dir = opendir(_file.c_str());
+	if (dir)
+	{
+		_client->_response._body += "<html><body><h1>";
+		while ((dent = readdir(dir)) != NULL)
+		{
+			if (std::string(dent->d_name) != "..")
+			{
+				_client->_response._body += dent->d_name;
+				_client->_response._body += "\n";
+			}
+		}
+		closedir(dir);
+		_client->_response._body += "</h1></body></html>";
+	}
+	std::cout << _client->_response._body;
+}
+
 int	Request::parse_filename(std::vector<Location*> locations)
 {
 	struct stat	info;
@@ -409,22 +432,27 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	get_location(&_uri, locations);
 	if (_location)
 	{
-			i = (_location->_root).size() - 1;
-			if ((_location->_root)[i] == '/')
-				_file = _location->_root + _file;
-			else
-				_file = _location->_root + "/" + _file;
-			if (stat(_file.c_str(), &info) == 0)
-			{
-				 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
-				 {
+		i = (_location->_root).size() - 1;
+		if ((_location->_root)[i] == '/')
+			_file = _location->_root + _file;
+		else
+			_file = _location->_root + "/" + _file;
+		if (stat(_file.c_str(), &info) == 0)
+		{
+			 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
+			 {
+				if (_location->_autoindex == 1 && _method == "GET")
+					creat_autoindex();
+				else
+				{
 					i = _file.size() - 1;
 					if (_file[i] == '/')
 						_file = _file + _location->_index;
 					else
 						_file = _file + "/" + _location->_index;
-				 }
-			}
+			 	}
+			 }
+		}
 	}
 	return (1);
 }

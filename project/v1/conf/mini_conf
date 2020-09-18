@@ -8,7 +8,7 @@ server {
         root	./www/old
 		index	index.html
 		method	GET POST HEAD OPTIONS PUT
-		cgi_path ./www/CGI/cgi_tester
+		# cgi_path ./www/CGI/cgi_tester
     }
     location /test	{
         root    ./www/old/test

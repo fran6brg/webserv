@@ -17,6 +17,7 @@ class Location
         std::vector<std::string>    _method;
 		std::string					_cgi_root;
 		std::string					_php_root;
+		int							_autoindex;
         
         Location(std::string uri, std::string root, std::string index, std::vector<std::string> method, std::string cgi_root, std::string php_root)
         {
@@ -26,6 +27,8 @@ class Location
             _method = method;
 			_cgi_root = cgi_root;
 			_php_root = php_root;
+			// TEMPORAIRE
+			_autoindex = 0;
         };
     };
 

@@ -4,12 +4,14 @@ void			Response::get(Request *req)
 {
 	int		language = 0;
 	int		charset = 0;
-
+	if (_body != "")
+	{
+		_status_code = OK_200;
+		_content_type[0] = "text/html";
+		return ;
+	}
 	language = set_laguage(req);
 	charset = set_charset(req);
-
-//	std::cout << req->_file << std::endl;
-//	std::cout << "language = " << language << std::endl;
 	std::ifstream file(req->_file);
 	if ((req->_method == "GET" 
 		&& (req->_location->_cgi_root != "" 
