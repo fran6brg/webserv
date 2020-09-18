@@ -1,20 +1,29 @@
 #include "../../includes/Headers.hpp"
 
-void			Response::post(Request *req)
+void		Response::post(Request *req)
 {
-		// add is_cgi(req->_file)
+	std::string file;
+	int			fd;
+
 	if ((req->_location->_cgi_root != "" ||
-		(req->_location->_php_root != "" && is_php(req->_file))))
+		(req->_location->_php_root != "" && is_php(file))))//plus précis
 	{
-		ft_cgi(req);
-		get_cgi_ret();
-		// faire quoi tu retour du cgi
+		ft_cgi(req); // if not workin = internal error
+		//get_cgi_ret();
+
+		//------------
+		std::ifstream temp("./www/temp_file");
+		std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());
+		_body = buffer;
+		remove("./www/temp_file");
+		//-----------
+
+		LOG_WRT(Logger::DEBUG, "=====>body: " + _body);
+		write(fd, _body.c_str(), _body.length());
+		
 	}
 	else
 	{
-		int fd;
-
-		//Set the extention of the file whith mime tab ?
 		if (utils_tmp::file_exists(req->_file.c_str()))
 		{
 			if ((fd = open(req->_file.c_str(), O_APPEND|O_WRONLY|O_NONBLOCK, 0666)) == -1)
@@ -35,9 +44,9 @@ void			Response::post(Request *req)
 			_status_code = CREATED_201;
 			_body = "Ressource created";
 		}
-		//protect write
 		write(fd, req->_text_body.c_str(), req->_text_body.length());
-		LOG_WRT(Logger::DEBUG, req->_text_body);
-		close(fd);	
 	}
+	//protect write
+	//LOG_WRT(Logger::DEBUG, req->_text_body);
+	close(fd);
 }

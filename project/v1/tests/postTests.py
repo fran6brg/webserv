@@ -47,12 +47,12 @@ def printResponse(r, i):
 
 #print (bcolors.OKBLUE + "\n" + str(i) + ".1 requete post avec json \n" + bcolors.ENDC)
 #
-payload = {'some': 'data2'}
-headers_adds = {
-    "Content-Type": "application/json",
-}
-r = requests.post('http://localhost:8080/', data=json.dumps(payload), headers=headers_adds)
-printResponse(r, 0)
+#payload = {'some': 'data2'}
+#headers_adds = {
+#    "Content-Type": "application/json",
+#}
+#r = requests.post('http://localhost:80/cgi_tester', data=json.dumps(payload), headers=headers_adds)
+#printResponse(r, 0)
 
 #payload = "hello world ! icici le monde"
 #headers_adds = {
@@ -70,10 +70,10 @@ printResponse(r, 0)
 #printResponse(r, 0) 
 
 
-#payload = ""
-#headers_adds = {
-#    "Content-Type": "application/x-www-form-urlencoded",
-#}
-#
-#r = requests.post('http://localhost:80/postTests/rzq', payload, headers=headers_adds)
-#printResponse(r, 0)
+payload = "txt=this_is_a_query_string_test"
+headers_adds = {
+    "Content-Type": "application/x-www-form-urlencoded",
+}
+
+r = requests.post('http://localhost:80/cgi_tester', payload, headers=headers_adds)
+printResponse(r, 0)
