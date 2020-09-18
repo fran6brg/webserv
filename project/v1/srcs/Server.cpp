@@ -151,12 +151,17 @@ int Server::recvRequest(Client *c)
     // The non-blocking mode is set by changing one of the socket's flags.
 
     // bzero(c->_buffer, 1000);
-    if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
+
+    int bytes = strlen(c->_buffermalloc);
+    ret = recv(c->_accept_fd, c->_buffermalloc + bytes, 32768 - bytes, 0);
+    bytes += ret;
+    // if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
+	if (ret == -1)
     {
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
         // https://stackoverflow.com/questions/10318191/reading-socket-eagain-resource-temporarily-unavailable
         // EAGAIN does not mean you're disconnected, it just means "there's nothing to read now; try again later".
-        // if (errno != EWOULDBLOCK /*|| errno != EAGAIN*/)
+        if (errno != EWOULDBLOCK /*|| errno != EAGAIN*/)
             c->_is_connected = false;
         return (0);
     }
@@ -167,21 +172,35 @@ int Server::recvRequest(Client *c)
         return (0);
     }
     else
-		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
+	{
+        // c->_buffer[ret] = '\0';
+        c->_buffermalloc[bytes] = '\0';
+        if (strstr(c->_buffermalloc, "\r\n\r\n") != NULL) // meaning all headers are fully recv
+        {
+            LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
+            
+            LOG_WRT(Logger::INFO, "RAW REQUEST (" + std::to_string(ret) +"):\n" 
+            + "--------------\n" + std::string(c->_buffermalloc, bytes) + "\n----------------------");
+            
+            // c->_request._buffer = std::string(c->_buffer, 1000);
+            c->_request._buffer = std::string(c->_buffermalloc, bytes);
+            c->_request.parse(_locations);
+            
+            // FD_CLR(c->_accept_fd, &g_conf._save_readfds); // working without but to test
+            // FD_CLR(c->_accept_fd, &g_conf._readfds); // working without but to test
 
-    c->_buffer[ret] = '\0';
-	LOG_WRT(Logger::INFO, "RAW REQUEST:\n--------" + std::to_string(ret) + "--------------\n" + std::string(c->_buffer) + "\n----------------------");
-    c->_request._buffer = std::string(c->_buffer, 1000);
-    c->_request.parse(_locations);
-    
-    // FD_CLR(c->_accept_fd, &g_conf._save_readfds);
-    FD_CLR(c->_accept_fd, &g_conf._readfds);
-
-    // FD_SET(c->_accept_fd, &g_conf._save_writefds);
-    FD_SET(c->_accept_fd, &g_conf._writefds);
-    
-    c->_request.display();    
-    return (1);
+            FD_SET(c->_accept_fd, &g_conf._save_writefds);
+            // FD_SET(c->_accept_fd, &g_conf._writefds); // working without but to test
+            
+            c->_request.display();    
+            return (1);
+        }
+        else
+        {
+            LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=not complet");
+            return (0);
+        }
+    }
 }
 
 int Server::sendResponse(Client *c)

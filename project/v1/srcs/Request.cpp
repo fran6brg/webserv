@@ -258,18 +258,23 @@ int Request::parse_headers()
 int Request::parse_chunked_body()
 {
     std::string line;
-    std::vector<std::string> tokens;
-
+    unsigned int len; 
+    std::stringstream ss;
+    
     line.clear();
-    ft_getline(_buffer, line);
-    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
-    ft_getline(_buffer, line);
-    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
-    ft_getline(_buffer, line);
-    LOG_WRT(Logger::DEBUG, "inside parse_chunked_body(): line = " + line);
+    while (!_buffer.empty())
+    {
+        ft_getline(_buffer, line); // get len
+        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
+        ss << std::hex << line;
+        ss >> len;
+        LOG_WRT(Logger::DEBUG, "len in hex: " + std::to_string(len));
 
-    // todo later, if needed
-
+        line.clear();
+        ft_getline(_buffer, line); // get body
+        _text_body += line;
+        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
+    }
     return (1);
 }
 
@@ -324,7 +329,6 @@ int Request::parse_text_type_body()
     if (_content_length) // meaning if value > 0 <=> a body exists
     {
         std::string line;
-        std::vector<std::string> tokens;
 
         line.clear();
         ft_getline(_buffer, line);
@@ -472,6 +476,7 @@ void Request::display(void)
     ss1 << "12) _host: " << _host << std::endl; // 12
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
+    ss1 << "15) _text_body (" << std::to_string(_text_body.length()) << "): " << _text_body << std::endl; // 14
     ss1 << "15) _body:" << std::endl; // 15
     if (_body.empty())
         ss1 << std::endl;

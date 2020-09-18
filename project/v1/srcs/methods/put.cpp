@@ -22,12 +22,14 @@ void			Response::put(Request *req)
 	if (f1.good()) // test if _file already exists
 	{
         _status_code = OK_200;
+		LOG_WRT(Logger::DEBUG, "put: file exists, is good\n");
     }
 	else // _file does not exist
 	{
         _status_code = CREATED_201;
 		// _location = req->_uri; // déjà fait dans format_to_send()
 		_body = "Ressource created";
+		LOG_WRT(Logger::DEBUG, "put: file created\n");
     }
 	f1.close();
 
@@ -47,7 +49,7 @@ void			Response::put(Request *req)
     }
 	else
 	{
-	    LOG_WRT(Logger::DEBUG, "put: failed to write body inside _file -> 404\n");
+	    LOG_WRT(Logger::DEBUG, "put: failed to write body inside _file: \"" + std::string(strerror(errno)) + "\" -> 404\n");
 		not_found(req);
     }
 	f2.close();

@@ -48,6 +48,8 @@ class Client
 
         bool        _is_connected;
 
+        char        *_buffermalloc;
+
     /*
     ** methods
     */

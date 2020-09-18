@@ -11,20 +11,28 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	// vers une forme binaire (dans l'ordre d'octet du réseau),
 	// et la stocke dans la structure pointée
 	// http://manpagesfr.free.fr/man/man3/inet.3.html
-    _ip = inet_ntoa(addr.sin_addr); // todo: à recoder si non authorisée
-	_port = htons(addr.sin_port); // todo: à recoder si non authorisée
+    _ip = inet_ntoa(addr.sin_addr); // todo: à recoder si non autorisée
+	_port = htons(addr.sin_port); // todo: à recoder si non autorisée
 	_request._client = this;
 	// select():
 	FD_SET(_accept_fd, &g_conf._save_readfds);
 	// FD_SET(_accept_fd, &g_conf._readfds);
+	// FD_SET(_accept_fd, &g_conf._save_writefds);
+	// FD_SET(_accept_fd, &g_conf._writefds);
+
 	g_conf.add_fd(_accept_fd);
+
+	_buffermalloc = (char *)malloc(sizeof(char) * (32768 + 1));
+	memset((void *)_buffermalloc, 0, 32768 + 1);
 }
 
 Client::~Client()
 {
 	LOG_WRT(Logger::INFO, "closing connection for client " + std::to_string(_accept_fd));
-	// FD_CLR(_accept_fd, &g_conf._save_readfds);
-	FD_CLR(_accept_fd, &g_conf._readfds);
+	FD_CLR(_accept_fd, &g_conf._save_readfds);
+	// FD_CLR(_accept_fd, &g_conf._readfds);
+	FD_CLR(_accept_fd, &g_conf._save_writefds);
+	// FD_CLR(_accept_fd, &g_conf._writefds);
 	g_conf.remove_fd(_accept_fd); 
 	close(_accept_fd);
 	_accept_fd = -1;
