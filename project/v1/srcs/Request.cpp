@@ -12,7 +12,7 @@ Request::Request(void)
 ** utils
 */
 
-void	ft_getline(std::string &b, std::string &line)
+void	ft_getline(std::string b, std::string &line)
 {
     size_t					pos;
 
@@ -478,7 +478,7 @@ int Request::parse(std::vector<Location*> location)
         else if (_content_type == "multipart/form-data")
             parse_form_type_body();
         // else // _content_type == text/plain || _content_type.empty()
-            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction 
+            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction (body texte empty)
     }    
     return (1);
 }

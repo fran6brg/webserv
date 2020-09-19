@@ -1,1 +1,1 @@
-txt=this_is_a_query_string_test
+POST /bonjour HTTP/1.1
