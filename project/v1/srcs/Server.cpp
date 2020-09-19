@@ -153,7 +153,7 @@ int Server::recvRequest(Client *c)
     // bzero(c->_buffer, 1000);
 
     int bytes = strlen(c->_buffermalloc);
-    ret = recv(c->_accept_fd, c->_buffermalloc + bytes, 32768 - bytes, 0);
+    ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
     // if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
 	if (ret == -1)

@@ -22,8 +22,8 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 
 	g_conf.add_fd(_accept_fd);
 
-	_buffermalloc = (char *)malloc(sizeof(char) * (32768 + 1));
-	memset((void *)_buffermalloc, 0, 32768 + 1);
+	_buffermalloc = (char *)malloc(sizeof(char) * (RECV_BUFFER + 1));
+	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 }
 
 Client::~Client()

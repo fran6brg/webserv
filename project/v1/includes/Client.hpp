@@ -20,9 +20,14 @@
 class Server;
 
 /*
-** Class
+** Const
 */
 
+# define RECV_BUFFER    60000
+
+/*
+** Class
+*/
 
 class Client
 {

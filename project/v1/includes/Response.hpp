@@ -58,9 +58,9 @@ class Response
 		** Status Line
 		*/
 
-		std::string _http_version;
-		int 		_status_code;
-		std::string _reason_phrase;
+		std::string					_http_version;
+		int 						_status_code;
+		std::string					_reason_phrase;
 
 		/*
 		** Response Headers, dans l'ordre du sujet
@@ -97,7 +97,7 @@ class Response
 		** Response body
 		*/
 
-		std::string _to_send;
+		std::string 				_to_send;
 
 	/*
 	** methods
