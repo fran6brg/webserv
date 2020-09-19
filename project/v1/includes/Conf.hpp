@@ -55,7 +55,7 @@ class Conf
         
         // other variables
         std::vector<Server*>	_servers;
-        std::list<int>          _active_fds;
+        std::list<int>          _active_fds; // never use ?
 
     /*
     ** methods

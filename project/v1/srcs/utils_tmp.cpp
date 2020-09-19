@@ -76,3 +76,31 @@ bool utils_tmp::file_exists(const char *filename)
 	struct stat	buffer;
 	return (stat (filename, &buffer) == 0);
 }
+
+std::string utils_tmp::read_file(int fd)
+{
+	int ret;
+	char *cline;
+	std::string line;
+	std::string buffer;
+
+	while ((ret = get_next_line(fd, &cline)))
+	{
+		line = cline;
+		free(cline);
+		cline=NULL;
+		buffer.append(line);
+	}
+	if (cline)
+	{
+		line = cline;
+		free(cline);
+		buffer.append(line);
+	}
+	if (ret < 0)
+	{
+		//Jeter une exeption pour erreur;
+		LOG_WRT(Logger::DEBUG, "erreur read file");
+	}
+	return (buffer);
+}
