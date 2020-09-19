@@ -4,7 +4,16 @@
 ** constructors / destructors
 */
 
-Response::Response(void)
+Response::Response(void)/*:
+    _http_version(std::string("")),
+    _reason_phrase(std::string("")),
+    _allow(std::string("")),
+    _last_modified(std::string("")),
+    _location(std::string("")),
+    _date(std::string("")),
+    _retry_after(std::string("")),
+    _server(std::string("")),
+    _to_send(std::string(""))*/
 {
     init();
 }
@@ -42,13 +51,14 @@ void Response::init(void)
 int Response::concat_to_send(void)
 {
     std::stringstream ss;
-    size_t i = 0;
+    size_t i;
     
-    // Status Line
+    // 1. Status Line
     ss << _http_version << " ";
     ss << _status_code << " ";
     ss << _reason_phrase << "\r\n";
-    // Request Headers, dans l'ordre du sujet
+
+    // 2. Request Headers, dans l'ordre du sujet
     // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
     // if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (_content_length >= 0)
@@ -56,17 +66,6 @@ int Response::concat_to_send(void)
     // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
     if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
     // if (!_content_type.empty())         { ss << "Content-Type: " << _content_type << "\r\n"; }
-    if (!_content_type.empty())
-	{
-		ss << "Content-Type:";
-    	while (i < _content_type.size())
-    	{
-    	    ss << " " << _content_type[i++];
-    	    if (i + 1 < _content_type.size())
-    	        ss << ";";
-    	}
-    	ss << "\r\n";
-	}
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
     if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
@@ -74,7 +73,21 @@ int Response::concat_to_send(void)
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
     // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\r\n"; }
     // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\r\n"; }
-    // Request body
+    if (!_content_type.empty())
+	{
+		ss << "Content-Type:";
+        i = 0;
+    	while (i < _content_type.size())
+    	{
+    	    ss << " " << _content_type[i];
+    	    if (i + 1 < _content_type.size())
+    	        ss << ";";
+            i++;
+    	}
+    	ss << "\r\n";
+	}
+
+    // 3. Request body
     // ss << "\r\n\r\n"; // double or simple CRLF after the headers ?
     ss << "\r\n"; // CRLF et non pas \n\n https://stackoverflow.com/questions/29131727/http-header-and-message-body-separator-clarification
     if (!_body.empty())                 { ss << _body; }

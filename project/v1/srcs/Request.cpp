@@ -264,15 +264,21 @@ int Request::parse_chunked_body()
     line.clear();
     while (!_buffer.empty())
     {
-        ft_getline(_buffer, line); // get len
+        // 1. get len
+        len = 0;
+        ft_getline(_buffer, line);
         LOG_WRT(Logger::DEBUG, "len in hex: " + line);
         ss << std::hex << line;
         ss >> len;
-        LOG_WRT(Logger::DEBUG, "len in hex: " + std::to_string(len));
+        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
+        if (len == 0)
+            break ;
 
+        // 2. get body
         line.clear();
-        ft_getline(_buffer, line); // get body
-        _text_body += line;
+        ft_getline(_buffer, line);
+        remove_return(line);
+        _text_body.append(line);
         LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
     }
     return (1);
@@ -465,18 +471,15 @@ int Request::parse(std::vector<Location*> location)
 
 	if (_transfer_encoding == "chunked")
         parse_chunked_body();
-	else
-		parse_text_type_body();
-	/*
-    if (_transfer_encoding == "chunked")
-        parse_chunked_body();
-    else if (_content_type == "application/x-www-form-urlencoded")
-        parse_application_type_body();
-    else if (_content_type == "multipart/form-data")
-        parse_form_type_body();
-    // else // _content_type == text/plain || _content_type.empty()
-   	parse_text_type_body(); // si chunked ne pas lancer / x-www-form-urlencoded affecte cette fonction 
-    */
+    else
+    {
+        if (_content_type == "application/x-www-form-urlencoded")
+            parse_application_type_body();
+        else if (_content_type == "multipart/form-data")
+            parse_form_type_body();
+        // else // _content_type == text/plain || _content_type.empty()
+            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction 
+    }    
     return (1);
 }
 
