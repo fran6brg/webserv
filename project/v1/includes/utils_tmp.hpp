@@ -8,6 +8,7 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <unistd.h>
+# include <fcntl.h>
 # include "../srcs/get_next_line/get_next_line.hpp"
 # include "Logger.hpp"
 // add a std::to_string
@@ -21,7 +22,7 @@ public:
 	static std::vector<std::string> split_string(std::string &str, std::string set);
 	static int ft_atoi(const char *str);
 	static bool file_exists(const char *filename);
-	static std::string read_file(int fd);
+	static int read_file(int fd, std::string file, std::string &buff);
 };
 
 #endif

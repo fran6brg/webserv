@@ -77,30 +77,28 @@ bool utils_tmp::file_exists(const char *filename)
 	return (stat (filename, &buffer) == 0);
 }
 
-std::string utils_tmp::read_file(int fd)
+int	utils_tmp::read_file(int fd, std::string file, std::string &buff)
 {
 	int ret;
 	char *cline;
 	std::string line;
-	std::string buffer;
 
+	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK, 0666)) == -1)//mettre dans read file
+		return (-1);
 	while ((ret = get_next_line(fd, &cline)))
 	{
 		line = cline;
 		free(cline);
 		cline=NULL;
-		buffer.append(line);
+		buff += line + "\n";
 	}
 	if (cline)
 	{
 		line = cline;
 		free(cline);
-		buffer.append(line);
+		buff += line;
 	}
 	if (ret < 0)
-	{
-		//Jeter une exeption pour erreur;
-		LOG_WRT(Logger::DEBUG, "erreur read file");
-	}
-	return (buffer);
+		return (-1);
+	return (0);
 }
