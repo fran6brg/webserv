@@ -75,5 +75,5 @@ headers_adds = {
     "Content-Type": "application/x-www-form-urlencoded",
 }
 
-r = requests.post('http://localhost:80/cgi_tester', payload, headers=headers_adds)
+r = requests.post('http://localhost:80/bonjour', payload, headers=headers_adds)
 printResponse(r, 0)
