@@ -469,7 +469,7 @@ int Request::parse(std::vector<Location*> location)
 	parse_filename(location);
     parse_headers();
 
-    if (_transfer_encoding == "chunked")
+	if (_transfer_encoding == "chunked")
         parse_chunked_body();
     else
     {
@@ -478,7 +478,7 @@ int Request::parse(std::vector<Location*> location)
         else if (_content_type == "multipart/form-data")
             parse_form_type_body();
         // else // _content_type == text/plain || _content_type.empty()
-            parse_text_type_body();
+            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction 
     }    
     return (1);
 }

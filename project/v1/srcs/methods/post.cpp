@@ -8,14 +8,14 @@ void		Response::post(Request *req)
 	if ((req->_location->_cgi_root != "" ||
 		(req->_location->_php_root != "" && is_php(req->_file))))//plus précis pour le path
 	{
-		ft_cgi(req); // if not workin = internal error
-		//get_cgi_ret(); // stoi impossible si format error
-		if ((fd = open("./www/temp_file", O_RDONLY|O_NONBLOCK, 0666)) == -1)//mettre dans read file
+		ft_cgi(req);
+		//get_cgi_ret(); // Parse if error get status code ?
+		if (utils_tmp::read_file(fd, "./www/temp_file", buff) == -1)
 		{
 			_status_code = INTERNAL_ERROR_500;
+			remove("./www/temp_file");
 			return ;
 		}
-		buff = utils_tmp::read_file(fd);
 		remove("./www/temp_file");
 	}
 	else
@@ -42,7 +42,7 @@ void		Response::post(Request *req)
 		_body = "Ressource created";
 	}
 	write(fd, buff.c_str(), buff.length());
+	LOG_WRT(Logger::DEBUG, "buff(" + std::to_string(buff.length()) + ")= " + buff);
 	//protect write
-	//LOG_WRT(Logger::DEBUG, req->_text_body);
 	close(fd);
 }
