@@ -56,10 +56,10 @@ def printResponse(r, i):
 
 #payload = "hello world ! icici le monde"
 #headers_adds = {
-#    "Content-Type": "sqfqsfsq",
+#    "Content-Type": "text/plain",
 #}
-#
-#r = requests.post('http://localhost:80/postTests/rzq', payload, headers=headers_adds)
+
+#r = requests.post('http://localhost:80/', payload, headers=headers_adds)
 #printResponse(r, 0)
 
 #files = {'file': open('babouin.png', 'rb')}
@@ -75,5 +75,5 @@ headers_adds = {
     "Content-Type": "application/x-www-form-urlencoded",
 }
 
-r = requests.post('http://localhost:80/cgi_tester', payload, headers=headers_adds)
+r = requests.post('http://localhost:80/bonjour', payload, headers=headers_adds)
 printResponse(r, 0)
