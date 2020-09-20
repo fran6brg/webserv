@@ -16,7 +16,7 @@ void			Response::get(Request *req)
 	if ((req->_method == "GET" 
 		&& (req->_location->_cgi_root != "" 
 			|| (req->_location->_php_root != ""
-			&& is_php(req->_file))))
+			&& is_extension(req->_file, "php"))))
 	&& file.good())
 	{
 		LOG_WRT(Logger::DEBUG, "get: cgi\n");

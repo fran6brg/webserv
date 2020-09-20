@@ -4,8 +4,8 @@
 ** constructors / destructors
 */
 
-Server::Server(std::string serverName, int port):
-    _name(serverName), _port(port), _socket_fd(-1)
+Server::Server(std::string serverName, int port, std::string host, std::string error_page):
+    _name(serverName), _port(port), _socket_fd(-1), _error(error_page), _host(host)
 {
     bzero(&_addr, sizeof(_addr));
 

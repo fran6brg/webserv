@@ -3,7 +3,7 @@
 
 #include "Conf.hpp"
 
-std::vector<std::string> split(const std::string& str, char delim);
+std::vector<std::string> split(const std::string &str, char delim);
 
 class Location
     {
@@ -17,9 +17,12 @@ class Location
         std::vector<std::string>    _method;
 		std::string					_cgi_root;
 		std::string					_php_root;
+		std::string					_cgi;
 		int							_autoindex;
+		int							_body_size;
         
-        Location(std::string uri, std::string root, std::string index, std::vector<std::string> method, std::string cgi_root, std::string php_root)
+        Location(std::string uri, std::string root, std::string index, std::vector<std::string> method,
+				std::string cgi_root, std::string php_root, std::string cgi, int autoindex, int body_size)
         {
             _uri = uri;
             _root = root;
@@ -27,8 +30,9 @@ class Location
             _method = method;
 			_cgi_root = cgi_root;
 			_php_root = php_root;
-			// TEMPORAIRE
-			_autoindex = 0;
+			_cgi = cgi;
+			_autoindex = autoindex;
+			_body_size = body_size;
         };
     };
 

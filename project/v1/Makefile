@@ -76,8 +76,11 @@ fclean: clean
 	$(RM) $(NAME)
 	$(RM) webserv.dSYM
 
-tester: 
+tester:
 	../../intra/tester http://localhost:8080
+
+ubuntu_tester: 
+	../../intra/ubuntu_tester http://localhost:8080
 
 re:	fclean all
 
