@@ -102,3 +102,10 @@ int	utils_tmp::read_file(int fd, std::string file, std::string &buff)
 		return (-1);
 	return (0);
 }
+
+std::string utils_tmp::extract_body(std::string &buff)
+{
+	std::string res;
+	res = buff.erase(0 , buff.find_last_of("\n\r\n") + 1);
+	return (res);
+}

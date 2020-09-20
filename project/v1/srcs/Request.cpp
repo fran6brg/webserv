@@ -12,7 +12,7 @@ Request::Request(void)
 ** utils
 */
 
-void	ft_getline(std::string b, std::string &line)
+void	ft_getline(std::string &b, std::string &line)
 {
     size_t					pos;
 

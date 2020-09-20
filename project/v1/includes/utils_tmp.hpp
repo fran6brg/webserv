@@ -23,6 +23,7 @@ public:
 	static int ft_atoi(const char *str);
 	static bool file_exists(const char *filename);
 	static int read_file(int fd, std::string file, std::string &buff);
+	static std::string extract_body(std::string &buff);
 };
 
 #endif
