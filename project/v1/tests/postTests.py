@@ -28,7 +28,7 @@ def printResponse(r, i):
 	for h in r.request.headers:
 		print (h + ": " + r.request.headers[h])
 	print ()
-	#print ("Body:", r.request.body)
+	print ("Body:", r.request.body)
 
 	print ()
 	print ("-------- RESPONSE")
@@ -37,10 +37,10 @@ def printResponse(r, i):
 	for h in r.headers:
 		print (h + ": " + r.headers[h])
 	print ()
-	#print ("Body:", r.text)
-
+	print ("Body:", r.text)
 	# print ("-------- ENCODING")
 	# print (r.encoding)
+	print ()
 	print ("------------------\n")
 
 # PUT -------------------------------------------------------------------------
@@ -57,21 +57,21 @@ def printResponse(r, i):
 #headers_adds = {
 #    "Content-Type": "text/plain",
 #}
-#r = requests.post('http://localhost:80/fs', payload, headers=headers_adds)
+#r = requests.post('http://localhost:80/', payload, headers=headers_adds)
 #printResponse(r, 0)
 
-files = {'file': open('babouin.png', 'rb')}
-headers_adds = {
-    "Content-Type": "image/png",
-	"Transfer-Encoding": "chunked"
-}
-r = requests.post('http://localhost:80/photo', files=files,  headers=headers_adds)
-printResponse(r, 0) 
+#files = {'file': open('babouin.png', 'rb')}
+#headers_adds = {
+#    "Content-Type": "image/png",
+#	"Transfer-Encoding": "chunked"
+#}
+#r = requests.post('http://localhost:80/photo', files=files,  headers=headers_adds)
+#printResponse(r, 0) 
 
 #payload = "txt=this_is_a_query_string_test"
 #headers_adds = {
 #    "Content-Type": "application/x-www-form-urlencoded",
 #}
 #
-#r = requests.post('http://localhost:80/bonjour', payload, headers=headers_adds)
+#r = requests.post('http://localhost:80/', payload, headers=headers_adds)
 #printResponse(r, 0)
