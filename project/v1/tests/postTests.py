@@ -46,12 +46,12 @@ def printResponse(r, i):
 # PUT -------------------------------------------------------------------------
 
 
-#payload = {'some': 'data2'}
-#headers_adds = {
-#    "Content-Type": "application/json",
-#}
-#r = requests.post('http://localhost:80/lilupe', data=json.dumps(payload), headers=headers_adds)
-#printResponse(r, 0)
+payload = {'some': 'data2'}
+headers_adds = {
+    "Content-Type": "application/json",
+}
+r = requests.post('http://localhost:80/', data=json.dumps(payload), headers=headers_adds)
+printResponse(r, 0)
 
 #payload = "hello world ! icici le monde"
 #headers_adds = {

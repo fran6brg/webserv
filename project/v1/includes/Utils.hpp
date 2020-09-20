@@ -17,7 +17,7 @@ std::string     get_location_header(Request *req);
 std::string     map_to_string(std::map<int, std::string> map, char delim);
 std::string     vector_to_string(std::vector<std::string> map, char delim);
 void            displayMap(std::map<std::string, std::string> map);
-int	    		is_php(std::string file);
+int				is_extension(std::string file, std::string ext);
 
 int             set_laguage(Request *req);
 int             set_charset(Request *req);

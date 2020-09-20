@@ -20,7 +20,6 @@ public:
 	static std::string	get_date(void);
 	static int	isspace(int c);
 	static std::vector<std::string> split_string(std::string &str, std::string set);
-	static int ft_atoi(const char *str);
 	static bool file_exists(const char *filename);
 	static int read_file(int fd, std::string file, std::string &buff);
 	static std::string extract_body(std::string &buff);

@@ -194,15 +194,16 @@ void displayMap(std::map<std::string, std::string> map)
 	}
 }
 
-int		is_php(std::string file)
+int		is_extension(std::string file, std::string ext)
 {
-	int			i = file.size() - 1;
+	int i = file.size() - 1;
 	std::string temp;
-	while (file[i] != '.')
+	while (i > 0 && file[i] != '.')
 		i--;
-	temp = file.substr(i, file.size() - 1);
-	if (temp == ".php")
-		return (1);
-	else
+	if (i == 0)
 		return (0);
+	temp = file.substr(i, file.size() - 1);
+	if (temp == ext)
+		return (1);
+	return (0);
 }

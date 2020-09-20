@@ -30,6 +30,8 @@
 # define _INDEX "index"
 # define _CGI_PATH "cgi_path"
 # define _PHP_PATH "php_path"
+# define _CGI "cgi"
+# define _AUTO_INDEX "auto_index"
 // # define _LISTING "autoindex"
 
 class Conf;
@@ -44,6 +46,8 @@ typedef struct	s_loc
 	std::string					index;      // default file
 	std::string					cgi_path;
 	std::string					php_path;
+	std::string					cgi;
+	std::string					auto_index;
 //	int							autoindex;
 }				t_loc;
 
@@ -74,6 +78,7 @@ private:
 	void parse_conf();
 	void parse_server();
 	void parse_location(std::vector<std::string> &token, t_serv &serv);
+	void check_conf();
 
 	void add_serv_values(std::vector<std::string> &tokens, t_serv &serv);
 	void add_loc_values(std::vector<std::string> &tokens, t_loc&loc);

@@ -43,34 +43,6 @@ std::vector<std::string> utils_tmp::split_string(std::string &str, std::string s
 	return (split);
 }
 
-int		utils_tmp::ft_atoi(const char *str)
-{
-	int i;
-	int out;
-	int is_minus;
-
-	is_minus = 0;
-	i = 0;
-	out = 0;
-	while (str[i] == ' ' || str[i] == '\f' || str[i] == '\n'
-			|| str[i] == '\r' || str[i] == '\t' || str[i] == '\v')
-		i++;
-	if (str[i] == '+' || str[i] == '-')
-	{
-		if (str[i] == '-')
-			is_minus++;
-		i++;
-	}
-	while (str[i] != '\0' && str[i] >= '0' && str[i] <= '9')
-	{
-		out = out * 10 + (str[i] - 48);
-		i++;
-	}
-	if (is_minus)
-		out *= -1;
-	return (out);
-}
-
 bool utils_tmp::file_exists(const char *filename)
 {
 	struct stat	buffer;
