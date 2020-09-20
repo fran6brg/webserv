@@ -19,9 +19,10 @@ class Location
 		std::string					_php_root;
 		std::string					_cgi;
 		int							_autoindex;
+		int							_body_size;
         
         Location(std::string uri, std::string root, std::string index, std::vector<std::string> method,
-				std::string cgi_root, std::string php_root, std::string cgi, int autoindex)
+				std::string cgi_root, std::string php_root, std::string cgi, int autoindex, int body_size)
         {
             _uri = uri;
             _root = root;
@@ -31,6 +32,7 @@ class Location
 			_php_root = php_root;
 			_cgi = cgi;
 			_autoindex = autoindex;
+			_body_size = body_size;
         };
     };
 

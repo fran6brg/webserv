@@ -39,6 +39,7 @@ class Server
         //
 
     public:
+		std::string					_host; // Add but never use
         std::string                 _name;
         int                         _port;
 		std::string					_error;
@@ -59,7 +60,7 @@ class Server
         //
 
     public:
-        Server(std::string serverName, int port);
+        Server(std::string serverName, int port, std::string host, std::string error_page);
 		~Server();
     
         int start(void);

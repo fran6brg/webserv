@@ -22,6 +22,11 @@ void Config_parser::fail_double_token(std::string &str)
 	if (str.length() != 0)
 		fail("Double token [" + std::to_string(line_count) + "]");
 }
+void Config_parser::fail_double_token(int val)
+{
+	if (val != -1)
+		fail("Double token [" + std::to_string(line_count) + "]");
+}
 
 void Config_parser::setup_server(std::vector<Server *> &servers)
 {
@@ -30,7 +35,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
-		Server *server = new Server(serv[i].name, stoi(serv[i].port));
+		Server *server = new Server(serv[i].name, stoi(serv[i].port), serv[i].host, serv[i].error_page);
 		servers.push_back(server);
 
 		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
@@ -38,12 +43,11 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 		LOG_WRT(Logger::DEBUG, "name       = " + serv[i].name);
 		LOG_WRT(Logger::DEBUG, "port       = " + serv[i].port);
 		LOG_WRT(Logger::DEBUG, "error_page = " + serv[i].error_page);
-		LOG_WRT(Logger::DEBUG, "body_size  = " + serv[i].body_size);
 		for (size_t y = 0; y < serv[i].loc.size(); ++y)
 		{
 			Location *location = new Location(	serv[i].loc[y].uri, serv[i].loc[y].root, serv[i].loc[y].index,
 												serv[i].loc[y].method, serv[i].loc[y].cgi_path, serv[i].loc[y].php_path,
-												serv[i].loc[y].cgi, stoi(serv[i].loc[y].auto_index));
+												serv[i].loc[y].cgi, serv[i].loc[y].auto_index, serv[i].loc[y].body_size);
 			server->_locations.push_back(location);
 
 			LOG_WRT(Logger::DEBUG, "LOCATION " + std::to_string(y));
@@ -57,7 +61,9 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 			LOG_WRT(Logger::DEBUG, "	cgi_path   = " + serv[i].loc[y].cgi_path);
 			LOG_WRT(Logger::DEBUG, "	php_path   = " + serv[i].loc[y].php_path);
 			LOG_WRT(Logger::DEBUG, "	cgi        = " + serv[i].loc[y].cgi);
-			LOG_WRT(Logger::DEBUG, "	auto_index = " + serv[i].loc[y].auto_index);
+			LOG_WRT(Logger::DEBUG, "	auto_index = " + std::to_string(serv[i].loc[y].auto_index));
+			LOG_WRT(Logger::DEBUG, "    body_size  = " + std::to_string(serv[i].loc[y].body_size));
+
 		}
 		LOG_WRT(Logger::DEBUG, "");
 	}
@@ -189,11 +195,6 @@ void Config_parser::add_serv_values(std::vector<std::string> &tokens, t_serv &se
 		fail_double_token(serv.error_page);
 		serv.error_page = tokens[1];
 	}
-	else if (tokens[0] == _BODY_SIZE)
-	{
-		fail_double_token(serv.body_size);
-		serv.body_size = tokens[1];
-	}
 	else
 		fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");
 }
@@ -242,7 +243,12 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 		else if (tokens[0] == _AUTO_INDEX)
 		{
 			fail_double_token(loc.auto_index);
-			loc.auto_index = tokens[1];
+			loc.auto_index = stoi(tokens[1]);
+		}
+		else if (tokens[0] == _BODY_SIZE)
+		{
+			fail_double_token(loc.body_size);
+			loc.body_size = stoi(tokens[1]);
 		}
 		else
 			fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");

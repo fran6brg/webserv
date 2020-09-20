@@ -22,7 +22,6 @@
 # define _NAME "name"
 # define _PORT "listen"
 # define _ERROR_PAGE "error"
-# define _BODY_SIZE "body_size"
 
 // Location tokens
 # define _METHOD "method"
@@ -32,6 +31,7 @@
 # define _PHP_PATH "php_path"
 # define _CGI "cgi"
 # define _AUTO_INDEX "auto_index"
+# define _BODY_SIZE "body_size"
 // # define _LISTING "autoindex"
 
 class Conf;
@@ -47,17 +47,20 @@ typedef struct	s_loc
 	std::string					cgi_path;
 	std::string					php_path;
 	std::string					cgi;
-	std::string					auto_index;
-//	int							autoindex;
+	int							auto_index;
+	int							body_size;
+	s_loc() {
+		auto_index = -1;
+		body_size = -1;
+	}
 }				t_loc;
 
 typedef struct	s_serv
 {
 	std::string	host;
 	std::string	name;
-	std::string	port;
+	std::string	port; // Replace by vector<int>
 	std::string	error_page;
-	std::string body_size;
 	std::vector<t_loc> loc;
 }				t_serv;
 
@@ -85,6 +88,7 @@ private:
 
 	void fail(const std::string &message);
 	void fail_double_token(std::string &str);
+	void fail_double_token(int val);
 };
 
 #endif

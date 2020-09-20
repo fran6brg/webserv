@@ -5,8 +5,8 @@ void		Response::post(Request *req)
 	int			fd;
 	std::string buff;
 
-	if ((req->_location->_cgi_root != "" ||
-		(req->_location->_php_root != "" && is_extension(req->_file, "php"))))//plus précis pour le path
+	if (((req->_location->_cgi_root != "" && is_extension(req->_file, req->_location->_cgi))
+		|| (req->_location->_php_root != "" && is_extension(req->_file, "php"))))
 	{
 		ft_cgi(req);// check if error
 		get_cgi_ret();
