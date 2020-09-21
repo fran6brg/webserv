@@ -47,7 +47,8 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 		{
 			Location *location = new Location(	serv[i].loc[y].uri, serv[i].loc[y].root, serv[i].loc[y].index,
 												serv[i].loc[y].method, serv[i].loc[y].cgi_path, serv[i].loc[y].php_path,
-												serv[i].loc[y].cgi, serv[i].loc[y].auto_index, serv[i].loc[y].body_size);
+												serv[i].loc[y].cgi, serv[i].loc[y].auto_index, serv[i].loc[y].body_size,
+												serv[i].loc[y].auth);
 			server->_locations.push_back(location);
 
 			LOG_WRT(Logger::DEBUG, "LOCATION " + std::to_string(y));
@@ -63,6 +64,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 			LOG_WRT(Logger::DEBUG, "	cgi        = " + serv[i].loc[y].cgi);
 			LOG_WRT(Logger::DEBUG, "	auto_index = " + std::to_string(serv[i].loc[y].auto_index));
 			LOG_WRT(Logger::DEBUG, "    body_size  = " + std::to_string(serv[i].loc[y].body_size));
+			LOG_WRT(Logger::DEBUG, "	auth       = " + serv[i].loc[y].auth);
 
 		}
 		LOG_WRT(Logger::DEBUG, "");
@@ -214,7 +216,7 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 	else
 	{
 		if (tokens.size() > 2 && tokens[2][0] != '#')
-			fail("to many arguments [" + std::to_string(line_count) + "]");
+			fail("too many arguments [" + std::to_string(line_count) + "]");
 		if (tokens[0] == _ROOT)
 		{
 			fail_double_token(loc.root);
@@ -250,6 +252,11 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 			fail_double_token(loc.body_size);
 			loc.body_size = stoi(tokens[1]);
 		}
+		else if (tokens[0] == _AUTH)
+		{
+			fail_double_token(loc.auth);
+			loc.auth = tokens[1];
+		}	
 		else
 			fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");
 	}

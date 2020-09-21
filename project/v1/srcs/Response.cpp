@@ -131,12 +131,12 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
-	// TEMPORAIRE
-	// req->_method = "TRACE";
     if (bad_request(req))
 		return ;
 	else if (method_not_allowed(req))
 		return ;
+    else if (unauthorized(req))
+        return ;
 	else if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
 	else if (req->_method == "POST")
@@ -151,25 +151,6 @@ void		Response::handle_response(Request *req)
 		trace(req);
 	else if (req->_method == "CONNECT")
 		connect(req);
-}
-
-int				Response::method_not_allowed(Request *req)
-{
-	// Comparaison de la methode demande avec les methodes autorise dans la location
-	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
-	{
-		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method + "\n");
-		if ((req->_location->_method)[i] == req->_method)
-			return (0);
-	}
-	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
-    _status_code = METHOD_NOT_ALLOWED_405;
-	_allow = vector_to_string(req->_location->_method, ',');
-	std::string path = "./www/old/error/405.html";
-    std::ifstream error405(path);
-    std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
-    _body = buffer;
-	return (1);
 }
 
 int		Response::accepted_method(Request *req)
@@ -194,6 +175,115 @@ int				Response::bad_request(Request *req)
     std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
     _body = buffer;
 	return (1);
+}
+
+int				Response::method_not_allowed(Request *req)
+{
+	// Comparaison de la methode demande avec les methodes autorisees dans la location
+	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
+	{
+		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method + "\n");
+		if ((req->_location->_method)[i] == req->_method)
+			return (0);
+	}
+	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
+    _status_code = METHOD_NOT_ALLOWED_405;
+	_allow = vector_to_string(req->_location->_method, ',');
+	std::string path = "./www/old/error/405.html";
+    std::ifstream error405(path);
+    std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
+    _body = buffer;
+	return (1);
+}
+
+// https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
+
+static const std::string base64_chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789+/";
+
+static inline bool is_base64(unsigned char c)
+{
+    return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
+std::string base64_decode(std::string const &encoded_string)
+{
+    int in_len = encoded_string.size();
+    int i = 0;
+    int j = 0;
+    int in_ = 0;
+    unsigned char char_array_4[4], char_array_3[3];
+    std::string ret;
+
+    while (in_len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_]))
+    {
+        char_array_4[i++] = encoded_string[in_];
+        in_++;
+        if (i == 4)
+        {
+            for (i = 0; i < 4; i++)
+                char_array_4[i] = base64_chars.find(char_array_4[i]);
+
+            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+            char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+            char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+            for (i = 0; (i < 3); i++)
+                ret += char_array_3[i];
+            i = 0;
+        }
+    }
+
+    if (i)
+    {
+        for (j = i; j < 4; j++)
+            char_array_4[j] = 0;
+
+        for (j = 0; j < 4; j++)
+            char_array_4[j] = base64_chars.find(char_array_4[j]);
+
+        char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+        char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+        char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+        for (j = 0; (j < i - 1); j++)
+            ret += char_array_3[j];
+    }
+
+    return ret;
+}
+
+int				Response::unauthorized(Request *req)
+{
+    if (!req->_location->_auth.empty())
+    {
+     	LOG_WRT(Logger::DEBUG, "inside unauthorized():");
+     	LOG_WRT(Logger::DEBUG, "1) req->_location->_auth = " + req->_location->_auth);
+     	
+        // LOG_WRT(Logger::DEBUG, "req->_authorization = " + req->_authorization);
+        std::vector<std::string> tokens;
+        tokens = split(req->_authorization, ' ');
+        std::string creds = tokens[1];
+     	// LOG_WRT(Logger::DEBUG, "creds = " + creds);
+     	
+        LOG_WRT(Logger::DEBUG, "2) base64_decode(creds) = " + base64_decode(creds));
+        if (req->_location->_auth == base64_decode(creds))
+        {
+            LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ok authorized\n");
+            _status_code = OK_200;
+            return (0);
+        }
+        else
+	    {
+            LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ko unauthorized\n");
+            _status_code = UNAUTHORIZED_401;
+            return (1);
+        }
+    }
+    else
+	    return (0);
 }
 
 int				Response::not_found(Request *req)
