@@ -113,3 +113,19 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 # r = requests.put('http://localhost:8080/putTests/chunked.txt', data=body)
 # printResponse(r, i)
 
+# ---
+from requests.auth import HTTPBasicAuth
+i += 1
+body = "auth success"
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.put('http://localhost:8080/auth/file', auth=HTTPBasicAuth('user', 'pass'), data=body)
+	printResponse(r, i)
+
+# ---
+from requests.auth import HTTPBasicAuth
+i += 1
+body = "auth failed"
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.put('http://localhost:8080/auth/file', auth=HTTPBasicAuth('user', 'fail'), data=body)
+	printResponse(r, i)
+

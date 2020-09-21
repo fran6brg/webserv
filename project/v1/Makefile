@@ -1,4 +1,4 @@
-.PHONY: all clean fclean re norme
+.PHONY: all clean fclean re
 
 CC = clang++
 

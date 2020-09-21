@@ -9,7 +9,7 @@ void		Response::post(Request *req)
 		|| (req->_location->_php_root != "" && is_extension(req->_file, "php"))))//check file is good
 	{
 		ft_cgi(req);// check if error
-		get_cgi_ret();
+		get_cgi_ret(req);
 		if (utils_tmp::read_file(fd, "./www/temp_file", buff) == -1)
 		{
 			_status_code = INTERNAL_ERROR_500;
