@@ -23,7 +23,7 @@ class Server;
 ** Const
 */
 
-# define RECV_BUFFER    60000
+# define RECV_BUFFER    200
 
 /*
 ** Class
@@ -53,6 +53,18 @@ class Client
         bool        _is_connected;
 
         char        *_buffermalloc;
+
+
+		// Ajout
+    	enum status
+    	{
+			HEADER,
+			BODY,
+			COMPLETE,
+			ERROR
+    	};
+		int	recv_status;
+		//----------
 
     /*
     ** methods

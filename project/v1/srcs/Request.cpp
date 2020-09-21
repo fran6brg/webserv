@@ -254,35 +254,7 @@ int Request::parse_headers()
     return (1);
 }
 
-int Request::parse_chunked_body()
-{
-    std::string line;
-    unsigned int len; 
-    std::stringstream ss;
-    
-    line.clear();
-    while (!_buffer.empty())
-    {
-        // 1. get len
-        len = 0;
-        ft_getline(_buffer, line);
-        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
-        ss << std::hex << line;
-        ss >> len;
-        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
-        if (len == 0)
-            break ;
-
-        // 2. get body
-        line.clear();
-        ft_getline(_buffer, line);
-        remove_return(line);
-        _text_body.append(line);
-        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
-    }
-    return (1);
-}
-
+/*
 int Request::parse_application_type_body()
 {
     _body_type = APPLICATION;
@@ -343,6 +315,7 @@ int Request::parse_text_type_body()
     }
     return (1);
 }
+*/
 
 void	Request::parse_query_string()
 {
@@ -468,25 +441,87 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	return (1);
 }
 
-int Request::parse(std::vector<Location*> location)
+int Request::parse(std::vector<Location*> location)//header
 {
     parse_request_line();
 	parse_filename(location);
     parse_headers();
 
-	if (_transfer_encoding == "chunked")
-        parse_chunked_body();
-    else
-    {
-    /*        if (_content_type == "application/x-www-form-urlencoded")
-            parse_application_type_body();
-        else if (_content_type == "multipart/form-data")
-            parse_form_type_body();*/
-        // else // _content_type == text/plain || _content_type.empty()
-            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction (body texte empty)
-    }    
+	std::string tmp =_client->_buffermalloc;
+	utils_tmp::extract_body(tmp);
+	strcpy(_client->_buffermalloc, tmp.c_str());
 
-    return (1);
+	return (RET_SUCCESS);
+}
+
+void Request::update_body()
+{
+	if (_transfer_encoding == "chunked")
+		parse_body_chunked();
+	else if (_content_length != -1)
+		parse_body_length();
+	else
+	{
+		LOG_WRT(Logger::ERROR, "Header incomplete")
+		_client->recv_status = Client::ERROR;	
+	}
+}
+
+void Request::parse_body_length()
+{
+	char		*buff = _client->_buffermalloc;
+	std::string &body = _client->_request._text_body;
+	size_t 		cut;
+
+	if (_content_length < 0)
+	{
+		_client->recv_status = Client::ERROR;
+		return ;
+	}
+	size_t new_body_size = body.length() + strlen(buff);
+	if (new_body_size >= _content_length)
+	{
+		cut = _content_length - body.length();
+		body += std::string(buff).substr(0, cut);
+		_client->recv_status = Client::COMPLETE;
+		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
+	}
+	else
+	{
+		body += buff;
+		memset(buff, 0, RECV_BUFFER + 1);
+	}
+}
+
+void Request::parse_body_chunked()
+{
+
+//old function
+	/*std::string line;
+    unsigned int len; 
+    std::stringstream ss;
+    
+    line.clear();
+    while (!_buffer.empty())
+    {
+        // 1. get len
+        len = 0;
+        ft_getline(_buffer, line);
+        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
+        ss << std::hex << line;
+        ss >> len;
+        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
+        if (len == 0)
+            break ;
+
+        // 2. get body
+        line.clear();
+        ft_getline(_buffer, line);
+        remove_return(line);
+        _text_body.append(line);
+        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
+    }
+    return (1);*/
 }
 
 /*

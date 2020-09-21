@@ -155,7 +155,6 @@ int Server::recvRequest(Client *c)
     int bytes = strlen(c->_buffermalloc);
     ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
-    // if ((ret = recv(c->_accept_fd, c->_buffer, sizeof(c->_buffer), 0)) == -1)
 	if (ret == -1)
     {
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
@@ -172,34 +171,36 @@ int Server::recvRequest(Client *c)
         return (0);
     }
     else
-	{
-        // c->_buffer[ret] = '\0';
+	{//todo: Replace if by switch
         c->_buffermalloc[bytes] = '\0';
-        if (strstr(c->_buffermalloc, "\r\n\r\n") != NULL) // meaning all headers are fully recv
+        if (c->recv_status == Client::HEADER)
         {
-            LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
-            
-            LOG_WRT(Logger::INFO, "RAW REQUEST (" + std::to_string(ret) +"):\n" + "--------------\n" + std::string(c->_buffermalloc, bytes) + "\n----------------------");
-            
-            // c->_request._buffer = std::string(c->_buffer, 1000);
-            c->_request._buffer = std::string(c->_buffermalloc, bytes);
-            c->_request.parse(_locations);
-
-            // FD_CLR(c->_accept_fd, &g_conf._save_readfds); // working without but to test
-            // FD_CLR(c->_accept_fd, &g_conf._readfds); // working without but to test
-
-            FD_SET(c->_accept_fd, &g_conf._save_writefds);
-            // FD_SET(c->_accept_fd, &g_conf._writefds); // working without but to test
-            
+			if (strstr(c->_buffermalloc, "\r\n\r\n") != NULL)
+			{
+				c->recv_status = Client::BODY;
+            	c->_request._buffer = std::string(c->_buffermalloc, bytes);
+            	c->_request.parse(_locations);//parse only header
+			}
+			else
+			{
+				LOG_WRT(Logger::ERROR, "Not a valide http request");
+				return (RET_ERROR);
+			}
+        }
+		if (c->recv_status == Client::BODY)
+			c->_request.update_body();
+		if (c->recv_status ==  Client::COMPLETE)
+		{
+            FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
-            return (1);
-        }
-        else
-        {
-            LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=not complet");
-            return (0);
-        }
+		}
+		if (c->recv_status ==  Client::ERROR)
+		{
+			c->_is_connected = false;
+			return (RET_ERROR);
+		}
     }
+	return (RET_SUCCESS);
 }
 
 int Server::sendResponse(Client *c)
