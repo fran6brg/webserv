@@ -90,7 +90,7 @@ char			**Response::create_env_tab(Request *req)
 	int i = -1;
 	while (it != args_to_map.end())
 	{
-		std::cout << it->first << " = " << it->second << std::endl;
+		LOG_WRT(Logger::DEBUG, it->first + " = " +  it->second);
 		args_to_tab[++i] = strdup((it->first + "=" + it->second).c_str());
 		++it;
 	}
@@ -117,7 +117,7 @@ void		Response::ft_cgi(Request *req)
 			binaire = req->_location->_cgi_root;
 		else
 			binaire = req->_location->_php_root;
-		std::cout << binaire << std::endl;
+		//std::cout << binaire << std::endl; // ca dégage ?
         env = create_env_tab(req);
         args = (char **)(malloc(sizeof(char *) * 3));
 		if (req->_location->_cgi_root != "")

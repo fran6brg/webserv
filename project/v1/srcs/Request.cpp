@@ -448,31 +448,28 @@ void Request::update_body()
 
 void Request::parse_body_length()
 {
-//	size_t body_size = strlen(_client->_buffermalloc);
+	char		*buff = _client->_buffermalloc;
+	std::string &body = _client->_request._text_body;
+	size_t 		cut;
+
 	if (_content_length < 0)
 	{
 		_client->recv_status = Client::ERROR;
 		return ;
 	}
-	_client->_request._text_body += _client->_buffermalloc;
-	memset(_client->_buffermalloc, 0, RECV_BUFFER + 1);
-	if (_client->_request._text_body.length() == _content_length)
+	size_t new_body_size = body.length() + strlen(buff);
+	if (new_body_size >= _content_length)
+	{
+		cut = _content_length - body.length();
+		body += std::string(buff).substr(0, cut);
 		_client->recv_status = Client::COMPLETE;
-	
-
-//old function
-	/*_body_type = TEXT;
-    if (_content_length) // meaning if value > 0 <=> a body exists
-    {
-        std::string line;
-
-        line.clear();
-        ft_getline(_buffer, line);
-        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
-            return (1);
-        _text_body = line.substr(0, _content_length);
-    }
-    return (1);*/
+		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
+	}
+	else
+	{
+		body += buff;
+		memset(buff, 0, RECV_BUFFER + 1);
+	}
 }
 
 void Request::parse_body_chunked()
