@@ -8,7 +8,7 @@ in another shell:
 cd project/v1 && python3 ./tests/test.py
 ```
 
-# 2. quality readings to start the project
+# 2. quality readings
 
 ### web socket
 - nice article https://www.bogotobogo.com/cplusplus/sockets_server_client.php
