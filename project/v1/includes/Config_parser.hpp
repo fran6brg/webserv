@@ -32,6 +32,7 @@
 # define _CGI "cgi"
 # define _AUTO_INDEX "auto_index"
 # define _BODY_SIZE "body_size"
+# define _AUTH "auth"
 // # define _LISTING "autoindex"
 
 class Conf;
@@ -49,6 +50,7 @@ typedef struct	s_loc
 	std::string					cgi;
 	int							auto_index;
 	int							body_size;
+	std::string					auth;
 	s_loc() {
 		auto_index = -1;
 		body_size = -1;

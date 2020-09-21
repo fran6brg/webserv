@@ -47,7 +47,6 @@ class Client
         std::string	_ip;
         int         _port;
 
-        char        _buffer[1000]; // todo: quelle taille ? taille max des headers pour récup à minima le content_length
         Request     _request;
         Response    _response;
 

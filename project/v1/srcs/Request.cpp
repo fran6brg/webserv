@@ -511,7 +511,7 @@ void Request::display(void)
     ss1 << "12) _host: " << _host << std::endl; // 12
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
-    ss1 << "15) _text_body (" << std::to_string(_text_body.length()) << "): " << _text_body << std::endl; // 14
+    ss1 << "15) _text_body (" << std::to_string(_text_body.length()) << ")"/*: " << _text_body */<< std::endl; // 14
     ss1 << "15) _body:" << std::endl; // 15
     if (_body.empty())
         ss1 << std::endl;

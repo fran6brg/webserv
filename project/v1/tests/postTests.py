@@ -75,3 +75,22 @@ printResponse(r, 0)
 #
 #r = requests.post('http://localhost:80/', payload, headers=headers_adds)
 #printResponse(r, 0)
+
+
+# # ---
+# import base64
+# i += 1
+# if len(tests_to_run) == 0 or i in tests_to_run:
+# 	usrPass = "userid:password"
+# 	b64Val = base64.b64encode(usrPass)
+# 	r = requests.post(api_URL,
+# 					headers={"Authorization": "Basic %s" % b64Val},
+# 					data=payload)
+# 	printResponse(r, i)
+
+# # ---
+# from requests.auth import HTTPBasicAuth
+# i += 1
+# if len(tests_to_run) == 0 or i in tests_to_run:
+# 	r = requests.post('http://localhost:8080/', auth=HTTPBasicAuth('user', 'pass'), data=payload)
+# 	printResponse(r, i)
