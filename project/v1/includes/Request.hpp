@@ -133,7 +133,7 @@ class Request
 		int					parse_filename(std::vector<Location*> location);
 		int 				parse(std::vector<Location*> location);
 		void 				display(void);
-		void    			creat_autoindex();
+		void    			create_autoindex();
 	/*
 	** friends
 	*/

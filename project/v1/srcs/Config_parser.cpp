@@ -49,6 +49,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 												serv[i].loc[y].method, serv[i].loc[y].cgi_path, serv[i].loc[y].php_path,
 												serv[i].loc[y].cgi, serv[i].loc[y].auto_index, serv[i].loc[y].max_body,
 												serv[i].loc[y].auth);
+
 			server->_locations.push_back(location);
 
 			LOG_WRT(Logger::DEBUG, "LOCATION " + std::to_string(y));
@@ -63,7 +64,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 			LOG_WRT(Logger::DEBUG, "	php_path   = " + serv[i].loc[y].php_path);
 			LOG_WRT(Logger::DEBUG, "	cgi        = " + serv[i].loc[y].cgi);
 			LOG_WRT(Logger::DEBUG, "	auto_index = " + std::to_string(serv[i].loc[y].auto_index));
-			LOG_WRT(Logger::DEBUG, "    max_body  = " + std::to_string(serv[i].loc[y].max_body));
+			LOG_WRT(Logger::DEBUG, "    max_body   = " + std::to_string(serv[i].loc[y].max_body));
 			LOG_WRT(Logger::DEBUG, "	auth       = " + serv[i].loc[y].auth);
 
 		}
@@ -142,6 +143,10 @@ void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv
 	char		*cline;
 	std::string	line;
 	t_loc		new_loc;
+
+	// init
+	new_loc.max_body = -1;
+	// todo: init other member variables to null or -1 (if needed ?)
 
 	if (!(token.size() == 3 && token[2][0] == '{')
 		&& !(token.size() == 2 && token[1][token[1].length() - 1] == '{'))

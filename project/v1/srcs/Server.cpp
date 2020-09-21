@@ -132,7 +132,7 @@ int Server::recvRequest(Client *c)
 {
     int ret = 0;
     errno = 0;
-    
+
     // https://stackoverflow.com/questions/13736064/recv-connection-reset-by-peer
     // 'Connection reset by peer' has a number of causes,
     // but the most common one is that you have written to a connection that has already been closed by the peer.
@@ -179,20 +179,19 @@ int Server::recvRequest(Client *c)
         {
             LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> recv=OK");
             
-            LOG_WRT(Logger::INFO, "RAW REQUEST (" + std::to_string(ret) +"):\n" 
-            + "--------------\n" + std::string(c->_buffermalloc, bytes) + "\n----------------------");
+            LOG_WRT(Logger::INFO, "RAW REQUEST (" + std::to_string(ret) +"):\n" + "--------------\n" + std::string(c->_buffermalloc, bytes) + "\n----------------------");
             
             // c->_request._buffer = std::string(c->_buffer, 1000);
             c->_request._buffer = std::string(c->_buffermalloc, bytes);
             c->_request.parse(_locations);
-            
+
             // FD_CLR(c->_accept_fd, &g_conf._save_readfds); // working without but to test
             // FD_CLR(c->_accept_fd, &g_conf._readfds); // working without but to test
 
             FD_SET(c->_accept_fd, &g_conf._save_writefds);
             // FD_SET(c->_accept_fd, &g_conf._writefds); // working without but to test
             
-            c->_request.display();    
+            c->_request.display();
             return (1);
         }
         else
