@@ -47,7 +47,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 		{
 			Location *location = new Location(	serv[i].loc[y].uri, serv[i].loc[y].root, serv[i].loc[y].index,
 												serv[i].loc[y].method, serv[i].loc[y].cgi_path, serv[i].loc[y].php_path,
-												serv[i].loc[y].cgi, serv[i].loc[y].auto_index, serv[i].loc[y].body_size,
+												serv[i].loc[y].cgi, serv[i].loc[y].auto_index, serv[i].loc[y].max_body,
 												serv[i].loc[y].auth);
 			server->_locations.push_back(location);
 
@@ -63,7 +63,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 			LOG_WRT(Logger::DEBUG, "	php_path   = " + serv[i].loc[y].php_path);
 			LOG_WRT(Logger::DEBUG, "	cgi        = " + serv[i].loc[y].cgi);
 			LOG_WRT(Logger::DEBUG, "	auto_index = " + std::to_string(serv[i].loc[y].auto_index));
-			LOG_WRT(Logger::DEBUG, "    body_size  = " + std::to_string(serv[i].loc[y].body_size));
+			LOG_WRT(Logger::DEBUG, "    max_body  = " + std::to_string(serv[i].loc[y].max_body));
 			LOG_WRT(Logger::DEBUG, "	auth       = " + serv[i].loc[y].auth);
 
 		}
@@ -247,10 +247,10 @@ void Config_parser::add_loc_values(std::vector<std::string> &tokens, t_loc &loc)
 			fail_double_token(loc.auto_index);
 			loc.auto_index = stoi(tokens[1]);
 		}
-		else if (tokens[0] == _BODY_SIZE)
+		else if (tokens[0] == _MAX_BODY)
 		{
-			fail_double_token(loc.body_size);
-			loc.body_size = stoi(tokens[1]);
+			fail_double_token(loc.max_body);
+			loc.max_body = stoi(tokens[1]);
 		}
 		else if (tokens[0] == _AUTH)
 		{

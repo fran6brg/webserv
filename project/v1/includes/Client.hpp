@@ -42,7 +42,7 @@ class Client
         //
 
     public:
-        Server     *_server;
+        Server      *_server;
         int         _accept_fd;
         std::string	_ip;
         int         _port;
