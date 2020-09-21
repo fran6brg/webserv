@@ -279,6 +279,10 @@ int				Response::unauthorized(Request *req)
 	    {
             LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ko unauthorized\n");
             _status_code = UNAUTHORIZED_401;
+            std::string path = "./www/old/error/401.html";
+            std::ifstream error401(path);
+            std::string buffer((std::istreambuf_iterator<char>(error401)), std::istreambuf_iterator<char>());
+            _body = buffer;
             return (1);
         }
     }
