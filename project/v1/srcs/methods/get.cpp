@@ -14,7 +14,7 @@ void			Response::get(Request *req)
 	charset = set_charset(req);
 	std::ifstream file(req->_file);
 	if ((req->_method == "GET" 
-		&& (req->_location->_cgi_root != "" 
+		&& (req->_location->_cgi_root != ""
 			|| (req->_location->_php_root != ""
 			&& is_extension(req->_file, "php"))))
 	&& file.good())

@@ -55,6 +55,18 @@ class Client
 
         char        *_buffermalloc;
 
+
+		// Ajout
+    	enum status
+    	{
+			HEADER,
+			BODY,
+			COMPLETE,
+			ERROR
+    	};
+		int	recv_status;
+		//----------
+
     /*
     ** methods
     */

@@ -255,35 +255,7 @@ int Request::parse_headers()
     return (1);
 }
 
-int Request::parse_chunked_body()
-{
-    std::string line;
-    unsigned int len; 
-    std::stringstream ss;
-    
-    line.clear();
-    while (!_buffer.empty())
-    {
-        // 1. get len
-        len = 0;
-        ft_getline(_buffer, line);
-        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
-        ss << std::hex << line;
-        ss >> len;
-        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
-        if (len == 0)
-            break ;
-
-        // 2. get body
-        line.clear();
-        ft_getline(_buffer, line);
-        remove_return(line);
-        _text_body.append(line);
-        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
-    }
-    return (1);
-}
-
+/*
 int Request::parse_application_type_body()
 {
     _body_type = APPLICATION;
@@ -327,23 +299,8 @@ int Request::parse_form_type_body()
     _body_type = FORM;
     // todo après validation du tester
     return (1);
-}
+}*/
 
-int Request::parse_text_type_body()
-{
-    _body_type = TEXT;
-    if (_content_length) // meaning if value > 0 <=> a body exists
-    {
-        std::string line;
-
-        line.clear();
-        ft_getline(_buffer, line);
-        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
-            return (1);
-        _text_body = line.substr(0, _content_length);
-    }
-    return (1);
-}
 
 void	Request::parse_query_string()
 {
@@ -463,24 +420,90 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	return (1);
 }
 
-int Request::parse(std::vector<Location*> location)
+int Request::parse(std::vector<Location*> location)//header
 {
     parse_request_line();
 	parse_filename(location);
     parse_headers();
 
+	std::string tmp =_client->_buffermalloc;
+	utils_tmp::extract_body(tmp);
+	strcpy(_client->_buffermalloc, tmp.c_str());
+
+	return (RET_SUCCESS);
+}
+
+void Request::update_body()
+{
 	if (_transfer_encoding == "chunked")
-        parse_chunked_body();
-    else
+		parse_body_chunked();
+	else if (_content_length != -1)
+		parse_body_length();
+	else
+	{
+		LOG_WRT(Logger::ERROR, "Header incomplete")
+		_client->recv_status = Client::ERROR;	
+	}
+}
+
+void Request::parse_body_length()
+{
+//	size_t body_size = strlen(_client->_buffermalloc);
+
+	if (_content_length < 0)
+	{
+		_client->recv_status = Client::ERROR;
+		return ;
+	}
+	memset(_client->_buffermalloc, 0, RECV_BUFFER + 1);
+	if (_client->_request._text_body.length() == _content_length)
+		_client->recv_status = Client::COMPLETE;
+	
+	//_client->_buffermalloc;
+//old function
+	/*_body_type = TEXT;
+    if (_content_length) // meaning if value > 0 <=> a body exists
     {
-        if (_content_type == "application/x-www-form-urlencoded")
-            parse_application_type_body();
-        else if (_content_type == "multipart/form-data")
-            parse_form_type_body();
-        // else // _content_type == text/plain || _content_type.empty()
-            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction (body texte empty)
-    }    
-    return (1);
+        std::string line;
+
+        line.clear();
+        ft_getline(_buffer, line);
+        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
+            return (1);
+        _text_body = line.substr(0, _content_length);
+    }
+    return (1);*/
+}
+
+void Request::parse_body_chunked()
+{
+
+//old function
+	/*std::string line;
+    unsigned int len; 
+    std::stringstream ss;
+    
+    line.clear();
+    while (!_buffer.empty())
+    {
+        // 1. get len
+        len = 0;
+        ft_getline(_buffer, line);
+        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
+        ss << std::hex << line;
+        ss >> len;
+        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
+        if (len == 0)
+            break ;
+
+        // 2. get body
+        line.clear();
+        ft_getline(_buffer, line);
+        remove_return(line);
+        _text_body.append(line);
+        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
+    }
+    return (1);*/
 }
 
 /*

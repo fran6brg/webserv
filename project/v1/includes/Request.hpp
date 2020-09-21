@@ -123,17 +123,21 @@ class Request
 
     	int 				parse_request_line(void);
     	int 				parse_headers(void);
-    	int 				parse_application_type_body(void);
-    	int 				parse_form_type_body(void);
+    	//int 				parse_application_type_body(void);
+    	//int 				parse_form_type_body(void);
     	int 				parse_text_type_body(void);
 
-    	int 				parse_chunked_body(void);
+    	//int 				parse_chunked_body(void);
 		void				parse_query_string();
 		int					get_location(std::string *uri, std::vector<Location*> location);
 		int					parse_filename(std::vector<Location*> location);
 		int 				parse(std::vector<Location*> location);
 		void 				display(void);
 		void    			creat_autoindex();
+
+		void 				update_body();
+		void 				parse_body_length();
+		void 				parse_body_chunked();
 	/*
 	** friends
 	*/
