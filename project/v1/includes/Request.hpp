@@ -133,11 +133,13 @@ class Request
 		int					parse_filename(std::vector<Location*> location);
 		int 				parse(std::vector<Location*> location);
 		void 				display(void);
-		void    			creat_autoindex();
 
 		void 				update_body();
 		void 				parse_body_length();
 		void 				parse_body_chunked();
+
+		void    			create_autoindex();
+
 	/*
 	** friends
 	*/

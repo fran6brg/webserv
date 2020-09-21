@@ -55,7 +55,9 @@ int main(int argc, char *argv[])
 			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
+				
 				s->handleClientRequest(c);
+
 				if (!c->_is_connected) // si 'ressource temporary unavailable' || si le client est déconnecté
 				{
 					it_c = s->_clients.erase(it_c);

@@ -38,7 +38,10 @@ def printResponse(r, i):
 
 	print ()
 	print ("-------- RESPONSE")
+	# print (props(r.raw))
 	print ("Status code:", r.status_code)
+	print ("Reason:", r.raw.reason)
+	# print ("headers:", r.raw.headers)
 	print ()
 	for h in r.headers:
 		print (h + ": " + r.headers[h])
@@ -116,6 +119,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 # ---
 from requests.auth import HTTPBasicAuth
 i += 1
+print (bcolors.OKBLUE + "\n" + str(i) + ". Auth success:\n" + bcolors.ENDC)
 body = "auth success"
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.put('http://localhost:8080/auth/file', auth=HTTPBasicAuth('user', 'pass'), data=body)
@@ -124,8 +128,18 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 # ---
 from requests.auth import HTTPBasicAuth
 i += 1
+print (bcolors.OKBLUE + "\n" + str(i) + ". Auth failed:\n" + bcolors.ENDC)
 body = "auth failed"
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.put('http://localhost:8080/auth/file', auth=HTTPBasicAuth('user', 'fail'), data=body)
 	printResponse(r, i)
 
+# ---
+from requests.auth import HTTPBasicAuth
+i += 1
+print (bcolors.OKBLUE + "\n" + str(i) + ". max body < content length -> 413:\n" + bcolors.ENDC)
+body = "1234"
+# headers = {'Max-Body': '3'} -> location
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.put('http://localhost:8080/maxbody/file', data=body)
+	printResponse(r, i)

@@ -39,6 +39,7 @@ def printResponse(r, i):
 	print ()
 	print ("-------- RESPONSE")
 	print ("Status code:", r.status_code)
+	print ("Reason:", r.raw.reason)
 	print ()
 	for h in r.headers:
 		print (h + ": " + r.headers[h])

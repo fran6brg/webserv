@@ -132,7 +132,7 @@ int Server::recvRequest(Client *c)
 {
     int ret = 0;
     errno = 0;
-    
+
     // https://stackoverflow.com/questions/13736064/recv-connection-reset-by-peer
     // 'Connection reset by peer' has a number of causes,
     // but the most common one is that you have written to a connection that has already been closed by the peer.

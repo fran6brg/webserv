@@ -298,8 +298,24 @@ int Request::parse_form_type_body()
     _body_type = FORM;
     // todo après validation du tester
     return (1);
-}*/
+}
 
+int Request::parse_text_type_body()
+{
+    _body_type = TEXT;
+    if (_content_length > 0) // meaning if value > 0 <=> a body exists
+    {
+        std::string line;
+
+        line.clear();
+        ft_getline(_buffer, line);
+        if (line.empty() || !line[0]) // '!line[0]' important sinon ça lit beaucoup plus loin dans la mémoire
+            return (1);
+        _text_body = line.substr(0, _content_length);
+    }
+    return (1);
+}
+*/
 
 void	Request::parse_query_string()
 {
@@ -324,6 +340,8 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 {
 	int			j;
 	std::string uri_tmp;
+
+
 	// Verifie si l'uri est present dans les locations
 	for (std::size_t i = 0; i < locations.size(); ++i)
 	{
@@ -333,6 +351,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			return (1);
 		}
 	}
+
 	// Sinon check les sous dossiers de l'uri (jusqu'a "/") pour voir s'ils correspondent a une location 
 	j = (*uri).size() - 1;
 	uri_tmp = *uri;
@@ -354,6 +373,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			}
 		}
 	}
+
 	return (0);
 }
 
@@ -362,7 +382,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 **	a partir de l'uri present dans la requete, et de la location
 */
 
-void	Request::creat_autoindex()
+void	Request::create_autoindex()
 {
 	DIR				*dir;
 	struct dirent	*dent;
@@ -390,8 +410,10 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	struct stat	info;
 	int			i;
 
+
 	parse_query_string();	
 	get_location(&_uri, locations);
+
 	if (_location)
 	{
 		i = (_location->_root).size() - 1;
@@ -404,7 +426,7 @@ int	Request::parse_filename(std::vector<Location*> locations)
 			 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
 			 {
 				if (_location->_autoindex == 1 && _method == "GET")
-					creat_autoindex();
+					create_autoindex();
 				else
 				{
 					i = _file.size() - 1;
@@ -518,8 +540,7 @@ void Request::display(void)
     ss1 << " 3) _http_version: " << _http_version << std::endl; // 3
     ss1 << " 4) _accept_charset:"; // 4
     print_map(ss1, _accept_charset);
-	
-     ss1 << " 5) _accept_language:"; // 5
+	ss1 << " 5) _accept_language:"; // 5
     print_map(ss1, _accept_language);
     ss1 << " 6) _authorization: " << _authorization << std::endl; // 6
     ss1 << " 7) _content_language:"; // 7
@@ -532,21 +553,21 @@ void Request::display(void)
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
     ss1 << "15) _text_body (" << std::to_string(_text_body.length()) << ")"/*: " << _text_body */<< std::endl; // 14
-    ss1 << "15) _body:" << std::endl; // 15
-    if (_body.empty())
-        ss1 << std::endl;
-    else
-    {
-        i = 0;
-        while (i < _body.size())
-        {
-            if (i > 0)
-                ss1 << " ";
-            ss1 << _body[i].first << "=" << _body[i].second;
-            i++;
-        }
-        ss1 << std::endl;
-    }
+    // ss1 << "15) _body:" << std::endl; // 15
+    // if (_body.empty())
+    //     ss1 << std::endl;
+    // else
+    // {
+    //     i = 0;
+    //     while (i < _body.size())
+    //     {
+    //         if (i > 0)
+    //             ss1 << " ";
+    //         ss1 << _body[i].first << "=" << _body[i].second;
+    //         i++;
+    //     }
+    //     ss1 << std::endl;
+    // }
     ss1 << "16) _file: " << _file << std::endl;
     ss1 << "17) _transfer_encoding: " << _transfer_encoding << std::endl;
 	LOG_WRT(Logger::INFO, ss1.str());

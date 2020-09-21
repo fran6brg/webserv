@@ -131,11 +131,13 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
-    if (bad_request(req))
+    if (bad_request(req)) // 400
 		return ;
-	else if (method_not_allowed(req))
+	else if (method_not_allowed(req)) // 405
 		return ;
-    else if (unauthorized(req))
+    else if (unauthorized(req)) // 401
+        return ;
+    else if (request_entity_too_large(req)) // 413
         return ;
 	else if (req->_method == "GET" || req->_method == "HEAD")
 		get(req);
@@ -288,6 +290,24 @@ int				Response::unauthorized(Request *req)
     }
     else
 	    return (0);
+}
+
+int				Response::request_entity_too_large(Request *req)
+{
+    if (req->_content_length > 0 && req->_location->_max_body > 0)
+    {
+        if (req->_content_length > req->_location->_max_body)
+        {
+            LOG_WRT(Logger::INFO, "Response::request_entity_too_large()\n");
+            _status_code = REQUEST_ENTITY_TOO_LARGE_413;
+            std::string path = "./www/old/error/413.html";
+            std::ifstream error413(path);
+            std::string buffer((std::istreambuf_iterator<char>(error413)), std::istreambuf_iterator<char>());
+            _body = buffer;
+            return (1);
+        }
+    }
+    return (0);
 }
 
 int				Response::not_found(Request *req)
