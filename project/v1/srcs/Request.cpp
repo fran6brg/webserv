@@ -449,17 +449,17 @@ void Request::update_body()
 void Request::parse_body_length()
 {
 //	size_t body_size = strlen(_client->_buffermalloc);
-
 	if (_content_length < 0)
 	{
 		_client->recv_status = Client::ERROR;
 		return ;
 	}
+	_client->_request._text_body += _client->_buffermalloc;
 	memset(_client->_buffermalloc, 0, RECV_BUFFER + 1);
 	if (_client->_request._text_body.length() == _content_length)
 		_client->recv_status = Client::COMPLETE;
 	
-	//_client->_buffermalloc;
+
 //old function
 	/*_body_type = TEXT;
     if (_content_length) // meaning if value > 0 <=> a body exists
