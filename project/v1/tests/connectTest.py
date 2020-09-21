@@ -55,51 +55,7 @@ i = 0;
 
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/')
+	r = requests.connect('http://localhost:8080/')
 	printResponse(r, i)
 
 # ---
-i += 1
-headers = {'Accept-Language': 'fr'}
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/test', headers=headers)
-	printResponse(r, i)
-
-# ---
-i += 1
-headers = {'Accept-Language': 'en'}
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/test', headers=headers)
-	printResponse(r, i)
-
-# ---
-i += 1
-headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/test', headers=headers)
-	printResponse(r, i)
-
-# ---
-i += 1
-headers = {'Accept-Charset': 'iso-8859-1'}
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/test', headers=headers)
-	printResponse(r, i)
-
-# ---
-i += 1
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/auto_index')
-	printResponse(r, i)
-
-# ---
-i += 1
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/index.php')
-	printResponse(r, i)
-
-# ---
-i += 1
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/index.html?var1=value1&var2=value2&var3=value3')
-	printResponse(r, i)
