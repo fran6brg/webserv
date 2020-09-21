@@ -125,7 +125,7 @@ class Request
     	int 				parse_headers(void);
     	//int 				parse_application_type_body(void);
     	//int 				parse_form_type_body(void);
-    	int 				parse_text_type_body(void);
+    	//int 				parse_text_type_body(void);
 
     	//int 				parse_chunked_body(void);
 		void				parse_query_string();
