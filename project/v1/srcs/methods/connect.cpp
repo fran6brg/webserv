@@ -2,5 +2,5 @@
 
 void			Response::connect(Request *req)
 {
-	(void)req;
+	bad_request(req);
 }

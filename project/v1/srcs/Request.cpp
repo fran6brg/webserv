@@ -93,7 +93,6 @@ void Request::fill_request(std::string key, std::string value)
 
     if (key == "Accept-Charset") // 4 example: Accept-Charset: utf-8, iso-8859-1;q=0.5
     {
-		std::cout << "ICI" << std::endl;
         tokens = split(value, ',');
         if (!tokens.empty())
         {
@@ -473,10 +472,10 @@ int Request::parse(std::vector<Location*> location)
         parse_chunked_body();
     else
     {
-        if (_content_type == "application/x-www-form-urlencoded")
+/*        if (_content_type == "application/x-www-form-urlencoded")
             parse_application_type_body();
         else if (_content_type == "multipart/form-data")
-            parse_form_type_body();
+            parse_form_type_body();*/
         // else // _content_type == text/plain || _content_type.empty()
             parse_text_type_body();// x-www-form-urlencoded affecte cette fonction (body texte empty)
     }    

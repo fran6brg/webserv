@@ -16,12 +16,12 @@ void			Response::get(Request *req)
 	if ((req->_method == "GET" 
 		&& (req->_location->_cgi_root != "" 
 			|| (req->_location->_php_root != ""
-			&& is_extension(req->_file, "php"))))
+			&& is_extension(req->_file, ".php"))))
 	&& file.good())
 	{
 		LOG_WRT(Logger::DEBUG, "get: cgi\n");
 		ft_cgi(req);
-		get_cgi_ret();
+		get_cgi_ret(req);
 		_last_modified = get_last_modif(req->_file);
 		std::ifstream temp("./www/temp_file");
 		std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());

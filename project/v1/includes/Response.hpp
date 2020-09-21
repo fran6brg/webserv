@@ -133,7 +133,7 @@ class Response
 
 		char			**create_env_tab(Request *req);
 		void			ft_cgi(Request *req);
-		void			get_cgi_ret(void);
+		void			get_cgi_ret(Request *req);
 	/*
 	** friends
 	*/

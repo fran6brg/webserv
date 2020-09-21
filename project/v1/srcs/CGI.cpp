@@ -124,7 +124,7 @@ void		Response::ft_cgi(Request *req)
         	args[0] = strdup(req->_location->_cgi_root.c_str());
 		else
         	args[0] = strdup(req->_location->_php_root.c_str());
-        args[1] = strdup(req->_file.c_str());
+		args[1] = strdup(req->_file.c_str());
         args[2] = NULL;
 		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
 		pipe(tubes);
@@ -134,7 +134,7 @@ void		Response::ft_cgi(Request *req)
 		if ((pid = fork()) == 0)
 		{
 			dup2(temp_fd, 1);
-			if (stat(req->_location->_cgi_root.c_str(), &php) != 0 ||
+			if (stat(binaire.c_str(), &php) != 0 ||
 			!(php.st_mode & S_IFREG))
 			{
 				std::cout << "Erreur CGI\n";
@@ -158,7 +158,7 @@ void		Response::ft_cgi(Request *req)
     }
 }
 
-void		Response::get_cgi_ret(void)
+void		Response::get_cgi_ret(Request *req)
 {
 	std::ifstream 				temp_file("./www/temp_file");
 	std::string					line;
@@ -167,12 +167,23 @@ void		Response::get_cgi_ret(void)
 	if (temp_file.is_open())
 	{
 		getline(temp_file, line);
-		split_ret = split(line, ' ');
-		_status_code = std::stoi(split_ret[1]);
+		if (line.find("Status:") && req->_location->_cgi_root != "")
+		{
+			split_ret = split(line, ' ');
+			_status_code = std::stoi(split_ret[1]);
+			split_ret.clear();
+		}
+		else
+			_status_code = OK_200;
 		getline(temp_file, line);
-		split_ret.clear();
-		split_ret = split(line, ':');
-		_content_type[0] = trim(split_ret[1]);
-		split_ret.clear();
+		if (line.find("Content-Type:") && req->_location->_cgi_root != "")
+		{
+			split_ret.clear();
+			split_ret = split(line, ':');
+			_content_type[0] = trim(split_ret[1]);
+			split_ret.clear();
+		}
+		else
+			_content_type[0] = "text/html";
 	}
 }
