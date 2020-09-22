@@ -143,3 +143,14 @@ body = "1234"
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.put('http://localhost:8080/maxbody/file', data=body)
 	printResponse(r, i)
+
+
+# ---
+from requests.auth import HTTPBasicAuth
+i += 1
+print (bcolors.OKBLUE + "\n" + str(i) + "< chunked ->\n" + bcolors.ENDC)
+body = "14\r\nabcdefghijklmnopqrst\r\nA\r\n0123456789\r\n0\r\n\r\n"
+headers = {'Transfer-Encoding': 'chunked'}
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.put('http://localhost:8080/putTests/abc', data=body, headers=headers)
+	printResponse(r, i)

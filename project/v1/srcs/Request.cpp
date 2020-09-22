@@ -58,7 +58,7 @@ std::string trim(const std::string& str)
     return (std::string(str.substr(first, (last - first + 1)))); // std::string() autour du substr pour bien s'assurer qu'on a le \0 à la fin de value sinon ça peut bug
 }
 
-void remove_return(std::string& str)
+void remove_return(std::string &str)
 {
     size_t pos = str.find_last_of('\r');
 
@@ -441,7 +441,7 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	return (1);
 }
 
-int Request::parse(std::vector<Location*> location)//header
+int Request::parse(std::vector<Location*> location) // parse header
 {
     parse_request_line();
 	parse_filename(location);
@@ -472,7 +472,7 @@ void Request::update_body()
 }
 
 void Request::parse_body_length()
-{
+{//LOG_WRT(Logger::DEBUG, "parse_body_length");
 	char		*buff = _client->_buffermalloc;
 	std::string &body = _client->_request._text_body;
 	size_t 		cut;
@@ -498,38 +498,47 @@ void Request::parse_body_length()
 }
 
 void Request::parse_body_chunked()
-{
-
-//old function
-	std::string line;
-    unsigned int len; 
-    std::stringstream ss;
-    
-    line.clear();
-    while (!_buffer.empty())
-    {
-        // 1. get len
-        len = 0;
-        ft_getline(_buffer, line);
-        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
-        ss << std::hex << line;
-        ss >> len;
-        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
-        if (len == 0)
-        {
-            _client->recv_status = Client::COMPLETE;
-            break ;
-        }
-
-        // 2. get body
-        line.clear();
-        ft_getline(_buffer, line);
-        remove_return(line);
-        _text_body.append(line);
-        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
-    }
-    // return (1);
+{//LOG_WRT(Logger::DEBUG, "parse_body_chunked");
+	char				*buff = _client->_buffermalloc;
+	std::string 		&body = _client->_request._text_body;
+	static size_t		line_size = 0;
+	static std::string	str_buff; //tmpbuff + buff
+	size_t				next_line;
+	
+	str_buff += buff;
+	//LOG_WRT(Logger::CLEAR, "str_buff:\n" + std::string(buff) + "|");
+	while (true)
+	{
+		if (line_size == 0)
+		{
+			if ((next_line = str_buff.find("\r\n")) == std::string::npos)
+				break ;
+			std::string line = str_buff.substr(0, next_line);
+			line_size = utils_tmp::hexa_to_dec(line.c_str());
+			str_buff.erase(0, line.length() + 2);
+			if (line_size == 0)
+				_client->recv_status = Client::COMPLETE;
+		}
+		if (line_size != 0)
+		{
+			if (str_buff.length() >= line_size)// if hexa is bigger than predict ?
+			{
+				body += str_buff.substr(0, line_size);
+				str_buff.erase(0, line_size + 2);
+				line_size = 0;
+			}
+			else
+				break ;
+		}
+		if (_client->recv_status == Client::COMPLETE)//else complete ?
+		{
+			memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
+			return ;
+		}
+	}
+	memset(buff, 0, RECV_BUFFER + 1);
 }
+
 
 /*
 ** Debug

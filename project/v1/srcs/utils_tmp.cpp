@@ -81,3 +81,26 @@ std::string utils_tmp::extract_body(std::string &buff)
 	res = buff.erase(0 , (buff.find("\r\n\r\n") + 4));
 	return (res);
 }
+
+int utils_tmp::hexa_to_dec(const char *hexVal)
+{    
+    int len = strlen(hexVal); 
+    int base = 1; 
+    int dec_val = 0; 
+
+	for (int i = len - 1; i >= 0; --i) 
+    {    
+        if (hexVal[i] >= '0' && hexVal[i] <= '9') 
+        { 
+            dec_val += (hexVal[i] - 48) * base;  
+            base = base * 16; 
+        } 
+        else if (hexVal[i] >= 'A' && hexVal[i] <= 'F') 
+        { 
+            dec_val += (hexVal[i] - 55)*base; 
+            base = base * 16; 
+        } 
+    }
+	//std::cout << "dec_val="<<dec_val << " hexVal"<<hexVal<<std::endl;
+    return (dec_val); 
+} 

@@ -23,6 +23,7 @@ public:
 	static bool file_exists(const char *filename);
 	static int read_file(int fd, std::string file, std::string &buff);
 	static std::string extract_body(std::string &buff);
+	static int hexa_to_dec(const char *hexVal) ;
 };
 
 #endif
