@@ -458,13 +458,17 @@ void Request::update_body()
 {
 	if (_transfer_encoding == "chunked")
 		parse_body_chunked();
-	else if (_content_length != -1)
+	else if (_content_length != -1) // > 0
 		parse_body_length();
-	else
-	{
-		LOG_WRT(Logger::ERROR, "Header incomplete")
-		_client->recv_status = Client::ERROR;	
-	}
+	// else
+	// {
+	// 	LOG_WRT(Logger::ERROR, "Header incomplete")
+	// 	_client->recv_status = Client::ERROR;	
+	// }
+    else
+    {
+		_client->recv_status = Client::COMPLETE;
+    }    
 }
 
 void Request::parse_body_length()
@@ -497,7 +501,7 @@ void Request::parse_body_chunked()
 {
 
 //old function
-	/*std::string line;
+	std::string line;
     unsigned int len; 
     std::stringstream ss;
     
@@ -512,7 +516,10 @@ void Request::parse_body_chunked()
         ss >> len;
         LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
         if (len == 0)
+        {
+            _client->recv_status = Client::COMPLETE;
             break ;
+        }
 
         // 2. get body
         line.clear();
@@ -521,7 +528,7 @@ void Request::parse_body_chunked()
         _text_body.append(line);
         LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
     }
-    return (1);*/
+    // return (1);
 }
 
 /*

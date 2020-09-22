@@ -95,6 +95,8 @@ int Server::start(void)
     // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
 	FD_SET(_socket_fd, &g_conf._save_readfds);
     g_conf.add_fd(_socket_fd);    
+
+    LOG_WRT(Logger::INFO, "****************\n\n");
     return (1);
 }
 
@@ -155,6 +157,7 @@ int Server::recvRequest(Client *c)
     int bytes = strlen(c->_buffermalloc);
     ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
+    LOG_WRT(Logger::DEBUG, "recv() -> ret = " + std::to_string(ret));
 	if (ret == -1)
     {
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
@@ -171,43 +174,40 @@ int Server::recvRequest(Client *c)
         return (0);
     }
     else
-	{//todo: Replace if by switch
+	{ 
+        // todo: Replace if by switch
         c->_buffermalloc[bytes] = '\0';
         if (c->recv_status == Client::HEADER)
         {
+            LOG_WRT(Logger::DEBUG, "c->recv_status == HEADER");
 			if (strstr(c->_buffermalloc, "\r\n\r\n") != NULL)
 			{
+                LOG_WRT(Logger::DEBUG, "found \"\\r\\n\\r\\n\"");
 				c->recv_status = Client::BODY;
             	c->_request._buffer = std::string(c->_buffermalloc, bytes);
-            	c->_request.parse(_locations);//parse only header
+                LOG_WRT(Logger::DEBUG, "RAW REQUEST (" + std::to_string(bytes) + "):\n---\n" + std::string(c->_request._buffer) + "---");
+            	c->_request.parse(_locations); // parse only header
 			}
-			else
+			else if (bytes >= RECV_BUFFER)
 			{
-				LOG_WRT(Logger::ERROR, "Not a valide http request");
+				LOG_WRT(Logger::ERROR, "bytes >= RECV_BUFFER: Not a valide http request");
 				return (RET_ERROR);
 			}
         }
 		if (c->recv_status == Client::BODY)
-			c->_request.update_body();
+		{
+            LOG_WRT(Logger::DEBUG, "c->recv_status == BODY");
+            c->_request.update_body();
+        }
 		if (c->recv_status ==  Client::COMPLETE)
 		{
-            FD_SET(c->_accept_fd, &g_conf._save_writefds);
-			// Ou mettre ca ?
-/*			if (!c->_retry_after.empty())
-			{
-				std::cout << "\n\n TEST \n\n";
-				if (compare_date(c->_last_request, get_date()) == 1)
-				{
-					c->_retry_after.clear();
-					c->_last_request = get_date();
-				}
-				else
-					c->recv_status =  Client::ERROR;
-			}*/
+            LOG_WRT(Logger::DEBUG, "c->recv_status == COMPLETE");
+            FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
 		}
 		if (c->recv_status ==  Client::ERROR)
 		{
+            LOG_WRT(Logger::DEBUG, "c->recv_status == ERROR");
 			c->_is_connected = false;
 			return (RET_ERROR);
 		}
@@ -247,25 +247,25 @@ int Server::handleClientRequest(Client *c)
 
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
-        LOG_WRT(Logger::INFO, "reading request of client " + std::to_string(c->_accept_fd) + "\n");
+        LOG_WRT(Logger::INFO, "reading request of client " + std::to_string(c->_accept_fd));
         if (!recvRequest(c))
             return (0);
         else
             ok_read = 1;
     }
     else
-        LOG_WRT(Logger::INFO, "reading not set for client " + std::to_string(c->_accept_fd) + "\n");
+        LOG_WRT(Logger::INFO, "reading not set for client " + std::to_string(c->_accept_fd));
 
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {
-        LOG_WRT(Logger::INFO, "sending response to client " + std::to_string(c->_accept_fd) + "\n");
+        LOG_WRT(Logger::INFO, "sending response to client " + std::to_string(c->_accept_fd));
         if (!sendResponse(c))
             return (0);
         else
             ok_write = 1;
     }
     else
-        LOG_WRT(Logger::INFO, "writing not set for client " + std::to_string(c->_accept_fd) + "\n");
+        LOG_WRT(Logger::INFO, "writing not set for client " + std::to_string(c->_accept_fd));
 
     return (ok_read && ok_write);
 }
