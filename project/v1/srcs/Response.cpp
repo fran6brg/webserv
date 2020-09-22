@@ -126,8 +126,9 @@ int Response::format_to_send(Request *req)
 	if (req->_method == "HEAD")
 		_body.clear();
     concat_to_send();
-//	if (!_retry_after.empty())
-//		req->_client->_retry_after = _retry_after;
+//	_retry_after = "Tue, 22 Sep 2020 13:11:39 CEST";
+	if (!_retry_after.empty())
+		req->_client->_retry_after = _retry_after;
 	return (1);
 }
 

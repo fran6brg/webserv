@@ -202,9 +202,10 @@ int Server::recvRequest(Client *c)
 		if (c->recv_status ==  Client::COMPLETE)
 		{
 				// --- Ou mettre ca ?
-          if (!c->_retry_after.empty())
-          {
-				std::cout << "\n\n TEST \n\n";
+			std::cout << "\n\n{" << c->_retry_after << "}\n\n";
+        	if (!c->_retry_after.empty())
+          	{
+//				std::cout << "\n\n TEST \n\n";
 				if (compare_date(c->_last_request, get_date()) == 1)
                 {
                     c->_retry_after.clear();
