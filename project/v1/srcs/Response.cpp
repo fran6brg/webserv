@@ -184,7 +184,7 @@ int				Response::method_not_allowed(Request *req)
 	// Comparaison de la methode demande avec les methodes autorisees dans la location
 	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
 	{
-		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method + "\n");
+		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method);
 		if ((req->_location->_method)[i] == req->_method)
 			return (0);
 	}

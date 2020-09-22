@@ -23,7 +23,7 @@ class Server;
 ** Const
 */
 
-# define RECV_BUFFER    200
+# define RECV_BUFFER    10000
 
 /*
 ** Class
@@ -63,7 +63,7 @@ class Client
 			COMPLETE,
 			ERROR
     	};
-		int	recv_status;
+		int	        recv_status;
 		//----------
 
     /*
