@@ -126,7 +126,9 @@ int Response::format_to_send(Request *req)
 	if (req->_method == "HEAD")
 		_body.clear();
     concat_to_send();
-    return (1);
+//	if (!_retry_after.empty())
+//		req->_client->_retry_after = _retry_after;
+	return (1);
 }
 
 void		Response::handle_response(Request *req)
@@ -181,7 +183,6 @@ int				Response::bad_request(Request *req)
 
 int				Response::method_not_allowed(Request *req)
 {
-	// Comparaison de la methode demande avec les methodes autorisees dans la location
 	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
 	{
 		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method + "\n");

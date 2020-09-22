@@ -191,7 +191,19 @@ int Server::recvRequest(Client *c)
 			c->_request.update_body();
 		if (c->recv_status ==  Client::COMPLETE)
 		{
-            FD_SET(c->_accept_fd, &g_conf._save_writefds);          
+            FD_SET(c->_accept_fd, &g_conf._save_writefds);
+			// Ou mettre ca ?
+/*			if (!c->_retry_after.empty())
+			{
+				std::cout << "\n\n TEST \n\n";
+				if (compare_date(c->_last_request, get_date()) == 1)
+				{
+					c->_retry_after.clear();
+					c->_last_request = get_date();
+				}
+				else
+					c->recv_status =  Client::ERROR;
+			}*/
             c->_request.display();
 		}
 		if (c->recv_status ==  Client::ERROR)

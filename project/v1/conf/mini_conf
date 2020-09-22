@@ -10,8 +10,8 @@ server {
 		method	GET POST HEAD OPTIONS PUT
 		cgi .php
 		#cgi .cgi
-		php_path /usr/local/php5-7.3.8-20190811-205217/bin/php-cgi
-		#cgi_path ./www/CGI/
+		#php_path /usr/local/php5-7.3.8-20190811-205217/bin/php-cgi
+		cgi_path ./www/CGI/cgi_tester
     }
     location /test	{
         root    ./www/old/test

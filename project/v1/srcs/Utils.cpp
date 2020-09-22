@@ -207,3 +207,22 @@ int		is_extension(std::string file, std::string ext)
 		return (1);
 	return (0);
 }
+
+int		compare_date(std::string a, std::string b)
+{
+	struct tm c;
+	struct tm d;
+	strptime(a.c_str(), "%a, %d %b %Y %H:%M:%S GMT", &c);
+	strptime(b.c_str(), "%a, %d %b %Y %H:%M:%S GMT", &d);
+	if (c.tm_year > d.tm_year)
+		return (1);
+	else if (c.tm_year == d.tm_year && c.tm_yday > d.tm_yday)
+		return (1);
+	else if (c.tm_year == d.tm_year && c.tm_yday == d.tm_yday && c.tm_hour > d.tm_hour)
+		return (1);
+	else if (c.tm_year == d.tm_year && c.tm_yday == d.tm_yday && c.tm_hour == d.tm_hour && c.tm_min > d.tm_min)
+		return (1);
+	else if (c.tm_year == d.tm_year && c.tm_yday == d.tm_yday && c.tm_hour == d.tm_hour && c.tm_min == d.tm_min && c.tm_sec >= d.tm_sec)
+		return (1);
+	return (0);
+}

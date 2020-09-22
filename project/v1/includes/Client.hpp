@@ -54,6 +54,8 @@ class Client
 
         char        *_buffermalloc;
 
+		std::string	_last_request;
+		std::string	_retry_after;
 
 		// Ajout
     	enum status

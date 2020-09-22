@@ -22,5 +22,6 @@ int				is_extension(std::string file, std::string ext);
 int             set_laguage(Request *req);
 int             set_charset(Request *req);
 void            unset_extension(Request *req);
+int				compare_date(std::string a, std::string b);
 
 #endif
