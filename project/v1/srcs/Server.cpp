@@ -204,6 +204,7 @@ int Server::recvRequest(Client *c)
             LOG_WRT(Logger::DEBUG, "c->recv_status == COMPLETE");
             FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
+            //LOG_WRT(Logger::CLEAR, "TEXT BODY: " + c->_request._text_body);
 		}
 		if (c->recv_status ==  Client::ERROR)
 		{

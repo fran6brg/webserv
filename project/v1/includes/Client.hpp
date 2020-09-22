@@ -23,7 +23,7 @@ class Server;
 ** Const
 */
 
-# define RECV_BUFFER    10000
+# define RECV_BUFFER    60000
 
 /*
 ** Class
