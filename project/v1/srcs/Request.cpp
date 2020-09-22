@@ -254,35 +254,7 @@ int Request::parse_headers()
     return (1);
 }
 
-int Request::parse_chunked_body()
-{
-    std::string line;
-    unsigned int len; 
-    std::stringstream ss;
-    
-    line.clear();
-    while (!_buffer.empty())
-    {
-        // 1. get len
-        len = 0;
-        ft_getline(_buffer, line);
-        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
-        ss << std::hex << line;
-        ss >> len;
-        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
-        if (len == 0)
-            break ;
-
-        // 2. get body
-        line.clear();
-        ft_getline(_buffer, line);
-        remove_return(line);
-        _text_body.append(line);
-        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
-    }
-    return (1);
-}
-
+/*
 int Request::parse_application_type_body()
 {
     _body_type = APPLICATION;
@@ -331,7 +303,7 @@ int Request::parse_form_type_body()
 int Request::parse_text_type_body()
 {
     _body_type = TEXT;
-    if (_content_length) // meaning if value > 0 <=> a body exists
+    if (_content_length > 0) // meaning if value > 0 <=> a body exists
     {
         std::string line;
 
@@ -343,6 +315,7 @@ int Request::parse_text_type_body()
     }
     return (1);
 }
+*/
 
 void	Request::parse_query_string()
 {
@@ -367,6 +340,8 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 {
 	int			j;
 	std::string uri_tmp;
+
+
 	// Verifie si l'uri est present dans les locations
 	for (std::size_t i = 0; i < locations.size(); ++i)
 	{
@@ -376,6 +351,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			return (1);
 		}
 	}
+
 	// Sinon check les sous dossiers de l'uri (jusqu'a "/") pour voir s'ils correspondent a une location 
 	j = (*uri).size() - 1;
 	uri_tmp = *uri;
@@ -397,6 +373,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 			}
 		}
 	}
+
 	return (0);
 }
 
@@ -405,7 +382,7 @@ int		Request::get_location(std::string *uri, std::vector<Location*> locations)
 **	a partir de l'uri present dans la requete, et de la location
 */
 
-void	Request::creat_autoindex()
+void	Request::create_autoindex()
 {
 	DIR				*dir;
 	struct dirent	*dent;
@@ -433,8 +410,10 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	struct stat	info;
 	int			i;
 
+
 	parse_query_string();	
 	get_location(&_uri, locations);
+
 	if (_location)
 	{
 		i = (_location->_root).size() - 1;
@@ -447,7 +426,7 @@ int	Request::parse_filename(std::vector<Location*> locations)
 			 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
 			 {
 				if (_location->_autoindex == 1 && _method == "GET")
-					creat_autoindex();
+					create_autoindex();
 				else
 				{
 					i = _file.size() - 1;
@@ -462,24 +441,87 @@ int	Request::parse_filename(std::vector<Location*> locations)
 	return (1);
 }
 
-int Request::parse(std::vector<Location*> location)
+int Request::parse(std::vector<Location*> location)//header
 {
     parse_request_line();
 	parse_filename(location);
     parse_headers();
 
+	std::string tmp =_client->_buffermalloc;
+	utils_tmp::extract_body(tmp);
+	strcpy(_client->_buffermalloc, tmp.c_str());
+
+	return (RET_SUCCESS);
+}
+
+void Request::update_body()
+{
 	if (_transfer_encoding == "chunked")
-        parse_chunked_body();
-    else
+		parse_body_chunked();
+	else if (_content_length != -1)
+		parse_body_length();
+	else
+	{
+		LOG_WRT(Logger::ERROR, "Header incomplete")
+		_client->recv_status = Client::ERROR;	
+	}
+}
+
+void Request::parse_body_length()
+{
+	char		*buff = _client->_buffermalloc;
+	std::string &body = _client->_request._text_body;
+	size_t 		cut;
+
+	if (_content_length < 0)
+	{
+		_client->recv_status = Client::ERROR;
+		return ;
+	}
+	size_t new_body_size = body.length() + strlen(buff);
+	if (new_body_size >= _content_length)
+	{
+		cut = _content_length - body.length();
+		body += std::string(buff).substr(0, cut);
+		_client->recv_status = Client::COMPLETE;
+		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
+	}
+	else
+	{
+		body += buff;
+		memset(buff, 0, RECV_BUFFER + 1);
+	}
+}
+
+void Request::parse_body_chunked()
+{
+
+//old function
+	/*std::string line;
+    unsigned int len; 
+    std::stringstream ss;
+    
+    line.clear();
+    while (!_buffer.empty())
     {
-/*        if (_content_type == "application/x-www-form-urlencoded")
-            parse_application_type_body();
-        else if (_content_type == "multipart/form-data")
-            parse_form_type_body();*/
-        // else // _content_type == text/plain || _content_type.empty()
-            parse_text_type_body();// x-www-form-urlencoded affecte cette fonction (body texte empty)
-    }    
-    return (1);
+        // 1. get len
+        len = 0;
+        ft_getline(_buffer, line);
+        LOG_WRT(Logger::DEBUG, "len in hex: " + line);
+        ss << std::hex << line;
+        ss >> len;
+        LOG_WRT(Logger::DEBUG, "len in dec: " + std::to_string(len));
+        if (len == 0)
+            break ;
+
+        // 2. get body
+        line.clear();
+        ft_getline(_buffer, line);
+        remove_return(line);
+        _text_body.append(line);
+        LOG_WRT(Logger::DEBUG, "_text_body is now " + std::to_string(_text_body.length()) + " long");
+    }
+    return (1);*/
 }
 
 /*
@@ -498,8 +540,7 @@ void Request::display(void)
     ss1 << " 3) _http_version: " << _http_version << std::endl; // 3
     ss1 << " 4) _accept_charset:"; // 4
     print_map(ss1, _accept_charset);
-	
-     ss1 << " 5) _accept_language:"; // 5
+	ss1 << " 5) _accept_language:"; // 5
     print_map(ss1, _accept_language);
     ss1 << " 6) _authorization: " << _authorization << std::endl; // 6
     ss1 << " 7) _content_language:"; // 7
@@ -512,21 +553,21 @@ void Request::display(void)
     ss1 << "13) _referer: " << _referer << std::endl; // 13
     ss1 << "14) _user_agent: " << _user_agent << std::endl; // 14
     ss1 << "15) _text_body (" << std::to_string(_text_body.length()) << ")"/*: " << _text_body */<< std::endl; // 14
-    ss1 << "15) _body:" << std::endl; // 15
-    if (_body.empty())
-        ss1 << std::endl;
-    else
-    {
-        i = 0;
-        while (i < _body.size())
-        {
-            if (i > 0)
-                ss1 << " ";
-            ss1 << _body[i].first << "=" << _body[i].second;
-            i++;
-        }
-        ss1 << std::endl;
-    }
+    // ss1 << "15) _body:" << std::endl; // 15
+    // if (_body.empty())
+    //     ss1 << std::endl;
+    // else
+    // {
+    //     i = 0;
+    //     while (i < _body.size())
+    //     {
+    //         if (i > 0)
+    //             ss1 << " ";
+    //         ss1 << _body[i].first << "=" << _body[i].second;
+    //         i++;
+    //     }
+    //     ss1 << std::endl;
+    // }
     ss1 << "16) _file: " << _file << std::endl;
     ss1 << "17) _transfer_encoding: " << _transfer_encoding << std::endl;
 	LOG_WRT(Logger::INFO, ss1.str());

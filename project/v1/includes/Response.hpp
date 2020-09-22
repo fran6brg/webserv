@@ -130,6 +130,7 @@ class Response
 		int				accepted_method(Request *req);
 		int				method_not_allowed(Request *req);
 		int				unauthorized(Request *req);
+		int				request_entity_too_large(Request *req);
 		int				not_found(Request *req);
 
 		char			**create_env_tab(Request *req);

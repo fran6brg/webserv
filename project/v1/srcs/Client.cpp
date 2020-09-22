@@ -7,6 +7,7 @@
 Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
     _server(server), _accept_fd(accept_fd), _is_connected(true)
 {
+	recv_status = HEADER;
 	// convertit l'adresse Internet de l'hôte cp depuis la notation IPv4 décimale pointée
 	// vers une forme binaire (dans l'ordre d'octet du réseau),
 	// et la stocke dans la structure pointée

@@ -31,7 +31,7 @@
 # define _PHP_PATH "php_path"
 # define _CGI "cgi"
 # define _AUTO_INDEX "auto_index"
-# define _BODY_SIZE "body_size"
+# define _MAX_BODY "max_body"
 # define _AUTH "auth"
 // # define _LISTING "autoindex"
 
@@ -49,11 +49,11 @@ typedef struct	s_loc
 	std::string					php_path;
 	std::string					cgi;
 	int							auto_index;
-	int							body_size;
+	int							max_body;
 	std::string					auth;
 	s_loc() {
 		auto_index = -1;
-		body_size = -1;
+		max_body = -1;
 	}
 }				t_loc;
 
