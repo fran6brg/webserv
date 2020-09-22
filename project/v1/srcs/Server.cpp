@@ -106,10 +106,6 @@ Client	*Server::search_existing_client(Client *c)
 
 	while (i < _client_saved.size())
 	{
-//		std::cout << "\n\n\n" << _client_saved[i]->_ip << "\n\n\n";
-//		std::cout << "\n\n\n" << _client_saved[i]->_port << "\n\n\n";
-//		std::cout << "\n\n\n" << _client_saved[i]->_retry_after << "\n\n\n";
-//		std::cout << "\n\n\n" << _client_saved[i]->_last_request << "\n\n\n";
 		if (_client_saved[i]->_ip == c->_ip)
 		{
 			return (_client_saved[i]);
@@ -225,19 +221,6 @@ int Server::recvRequest(Client *c)
         }
 		if (c->recv_status ==  Client::COMPLETE)
 		{
-				// --- Ou mettre ca ?
-        //	if (!c->_retry_after.empty())
-        //	{
-		//		if (compare_date(c->_last_request, get_date()) == 1)
-        //        {
-        //            c->_retry_after.clear();
-        //            c->_last_request = get_date();
-        //        }
-        //        else
-		//			// REFUSER LA REQUETE + DECO CLIENT ?
-        //            c->recv_status =  Client::ERROR;
-        //   }
-				// ----
             LOG_WRT(Logger::DEBUG, "c->recv_status == COMPLETE");
             FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
