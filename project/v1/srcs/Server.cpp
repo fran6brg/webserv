@@ -201,6 +201,19 @@ int Server::recvRequest(Client *c)
         }
 		if (c->recv_status ==  Client::COMPLETE)
 		{
+				// --- Ou mettre ca ?
+          if (!c->_retry_after.empty())
+          {
+				std::cout << "\n\n TEST \n\n";
+				if (compare_date(c->_last_request, get_date()) == 1)
+                {
+                    c->_retry_after.clear();
+                    c->_last_request = get_date();
+                }
+                else
+                    c->recv_status =  Client::ERROR;
+            }
+				// ----
             LOG_WRT(Logger::DEBUG, "c->recv_status == COMPLETE");
             FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
