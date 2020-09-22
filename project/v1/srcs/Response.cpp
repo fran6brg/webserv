@@ -67,6 +67,7 @@ int Response::concat_to_send(void)
     if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
     // if (!_content_type.empty())         { ss << "Content-Type: " << _content_type << "\r\n"; }
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
+    if (!_retry_after.empty())        { ss << "Retry-After: " << _retry_after << "\r\n"; }
     if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
@@ -126,7 +127,7 @@ int Response::format_to_send(Request *req)
 	if (req->_method == "HEAD")
 		_body.clear();
     concat_to_send();
-//	_retry_after = "Tue, 22 Sep 2020 13:11:39 CEST";
+//	_retry_after = "Tue, 22 Sep 2020 21:50:48 CEST";
 	if (!_retry_after.empty())
 		req->_client->_retry_after = _retry_after;
 	return (1);
@@ -134,6 +135,16 @@ int Response::format_to_send(Request *req)
 
 void		Response::handle_response(Request *req)
 {
+	if (!req->_client->_retry_after.empty())
+	{
+		if (compare_date(get_date(), req->_client->_retry_after) == 1)
+			req->_client->_retry_after.clear();
+		else
+		{
+			service_unaviable(req); // 503
+			return ;
+		}
+	}
     if (bad_request(req)) // 400
 		return ;
 	else if (method_not_allowed(req)) // 405
@@ -156,6 +167,7 @@ void		Response::handle_response(Request *req)
 		trace(req);
 	else if (req->_method == "CONNECT")
 		connect(req);
+	req->_client->_last_request = get_date();
 }
 
 int		Response::accepted_method(Request *req)
@@ -292,6 +304,18 @@ int				Response::unauthorized(Request *req)
     }
     else
 	    return (0);
+}
+
+int				Response::service_unaviable(Request *req)
+{
+	LOG_WRT(Logger::INFO, "Response::service_unaviable()\n");
+	_status_code = SERVICE_UNAVAILABLE_503;
+	_retry_after = req->_client->_retry_after;
+	std::string path = "./www/old/error/503.html";
+	std::ifstream error503(path);
+	std::string buffer((std::istreambuf_iterator<char>(error503)), std::istreambuf_iterator<char>());
+	_body = buffer;
+	return (1);
 }
 
 int				Response::request_entity_too_large(Request *req)

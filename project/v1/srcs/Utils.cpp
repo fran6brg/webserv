@@ -80,7 +80,6 @@ int				set_laguage(Request *req)
 
 	while (i < req->_accept_language.size())
 	{
-//		std::cout << req->_accept_language[i] << "##########" << std::endl;
 		if (req->_accept_language[i] != "")
 		{
 			temp = req->_accept_language[i];
@@ -114,15 +113,10 @@ int				set_charset(Request *req)
 			temp = req->_accept_charset[i];
 			if ((j = temp.find(';')) != std::string::npos)
 				temp = temp.substr(0, i);
-			std::cout << req->_accept_charset[i] << "}" << std::endl;
-			std::cout << temp << "}" << std::endl;
-			std::cout << req->_file << "}" << std::endl;
 			req->_file = req->_file + "." + temp;
-			std::cout << req->_file << "}" << std::endl;
 			std::ifstream file(req->_file);
 			if (file.good())
 			{
-				std::cout << req->_file << "-ICI-" << std::endl;
 				file.close();
 				return (1);
 			}
@@ -216,13 +210,13 @@ int		compare_date(std::string a, std::string b)
 	strptime(b.c_str(), "%a, %d %b %Y %H:%M:%S GMT", &d);
 	if (c.tm_year > d.tm_year)
 		return (1);
-	else if (c.tm_year == d.tm_year && c.tm_yday > d.tm_yday)
+	else if (c.tm_year == d.tm_year && c.tm_wday > d.tm_wday)
 		return (1);
-	else if (c.tm_year == d.tm_year && c.tm_yday == d.tm_yday && c.tm_hour > d.tm_hour)
+	else if (c.tm_year == d.tm_year && c.tm_wday == d.tm_wday && c.tm_hour > d.tm_hour)
 		return (1);
-	else if (c.tm_year == d.tm_year && c.tm_yday == d.tm_yday && c.tm_hour == d.tm_hour && c.tm_min > d.tm_min)
+	else if (c.tm_year == d.tm_year && c.tm_wday == d.tm_wday && c.tm_hour == d.tm_hour && c.tm_min > d.tm_min)
 		return (1);
-	else if (c.tm_year == d.tm_year && c.tm_yday == d.tm_yday && c.tm_hour == d.tm_hour && c.tm_min == d.tm_min && c.tm_sec >= d.tm_sec)
+	else if (c.tm_year == d.tm_year && c.tm_wday == d.tm_wday && c.tm_hour == d.tm_hour && c.tm_min == d.tm_min && c.tm_sec >= d.tm_sec)
 		return (1);
 	return (0);
 }

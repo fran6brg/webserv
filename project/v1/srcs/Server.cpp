@@ -100,6 +100,24 @@ int Server::start(void)
     return (1);
 }
 
+Client	*Server::search_existing_client(Client *c)
+{
+	int		i = 0;
+
+	while (i < _client_saved.size())
+	{
+//		std::cout << "\n\n\n" << _client_saved[i]->_ip << "\n\n\n";
+//		std::cout << "\n\n\n" << _client_saved[i]->_port << "\n\n\n";
+//		std::cout << "\n\n\n" << _client_saved[i]->_retry_after << "\n\n\n";
+//		std::cout << "\n\n\n" << _client_saved[i]->_last_request << "\n\n\n";
+		if (_client_saved[i]->_ip == c->_ip)
+		{
+			return (_client_saved[i]);
+		}
+		i++;
+	}
+	return (NULL);
+}
 
 int Server::acceptNewClient(void)
 {
@@ -122,8 +140,14 @@ int Server::acceptNewClient(void)
     else
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));
-        Client *c = new Client(this, accept_fd, client_addr);
-        _clients.push_back(c);
+		Client	*c = new Client(this, accept_fd, client_addr);
+		Client	*temp = search_existing_client(c);
+		if (temp != NULL)
+		{
+			c->_retry_after = temp->_retry_after;
+			c->_last_request = temp->_last_request;
+		}
+		_clients.push_back(c);
 		LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
 
         return (1);
@@ -202,18 +226,17 @@ int Server::recvRequest(Client *c)
 		if (c->recv_status ==  Client::COMPLETE)
 		{
 				// --- Ou mettre ca ?
-			std::cout << "\n\n{" << c->_retry_after << "}\n\n";
-        	if (!c->_retry_after.empty())
-          	{
-//				std::cout << "\n\n TEST \n\n";
-				if (compare_date(c->_last_request, get_date()) == 1)
-                {
-                    c->_retry_after.clear();
-                    c->_last_request = get_date();
-                }
-                else
-                    c->recv_status =  Client::ERROR;
-            }
+        //	if (!c->_retry_after.empty())
+        //	{
+		//		if (compare_date(c->_last_request, get_date()) == 1)
+        //        {
+        //            c->_retry_after.clear();
+        //            c->_last_request = get_date();
+        //        }
+        //        else
+		//			// REFUSER LA REQUETE + DECO CLIENT ?
+        //            c->recv_status =  Client::ERROR;
+        //   }
 				// ----
             LOG_WRT(Logger::DEBUG, "c->recv_status == COMPLETE");
             FD_SET(c->_accept_fd, &g_conf._save_writefds);          

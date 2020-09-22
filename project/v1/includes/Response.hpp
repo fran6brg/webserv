@@ -132,6 +132,7 @@ class Response
 		int				unauthorized(Request *req);
 		int				request_entity_too_large(Request *req);
 		int				not_found(Request *req);
+		int             service_unaviable(Request *req);
 
 		char			**create_env_tab(Request *req);
 		void			ft_cgi(Request *req);

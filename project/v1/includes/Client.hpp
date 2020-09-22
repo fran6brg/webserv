@@ -74,7 +74,6 @@ class Client
 
     private:
         Client();
-
     protected:
         //
 
