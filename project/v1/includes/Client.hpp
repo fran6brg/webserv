@@ -53,6 +53,8 @@ class Client
         bool        _is_connected;
 
         char        *_buffermalloc;
+		std::string	_concat_body;
+        int         _line_size;
 
 		std::string	_last_request;
 		std::string	_retry_after;

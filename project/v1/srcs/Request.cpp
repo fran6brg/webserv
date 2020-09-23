@@ -447,9 +447,9 @@ int Request::parse(std::vector<Location*> location) // parse header
 	parse_filename(location);
     parse_headers();
 
-	std::string tmp =_client->_buffermalloc;
-	utils_tmp::extract_body(tmp);
-	strcpy(_client->_buffermalloc, tmp.c_str());
+	// std::string tmp =_client->_buffermalloc;
+	// utils_tmp::extract_body(tmp);
+	// strcpy(_client->_buffermalloc, tmp.c_str());
 
 	return (RET_SUCCESS);
 }
@@ -457,22 +457,22 @@ int Request::parse(std::vector<Location*> location) // parse header
 void Request::update_body()
 {
 	if (_transfer_encoding == "chunked")
-		parse_body_chunked();
-	else if (_content_length != -1) // > 0
-		parse_body_length();
-	// else
-	// {
-	// 	LOG_WRT(Logger::ERROR, "Header incomplete")
-	// 	_client->recv_status = Client::ERROR;	
-	// }
+	{
+        parse_body_chunked();
+    }
+	else if (_content_length >= 0)
+	{
+        parse_body_length();
+    }
     else
     {
+        LOG_WRT(Logger::DEBUG, "Request::update_body(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
     }    
 }
 
 void Request::parse_body_length()
-{//LOG_WRT(Logger::DEBUG, "parse_body_length");
+{
 	char		*buff = _client->_buffermalloc;
 	std::string &body = _client->_request._text_body;
 	size_t 		cut;
@@ -487,6 +487,7 @@ void Request::parse_body_length()
 	{
 		cut = _content_length - body.length();
 		body += std::string(buff).substr(0, cut);
+        LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
 		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
 	}
@@ -498,45 +499,73 @@ void Request::parse_body_length()
 }
 
 void Request::parse_body_chunked()
-{//LOG_WRT(Logger::DEBUG, "parse_body_chunked");
-	char				*buff = _client->_buffermalloc;
+{
+    LOG_WRT(Logger::DEBUG, "start parse_body_chunked()");
+
+	char				*recv_buffer = _client->_buffermalloc;
 	std::string 		&body = _client->_request._text_body;
-	static size_t		line_size = 0;
-	static std::string	str_buff; //tmpbuff + buff
-	size_t				next_line;
+	size_t				pos;
 	
-	str_buff += buff;
-	//LOG_WRT(Logger::CLEAR, "str_buff:\n" + std::string(buff) + "|");
-	while (true)
+    _client->_concat_body.append(recv_buffer);
+
+    while (true)
 	{
-		if (line_size == 0)
-		{
-			if ((next_line = str_buff.find("\r\n")) == std::string::npos)
-				break ;
-			std::string line = str_buff.substr(0, next_line);
-			line_size = utils_tmp::hexa_to_dec(line.c_str());
-			str_buff.erase(0, line.length() + 2);
-			if (line_size == 0)
-				_client->recv_status = Client::COMPLETE;
-		}
-		if (line_size != 0)
-		{
-			if (str_buff.length() >= line_size)// if hexa is bigger than predict ?
-			{
-				body += str_buff.substr(0, line_size);
-				str_buff.erase(0, line_size + 2);
-				line_size = 0;
-			}
-			else
-				break ;
-		}
-		if (_client->recv_status == Client::COMPLETE)//else complete ?
-		{
-			memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
-			return ;
-		}
+        LOG_WRT(Logger::DEBUG, "--- start while ---");
+        LOG_WRT(Logger::DEBUG, "_client->_concat_body len = " + std::to_string(_client->_concat_body.length()));
+        LOG_WRT(Logger::DEBUG, "_client->_line_size       = " + std::to_string(_client->_line_size));
+        // LOG_WRT(Logger::DEBUG, "_client->_concat_body     = " + _client->_concat_body);
+
+        pos = _client->_concat_body.find("\r\n"); // .find("\r\n"); -> "[\r\n]\r\n"
+        if (pos == std::string::npos)
+            break ;
+        else
+        {
+            // 1. get _client->_line_size
+            if (_client->_line_size == -1)
+            {
+                std::string line = _client->_concat_body.substr(0, pos);
+                LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): line                = -" + line + "-");
+                _client->_line_size = utils_tmp::hexa_to_dec(line.c_str());
+                LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): _client->_line_size = " + std::to_string(_client->_line_size));
+                _client->_concat_body.erase(0, line.length() + 2);
+            }
+            // 2. get next line content for _client->_line_size first bytes
+            if (_client->_line_size > 0)
+            {
+                LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): _client->_concat_body.length() = " + std::to_string(_client->_concat_body.length()));
+                if (_client->_concat_body.length() >= _client->_line_size)// todo: if hexa is bigger than predict ?
+                {
+                    pos = _client->_concat_body.find("\r\n");
+                    LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): pos = " + std::to_string(pos));
+                    if (pos == std::string::npos) // on a bien une ligne
+                        break ;
+                    // else if (pos != _client->_line_size)
+                    // {
+                    //     /* code */
+                    // }
+                    LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): substr(0, " + std::to_string(_client->_line_size) + ")");
+                    body.append(_client->_concat_body.substr(0, _client->_line_size));
+                    _client->_concat_body.erase(0, _client->_line_size + 2);
+                    _client->_line_size = -1;
+                }
+                else
+                {
+                    LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): _client->_concat_body.length() < _client->_line_size");
+                    break ;
+                }
+            }
+            // 3. end chunked body parsing
+            else if (_client->_line_size == 0)
+            {
+                LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): Body fully parsed");
+                _client->recv_status = Client::COMPLETE;
+                break ;
+            }
+        }
+        LOG_WRT(Logger::DEBUG, "--- end while ---\n");
 	}
-	memset(buff, 0, RECV_BUFFER + 1);
+	memset(recv_buffer, 0, RECV_BUFFER + 1);
+    LOG_WRT(Logger::DEBUG, "end parse_body_chunked()");
 }
 
 

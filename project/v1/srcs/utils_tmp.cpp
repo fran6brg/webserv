@@ -92,12 +92,17 @@ int utils_tmp::hexa_to_dec(const char *hexVal)
     {    
         if (hexVal[i] >= '0' && hexVal[i] <= '9') 
         { 
-            dec_val += (hexVal[i] - 48) * base;  
+            dec_val += (hexVal[i] - 48) * base;
             base = base * 16; 
         } 
         else if (hexVal[i] >= 'A' && hexVal[i] <= 'F') 
         { 
             dec_val += (hexVal[i] - 55)*base; 
+            base = base * 16; 
+        } 
+        else if (hexVal[i] >= 'a' && hexVal[i] <= 'f') 
+        { 
+            dec_val += (hexVal[i] - 87)*base; 
             base = base * 16; 
         } 
     }

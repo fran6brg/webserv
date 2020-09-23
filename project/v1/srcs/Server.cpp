@@ -157,7 +157,8 @@ int Server::recvRequest(Client *c)
     int bytes = strlen(c->_buffermalloc);
     ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
-    LOG_WRT(Logger::DEBUG, "recv() -> ret = " + std::to_string(ret));
+    LOG_WRT(Logger::DEBUG, "recv() -> ret = " + std::to_string(ret) + " | bytes = " + std::to_string(bytes));
+    LOG_WRT(Logger::DEBUG, "c->recv_status = " + std::to_string(c->recv_status));
 	if (ret == -1)
     {
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
@@ -175,6 +176,7 @@ int Server::recvRequest(Client *c)
     }
     else
 	{ 
+        LOG_WRT(Logger::DEBUG, "ret > 0");
         // todo: Replace if by switch
         c->_buffermalloc[bytes] = '\0';
         if (c->recv_status == Client::HEADER)
@@ -183,14 +185,27 @@ int Server::recvRequest(Client *c)
 			if (strstr(c->_buffermalloc, "\r\n\r\n") != NULL)
 			{
                 LOG_WRT(Logger::DEBUG, "found \"\\r\\n\\r\\n\"");
-				c->recv_status = Client::BODY;
             	c->_request._buffer = std::string(c->_buffermalloc, bytes);
                 LOG_WRT(Logger::DEBUG, "RAW REQUEST (" + std::to_string(bytes) + "):\n---\n" + std::string(c->_request._buffer) + "---");
             	c->_request.parse(_locations); // parse only header
+                if (c->_request._transfer_encoding == "chunked" || c->_request._content_length >= 0)
+				{
+                    c->recv_status = Client::BODY;
+                    
+                    c->_concat_body = std::string(c->_buffermalloc);
+                    size_t pos = c->_concat_body.find("\r\n\r\n");
+                    c->_concat_body.erase(0, pos + 4);
+                    LOG_WRT(Logger::DEBUG, "c->_concat_body = " + c->_concat_body);
+                    memset(c->_buffermalloc, 0, RECV_BUFFER + 1);
+                }
+                else
+                {
+                    c->recv_status = Client::COMPLETE;
+                }                
 			}
 			else if (bytes >= RECV_BUFFER)
 			{
-				LOG_WRT(Logger::ERROR, "bytes >= RECV_BUFFER: Not a valide http request");
+				LOG_WRT(Logger::ERROR, "bytes >= RECV_BUFFER: Not a valid http request");
 				return (RET_ERROR);
 			}
         }
@@ -199,23 +214,10 @@ int Server::recvRequest(Client *c)
             LOG_WRT(Logger::DEBUG, "c->recv_status == BODY");
             c->_request.update_body();
         }
-		if (c->recv_status ==  Client::COMPLETE)
+		if (c->recv_status == Client::COMPLETE)
 		{
-				// --- Ou mettre ca ?
-			std::cout << "\n\n{" << c->_retry_after << "}\n\n";
-        	if (!c->_retry_after.empty())
-          	{
-//				std::cout << "\n\n TEST \n\n";
-				if (compare_date(c->_last_request, get_date()) == 1)
-                {
-                    c->_retry_after.clear();
-                    c->_last_request = get_date();
-                }
-                else
-                    c->recv_status =  Client::ERROR;
-            }
-				// ----
             LOG_WRT(Logger::DEBUG, "c->recv_status == COMPLETE");
+            LOG_WRT(Logger::DEBUG, "RAW REQUEST (" + std::to_string(bytes) + "):\n---\n" + std::string(c->_request._buffer) + "---");
             FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
             //LOG_WRT(Logger::CLEAR, "TEXT BODY: " + c->_request._text_body);
@@ -273,6 +275,11 @@ int Server::handleClientRequest(Client *c)
 
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {
+        if (c->recv_status != Client::COMPLETE)
+        {
+            c->recv_status = Client::COMPLETE;
+            LOG_WRT(Logger::INFO, "Server::handleClientRequest() passing recv_status to COMPLETE for client " + std::to_string(c->_accept_fd));
+        }
         LOG_WRT(Logger::INFO, "sending response to client " + std::to_string(c->_accept_fd));
         if (!sendResponse(c))
             return (0);
