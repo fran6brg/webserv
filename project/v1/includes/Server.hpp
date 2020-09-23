@@ -47,7 +47,8 @@ class Server
         struct sockaddr_in		    _addr;
 
         std::vector<Location*>      _locations;        
-        std::vector<Client*>        _clients;        
+        std::vector<Client*>        _clients;
+        std::vector<Client*>        _client_saved;
 
     /*
     ** methods
@@ -68,6 +69,7 @@ class Server
         int recvRequest(Client *c);
         int sendResponse(Client *c);
         int handleClientRequest(Client *c);
+		Client  *search_existing_client(Client *c);
 
     /*
     ** friends

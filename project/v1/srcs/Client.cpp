@@ -52,3 +52,11 @@ int Client::parse_request(void)
     _request.init();
     return (1);
 }
+
+//void		Client::check_client_exist(void)
+//{
+//}
+
+//void		Clients::close_connection(void)
+//{
+//}

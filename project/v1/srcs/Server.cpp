@@ -100,6 +100,20 @@ int Server::start(void)
     return (1);
 }
 
+Client	*Server::search_existing_client(Client *c)
+{
+	int		i = 0;
+
+	while (i < _client_saved.size())
+	{
+		if (_client_saved[i]->_ip == c->_ip)
+		{
+			return (_client_saved[i]);
+		}
+		i++;
+	}
+	return (NULL);
+}
 
 int Server::acceptNewClient(void)
 {
@@ -122,8 +136,14 @@ int Server::acceptNewClient(void)
     else
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));
-        Client *c = new Client(this, accept_fd, client_addr);
-        _clients.push_back(c);
+		Client	*c = new Client(this, accept_fd, client_addr);
+		Client	*temp = search_existing_client(c);
+		if (temp != NULL)
+		{
+			c->_retry_after = temp->_retry_after;
+			c->_last_request = temp->_last_request;
+		}
+		_clients.push_back(c);
 		LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
 
         return (1);
