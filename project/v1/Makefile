@@ -75,6 +75,7 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	$(RM) webserv.dSYM
+	$(RM) www/tester/file_should_exist_after
 
 tester:
 	../../intra/tester http://localhost:8080
