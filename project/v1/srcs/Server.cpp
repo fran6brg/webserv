@@ -219,9 +219,7 @@ int Server::recvRequest(Client *c)
                     memset(c->_buffermalloc, 0, RECV_BUFFER + 1);
                 }
                 else
-                {
-                    c->recv_status = Client::COMPLETE;
-                }                
+                    c->recv_status = Client::COMPLETE;       
 			}
 			else if (bytes >= RECV_BUFFER)
 			{

@@ -44,14 +44,16 @@ char			**Response::create_env_tab(Request *req)
 	// Ajouter le nom du fichier au path ???
 	args_to_map["PATH_INFO"] = req->_uri; // chaîne entre SCRIPT_PATH et QUERY_STRING dans l'URL
 	// args_to_map["PATH_TRANSLATED"] = client.conf["path"];
-	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_body.size()); // longueur des données véhiculées dans la requête (POST)
+	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_text_body.length()); // longueur des données véhiculées dans la requête (POST)
 
 	if (req->_query != "")
 		args_to_map["QUERY_STRING"] = req->_query; // données transmises au CGI via l'URL (GET)
 	else
 		args_to_map["QUERY_STRING"]; // données transmises au CGI via l'URL (GET)
-
-	args_to_map["CONTENT_TYPE"] = req->_content_type; // type MIME des données véhiculées dans la requête
+	//if (req->_content_type == "chunked")
+	//	args_to_map["CONTENT_TYPE"] = "text/plain"; // type MIME des données véhiculées dans la requête
+	//else
+		args_to_map["CONTENT_TYPE"] = req->_content_type; // type MIME des données véhiculées dans la requête
 
 	// if (client.conf.find("exec") != client.conf.end())
 	// 	args_to_map["SCRIPT_NAME"] = client.conf["exec"]; // chemin du CGI à partir de la racine du serveur HTTP
@@ -109,6 +111,7 @@ void		Response::ft_cgi(Request *req)
 	pid_t	pid;
 	struct stat php;
 	std::string	binaire;
+	int status;
 
 	int CGI = 1; // TEMPORAIRE
     if (CGI)
@@ -117,9 +120,7 @@ void		Response::ft_cgi(Request *req)
 			binaire = req->_location->_cgi_root;
 		else
 			binaire = req->_location->_php_root;
-		//std::cout << binaire << std::endl; // ca dégage ?
         env = create_env_tab(req);
-		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): ok create_env_tab()");
         args = (char **)(malloc(sizeof(char *) * 3));
 		if (req->_location->_cgi_root != "")
         	args[0] = strdup(req->_location->_cgi_root.c_str());
@@ -128,25 +129,10 @@ void		Response::ft_cgi(Request *req)
 		args[1] = strdup(req->_file.c_str());
         args[2] = NULL;
 		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
+		pipe(tubes);
 
-		int i = pipe(tubes);
-		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): i = " + std::to_string(i));
-		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): write()");
-		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): req->_text_body.length() = " + std::to_string(req->_text_body.length()));
-
-		// if (fcntl(tubes[1], F_SETFL, O_NONBLOCK) == -1) // cf. subject
-		// {
-		// 	LOG_WRT(Logger::ERROR, "Response::ft_cgi(): fcntl(): " + std::string(strerror(errno)));
-		// }
-
-		if (req->_method == "POST")
-		{
-			write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
-		}
-
-		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): close()");
-		close(tubes[1]);
-		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): fork()");
+		if (req->_method == "GET")
+			close(tubes[1]);
 		if ((pid = fork()) == 0)
 		{
 			dup2(temp_fd, 1);
@@ -162,52 +148,55 @@ void		Response::ft_cgi(Request *req)
 			{
 				std::cout << std::string(strerror(errno)) << std::endl;
 				exit(1);
-			}
+			}			
 		}
 		else
 		{
-			LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): waitpid()");
-			waitpid(pid, NULL, 0);
+			if (req->_method == "POST")
+			{
+				write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
+				close(tubes[1]);
+			}
+			waitpid(pid, &status, 0);
+			if (WIFEXITED(status))
+				std::cout << WEXITSTATUS(status) << std::endl; // error to handle
+
 			close(tubes[0]);
 			close(temp_fd);
 		}
 		// FREE args + env !!!!!!!!
     }
-	LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): end ---");
 }
 
-void		Response::get_cgi_ret(Request *req)
+void        Response::get_cgi_ret(Request *req)
 {
-	std::ifstream 				temp_file("./www/temp_file");
-	std::string					line;
-	std::vector<std::string>	split_ret;
-
-	if (temp_file.is_open())
-	{
-		getline(temp_file, line);
-		LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 1) line = -" + line + "-");
-		
-		if (line.find("Status:") != std::string::npos
-			&& req->_location->_cgi_root != "")
-		{
-			split_ret = split(line, ' ');
-			_status_code = std::stoi(split_ret[1]);
-			split_ret.clear();
-		}
-		else
-			_status_code = OK_200;
-		getline(temp_file, line);
-		LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 2) line = -" + line + "-");
-		
-		if (line.find("Content-Type:") != std::string::npos
-			&& req->_location->_cgi_root != "")
-		{
-			split_ret.clear();
-			split_ret = split(line, ':');
-			_content_type[0] = trim(split_ret[1]);
-			split_ret.clear();
-		}
-		else
-			_content_type[0] = "text/html";
-	}
+    std::ifstream               temp_file("./www/temp_file");
+    std::string                 line;
+    std::vector<std::string>    split_ret;
+    if (temp_file.is_open())
+    {
+        getline(temp_file, line);
+        LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 1) line = -" + line + "-");
+        if (line.find("Status:") != std::string::npos
+            && req->_location->_cgi_root != "")
+        {
+            split_ret = split(line, ' ');
+            _status_code = std::stoi(split_ret[1]);
+            split_ret.clear();
+        }
+        else
+            _status_code = OK_200;
+        getline(temp_file, line);
+        LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 2) line = -" + line + "-");
+        if (line.find("Content-Type:") != std::string::npos
+            && req->_location->_cgi_root != "")
+        {
+            split_ret.clear();
+            split_ret = split(line, ':');
+            _content_type[0] = trim(split_ret[1]);
+            split_ret.clear();
+        }
+        else
+            _content_type[0] = "text/html";
+    }
 }

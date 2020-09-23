@@ -6,7 +6,7 @@ void		Response::post(Request *req)
 	std::string buff;
 
 	if (((req->_location->_cgi_root != "" && is_extension(req->_file, req->_location->_cgi))
-		|| (req->_location->_php_root != "" && is_extension(req->_file, "php"))))//check file is good
+		|| (req->_location->_php_root != "" && is_extension(req->_file, "php")))) // check file is good
 	{
 		ft_cgi(req);// check if error
 		get_cgi_ret(req);
@@ -17,6 +17,7 @@ void		Response::post(Request *req)
 			return ;
 		}
 		_body = utils_tmp::extract_body(buff);
+		_body.erase(_body.length()-1, 1);
 		remove("./www/temp_file");
 	}
 	else

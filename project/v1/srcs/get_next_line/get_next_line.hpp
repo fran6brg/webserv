@@ -16,7 +16,7 @@
 # include "stdlib.h"
 # include "unistd.h"
 
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 100024
 
 int			get_next_line(int fd, char **line);
 size_t		ft_strlen(const char *s);

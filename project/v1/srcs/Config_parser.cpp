@@ -64,7 +64,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 			LOG_WRT(Logger::DEBUG, "	php_path   = " + serv[i].loc[y].php_path);
 			LOG_WRT(Logger::DEBUG, "	cgi        = " + serv[i].loc[y].cgi);
 			LOG_WRT(Logger::DEBUG, "	auto_index = " + std::to_string(serv[i].loc[y].auto_index));
-			LOG_WRT(Logger::DEBUG, "    max_body   = " + std::to_string(serv[i].loc[y].max_body));
+			LOG_WRT(Logger::DEBUG, "	max_body   = " + std::to_string(serv[i].loc[y].max_body));
 			LOG_WRT(Logger::DEBUG, "	auth       = " + serv[i].loc[y].auth);
 
 		}
