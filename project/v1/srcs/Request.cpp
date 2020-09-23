@@ -477,23 +477,26 @@ void Request::parse_body_length()
 	std::string &body = _client->_request._text_body;
 	size_t 		cut;
 
+	_client->_concat_body.append(buff);
 	if (_content_length < 0)
 	{
 		_client->recv_status = Client::ERROR;
 		return ;
 	}
-	size_t new_body_size = body.length() + strlen(buff);
+	size_t new_body_size = body.length() + _client->_concat_body.length();
+	LOG_WRT(Logger::DEBUG, " body.length()= "+std::to_string( body.length()) + " strlen(buff="+std::to_string(strlen(buff)));
+	LOG_WRT(Logger::DEBUG, "new_body_size= "+std::to_string(new_body_size) + " _content_length="+std::to_string(_content_length));
 	if (new_body_size >= _content_length)
 	{
 		cut = _content_length - body.length();
-		body += std::string(buff).substr(0, cut);
+		body += _client->_concat_body.substr(0, cut);
         LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
 		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
 	}
 	else
 	{
-		body += buff;
+		body += _client->_concat_body;
 		memset(buff, 0, RECV_BUFFER + 1);
 	}
 }

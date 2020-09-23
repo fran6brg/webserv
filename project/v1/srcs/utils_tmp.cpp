@@ -51,14 +51,28 @@ bool utils_tmp::file_exists(const char *filename)
 
 int	utils_tmp::read_file(int fd, std::string file, std::string &buff)
 {
-	int ret;
-	char *cline;
-	std::string line;
+	(void)fd;
+
+	std::fstream newfile;
+
+	newfile.open(file,std::ios::in); //open a file to perform read operation using file object
+	if (newfile.is_open()){ //checking whether the file is open
+      std::string tp;
+      while(getline(newfile, tp)){ //read data from file object and put it into string.
+         buff += tp + "\n"; //print the data of the string
+      }
+      newfile.close(); //close the file object.
+   }	
+
+/*
 
 	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK, 0666)) == -1)//mettre dans read file
 		return (-1);
+		int i = 0;
 	while ((ret = get_next_line(fd, &cline)))
 	{
+		std::cout << "line:" << i << std::endl;
+		++i;
 		line = cline;
 		free(cline);
 		cline=NULL;
@@ -71,15 +85,19 @@ int	utils_tmp::read_file(int fd, std::string file, std::string &buff)
 		buff += line;
 	}
 	if (ret < 0)
-		return (-1);
+		return (-1);*/
 	return (0);
 }
 
 std::string utils_tmp::extract_body(std::string &buff)
 {
+
+	//size_t pos = buff.find("\r\n\r\n");
+	//buff.erase(0, pos + 4);
+
 	std::string res;
 	res = buff.erase(0 , (buff.find("\r\n\r\n") + 4));
-	return (res);
+	return (buff);
 }
 
 int utils_tmp::hexa_to_dec(const char *hexVal)

@@ -82,7 +82,7 @@ payload = "012345678901234567890123456789012345678901234567890123456789012345678
 headers_adds = {
     "Content-Type": "text/plain",
 }
-r = requests.post('http://localhost:80/test.cgi', payload, headers=headers_adds)
+r = requests.post('http://localhost:8080/test.cgi', payload, headers=headers_adds)
 printResponse(r, 0)
 
 ## TEST with your own content length
