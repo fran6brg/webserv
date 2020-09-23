@@ -174,6 +174,7 @@ int Server::recvRequest(Client *c)
 
     // bzero(c->_buffer, 1000);
 
+    LOG_WRT(Logger::DEBUG, "--- start recv() ---");
     int bytes = strlen(c->_buffermalloc);
     ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
@@ -255,10 +256,17 @@ int Server::sendResponse(Client *c)
     int ret = 0;
     errno = 0;
 
-	c->_response.handle_response(&(c->_request));
-    c->_response.format_to_send(&(c->_request));
+    if (c->_response._bytes_send == 0)
+    {
+        c->_response.handle_response(&(c->_request));
+        c->_response.format_to_send(&(c->_request));
+    	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
+    }
     
-    if ((ret = send(c->_accept_fd, c->_response._to_send.c_str(), c->_response._to_send.size(), 0)) == -1)
+    if ((ret = send(c->_accept_fd,
+                    c->_response._to_send.c_str() + c->_response._bytes_send,
+                    c->_response._to_send.length() - c->_response._bytes_send,
+                    0)) == -1)
     {
         LOG_WRT(Logger::ERROR, "Server::sendResponse -> send(): " + std::string(strerror(errno)));
         // if (errno != EWOULDBLOCK && errno != EAGAIN)
@@ -267,10 +275,19 @@ int Server::sendResponse(Client *c)
     }
     else
     {
-		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send=OK");
-        // LOG_WRT(Logger::DEBUG, "sendResponse: date: " + c->_response._date);
-        // LOG_WRT(Logger::DEBUG, "sendResponse: to_send: " + c->_response._to_send);
-        c->_is_connected = false;
+        c->_response._bytes_send += ret;
+
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
+
+        if (ret == 0 || ret >= c->_response._to_send.length())
+        {
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
+            c->_is_connected = false;
+        }
+        else
+        {
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " < _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> keep going send()");
+        }
     }
     return (1);
 }

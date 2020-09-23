@@ -146,7 +146,7 @@ void		Response::ft_cgi(Request *req)
 			errno = 0;
 			if ((ret = execve(binaire.c_str(), args, env)) == -1)
 			{
-				std::cout << std::string(strerror(errno)) << std::endl;
+				std::cout << "error execve: " << std::string(strerror(errno)) << std::endl;
 				exit(1);
 			}			
 		}
@@ -159,7 +159,7 @@ void		Response::ft_cgi(Request *req)
 			}
 			waitpid(pid, &status, 0);
 			if (WIFEXITED(status))
-				std::cout << WEXITSTATUS(status) << std::endl; // error to handle
+				std::cout << "WEXITSTATUS(status) " << WEXITSTATUS(status) << std::endl; // 0 if ok
 
 			close(tubes[0]);
 			close(temp_fd);
@@ -176,6 +176,7 @@ void        Response::get_cgi_ret(Request *req)
     if (temp_file.is_open())
     {
         getline(temp_file, line);
+		utils_tmp::remove_return(line);
         LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 1) line = -" + line + "-");
         if (line.find("Status:") != std::string::npos
             && req->_location->_cgi_root != "")
@@ -187,6 +188,7 @@ void        Response::get_cgi_ret(Request *req)
         else
             _status_code = OK_200;
         getline(temp_file, line);
+		utils_tmp::remove_return(line);
         LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 2) line = -" + line + "-");
         if (line.find("Content-Type:") != std::string::npos
             && req->_location->_cgi_root != "")

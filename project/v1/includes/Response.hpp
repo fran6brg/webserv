@@ -99,6 +99,12 @@ class Response
 
 		std::string 				_to_send;
 
+		/*
+		** Other
+		*/
+
+		size_t						_bytes_send;
+
 	/*
 	** methods
 	*/

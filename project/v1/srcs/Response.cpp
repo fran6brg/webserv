@@ -46,6 +46,8 @@ void Response::init(void)
     _body.clear();
     // Content to write in fd
     _to_send.clear();
+    // Other
+    _bytes_send = 0;
 }
 
 int Response::concat_to_send(void)

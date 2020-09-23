@@ -10,14 +10,19 @@ void		Response::post(Request *req)
 	{
 		ft_cgi(req);// check if error
 		get_cgi_ret(req);
+		LOG_WRT(Logger::DEBUG, "Response::post(): avant read_file");
 		if (utils_tmp::read_file(fd, "./www/temp_file", buff) == -1)
 		{
+			LOG_WRT(Logger::DEBUG, "Response::post(): read_file -> error");
 			_status_code = INTERNAL_ERROR_500;
 			remove("./www/temp_file");
 			return ;
 		}
+		LOG_WRT(Logger::DEBUG, "Response::post(): après read_file");
 		_body = utils_tmp::extract_body(buff);
-		_body.erase(_body.length()-1, 1);
+		LOG_WRT(Logger::DEBUG, "Response::post(): _body.length() = " + std::to_string(_body.length()));
+		_body.erase(_body.length() -1, 1);
+		LOG_WRT(Logger::DEBUG, "Response::post(): _body.length() = " + std::to_string(_body.length()));
 		remove("./www/temp_file");
 	}
 	else

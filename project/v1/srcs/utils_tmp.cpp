@@ -55,16 +55,18 @@ int	utils_tmp::read_file(int fd, std::string file, std::string &buff)
 
 	std::fstream newfile;
 
-	newfile.open(file,std::ios::in); //open a file to perform read operation using file object
-	if (newfile.is_open()){ //checking whether the file is open
-      std::string tp;
-      while(getline(newfile, tp)){ //read data from file object and put it into string.
-         buff += tp + "\n"; //print the data of the string
-      }
-      newfile.close(); //close the file object.
-   }	
+	newfile.open(file, std::ios::in); //open a file to perform read operation using file object
+	if (newfile.is_open())
+	{ //checking whether the file is open
+		std::string tp;
+		while (getline(newfile, tp))
+		{					   //read data from file object and put it into string.
+			buff += tp + "\n"; //print the data of the string
+		}
+		newfile.close(); //close the file object.
+	}
 
-/*
+	/*
 
 	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK, 0666)) == -1)//mettre dans read file
 		return (-1);
@@ -96,7 +98,7 @@ std::string utils_tmp::extract_body(std::string &buff)
 	//buff.erase(0, pos + 4);
 
 	std::string res;
-	res = buff.erase(0 , (buff.find("\r\n\r\n") + 4));
+	res = buff.erase(0, (buff.find("\r\n\r\n") + 4));
 	return (buff);
 }
 
@@ -127,3 +129,12 @@ int utils_tmp::hexa_to_dec(const char *hexVal)
 	//std::cout << "dec_val="<<dec_val << " hexVal"<<hexVal<<std::endl;
     return (dec_val); 
 } 
+
+
+void utils_tmp::remove_return(std::string &str)
+{
+    size_t pos = str.find_last_of('\r');
+
+    if (pos != std::string::npos)
+        str.erase(pos);
+}

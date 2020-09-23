@@ -58,14 +58,6 @@ std::string trim(const std::string& str)
     return (std::string(str.substr(first, (last - first + 1)))); // std::string() autour du substr pour bien s'assurer qu'on a le \0 à la fin de value sinon ça peut bug
 }
 
-void remove_return(std::string &str)
-{
-    size_t pos = str.find_last_of('\r');
-
-    if (pos != std::string::npos)
-        str.erase(pos);
-}
-
 void print_map(std::stringstream &ss1, std::map<int, std::string> map)
 {
     size_t i = 0;
@@ -145,6 +137,8 @@ void Request::fill_request(std::string key, std::string value)
         _user_agent = value;
     else if (key == "Transfer-Encoding") // 17
         _transfer_encoding = value;
+    // else if (key == "X-Secret-Header-For-Test") //
+    //     _secret_header = value;
 
     // other headers not to be handled cf. subject
     else if (key == "Connection")
@@ -185,6 +179,8 @@ void Request::init(void)
     // autres variables qui ne sont pas des headers
     _body_length = -1;
     _body_type = -1;
+
+    // _secret_header.clear();
 }
 
 std::map<std::string, std::string> Request::headers_to_map(void)
@@ -206,6 +202,7 @@ std::map<std::string, std::string> Request::headers_to_map(void)
    ret["Host"] = _host;
    ret["Referer"] = _referer;
    ret["User-Agent"] = _user_agent;
+//    ret["X-Secret-Header-For-Test"] = _secret_header;
 
    return (ret);
 }
@@ -243,9 +240,9 @@ int Request::parse_headers()
         if (pos == std::string::npos)
             break ;
         key = trim(line.substr(0, pos));
-        remove_return(key);
+        utils_tmp::remove_return(key);
         value = trim(line.substr(pos + 1));
-        remove_return(value);
+        utils_tmp::remove_return(value);
         if (key.empty())
             break ; 
         // fill corresponding request member variable with value
