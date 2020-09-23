@@ -60,21 +60,21 @@ int main(int argc, char *argv[])
 
 				if (!c->_is_connected) // si 'ressource temporary unavailable' || si le client est déconnecté
 				{
-					if (!c->_retry_after.empty())
-					{
-						FD_CLR(c->_accept_fd, &g_conf._save_readfds);
-						FD_CLR(c->_accept_fd, &g_conf._save_writefds);
-						g_conf.remove_fd(c->_accept_fd);
-						close(c->_accept_fd);
-						c->_accept_fd = -1;
-						s->_client_saved.push_back(c);
-						it_c = s->_clients.erase(it_c);
-					}
-					else
-					{
+					// if (!c->_retry_after.empty())
+					// {
+					// 	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
+					// 	FD_CLR(c->_accept_fd, &g_conf._save_writefds);
+					// 	g_conf.remove_fd(c->_accept_fd);
+					// 	close(c->_accept_fd);
+					// 	c->_accept_fd = -1;
+					// 	s->_client_saved.push_back(c);
+					// 	it_c = s->_clients.erase(it_c);
+					// }
+					// else
+					// {
 						it_c = s->_clients.erase(it_c);
 						delete c;
-					}
+					// }
           			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
 					if (s->_clients.empty())
 						break;
