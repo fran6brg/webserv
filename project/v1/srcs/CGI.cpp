@@ -119,6 +119,7 @@ void		Response::ft_cgi(Request *req)
 			binaire = req->_location->_php_root;
 		//std::cout << binaire << std::endl; // ca dégage ?
         env = create_env_tab(req);
+		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): ok create_env_tab()");
         args = (char **)(malloc(sizeof(char *) * 3));
 		if (req->_location->_cgi_root != "")
         	args[0] = strdup(req->_location->_cgi_root.c_str());
@@ -127,10 +128,25 @@ void		Response::ft_cgi(Request *req)
 		args[1] = strdup(req->_file.c_str());
         args[2] = NULL;
 		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
-		pipe(tubes);
+
+		int i = pipe(tubes);
+		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): i = " + std::to_string(i));
+		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): write()");
+		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): req->_text_body.length() = " + std::to_string(req->_text_body.length()));
+
+		// if (fcntl(tubes[1], F_SETFL, O_NONBLOCK) == -1) // cf. subject
+		// {
+		// 	LOG_WRT(Logger::ERROR, "Response::ft_cgi(): fcntl(): " + std::string(strerror(errno)));
+		// }
+
 		if (req->_method == "POST")
+		{
 			write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
+		}
+
+		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): close()");
 		close(tubes[1]);
+		LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): fork()");
 		if ((pid = fork()) == 0)
 		{
 			dup2(temp_fd, 1);
@@ -150,12 +166,14 @@ void		Response::ft_cgi(Request *req)
 		}
 		else
 		{
+			LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): waitpid()");
 			waitpid(pid, NULL, 0);
 			close(tubes[0]);
 			close(temp_fd);
 		}
 		// FREE args + env !!!!!!!!
     }
+	LOG_WRT(Logger::DEBUG, "Response::ft_cgi(): end ---");
 }
 
 void		Response::get_cgi_ret(Request *req)
@@ -167,7 +185,10 @@ void		Response::get_cgi_ret(Request *req)
 	if (temp_file.is_open())
 	{
 		getline(temp_file, line);
-		if (line.find("Status:") && req->_location->_cgi_root != "")
+		LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 1) line = -" + line + "-");
+		
+		if (line.find("Status:") != std::string::npos
+			&& req->_location->_cgi_root != "")
 		{
 			split_ret = split(line, ' ');
 			_status_code = std::stoi(split_ret[1]);
@@ -176,7 +197,10 @@ void		Response::get_cgi_ret(Request *req)
 		else
 			_status_code = OK_200;
 		getline(temp_file, line);
-		if (line.find("Content-Type:") && req->_location->_cgi_root != "")
+		LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 2) line = -" + line + "-");
+		
+		if (line.find("Content-Type:") != std::string::npos
+			&& req->_location->_cgi_root != "")
 		{
 			split_ret.clear();
 			split_ret = split(line, ':');

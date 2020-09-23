@@ -473,28 +473,35 @@ void Request::update_body()
 
 void Request::parse_body_length()
 {
-	char		*buff = _client->_buffermalloc;
+	char		*recv_buffer = _client->_buffermalloc;
 	std::string &body = _client->_request._text_body;
-	size_t 		cut;
+	size_t 		pos;
+
+    _client->_concat_body.append(recv_buffer);
 
 	if (_content_length < 0)
 	{
 		_client->recv_status = Client::ERROR;
 		return ;
 	}
-	size_t new_body_size = body.length() + strlen(buff);
-	if (new_body_size >= _content_length)
+
+    LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): body.length()       = " + std::to_string(body.length()));
+    LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): strlen(recv_buffer) = " + std::to_string(_client->_concat_body.length()));
+	size_t body_size = body.length() + _client->_concat_body.length();
+    LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): body_size           = " + std::to_string(body_size));
+
+	if (body_size >= _content_length)
 	{
-		cut = _content_length - body.length();
-		body += std::string(buff).substr(0, cut);
+		pos = _content_length - body.length();
+		body.append(_client->_concat_body.substr(0, pos));
         LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
-		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
+		memset(recv_buffer, 0, RECV_BUFFER + 1); // reset recv_buffer for other request
 	}
 	else
 	{
-		body += buff;
-		memset(buff, 0, RECV_BUFFER + 1);
+		body.append(std::string(recv_buffer));
+		memset(recv_buffer, 0, RECV_BUFFER + 1);
 	}
 }
 

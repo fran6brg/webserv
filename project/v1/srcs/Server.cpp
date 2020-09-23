@@ -137,12 +137,12 @@ int Server::acceptNewClient(void)
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));
 		Client	*c = new Client(this, accept_fd, client_addr);
-		Client	*temp = search_existing_client(c);
-		if (temp != NULL)
-		{
-			c->_retry_after = temp->_retry_after;
-			c->_last_request = temp->_last_request;
-		}
+		// Client	*temp = search_existing_client(c);
+		// if (temp != NULL)
+		// {
+		// 	c->_retry_after = temp->_retry_after;
+		// 	c->_last_request = temp->_last_request;
+		// }
 		_clients.push_back(c);
 		LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
 
