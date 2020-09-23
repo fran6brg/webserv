@@ -159,7 +159,7 @@ void		Response::ft_cgi(Request *req)
 			}
 			waitpid(pid, &status, 0);
 			if (WIFEXITED(status))
-				std::cout << "WEXITSTATUS(status) " << WEXITSTATUS(status) << std::endl; // 0 if ok
+				LOG_WRT(Logger::DEBUG, "WEXITSTATUS(status) = " + std::to_string(WEXITSTATUS(status)));
 
 			close(tubes[0]);
 			close(temp_fd);
