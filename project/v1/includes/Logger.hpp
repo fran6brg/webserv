@@ -28,6 +28,7 @@ public:
     static void Stop();
     static void Write(Priority priority, const std::string &message);
 	static int Error(const std::string &message);
+	static void		ChangeFile(void);
 	~Logger();
  
 private:
@@ -41,6 +42,9 @@ private:
     Priority					minPriority;
     static const std::string	PRIORITY_NAMES[];
     static Logger				instance;
+
+std::string					file;
+	int							request;
 };
 
 #endif

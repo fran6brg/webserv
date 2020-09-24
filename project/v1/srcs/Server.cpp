@@ -32,6 +32,8 @@ Server::~Server()
 int Server::start(void)
 {
     errno = 0;
+//	FD_ZERO(&(g_conf._save_readfds));
+//	FD_ZERO(&(g_conf._save_writefds));
 	
     // socket
 	if ((_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -107,9 +109,7 @@ Client	*Server::search_existing_client(Client *c)
 	while (i < _client_saved.size())
 	{
 		if (_client_saved[i]->_ip == c->_ip)
-		{
 			return (_client_saved[i]);
-		}
 		i++;
 	}
 	return (NULL);
