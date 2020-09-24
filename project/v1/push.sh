@@ -6,15 +6,18 @@ if [ -z "$1" ]
     exit 1
 fi
 
-echo "make fclean" 2> /dev/null || true
+echo "make fclean" 
 make fclean 2> /dev/null || true
 
+echo ""
 echo "git add ."
 git add .
 
+echo ""
 echo "git commit -m $1"
 git commit -m $1
 
+echo ""
 echo "Push ? [Yy/Nn]"
 read -p "> " -n 1 -r
 echo    # (optional) move to a new line
