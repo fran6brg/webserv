@@ -1,12 +1,12 @@
 .PHONY: all clean fclean re
 
-CC = clang++
+CC			= clang++
 
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS		= -Wall -Wextra -Werror -g -faddress-sanitizer
 
-VERSION     =   -std=c++11 # -std=c++98
+VERSION 	= -std=c++11 # -std=c++98
 
-NAME = webserv
+NAME 		= webserv
 
 SRC_PATH = ./srcs
 LIB_PATH = ./srcs/methods
@@ -55,6 +55,7 @@ RM = rm -rf
 all: $(NAME)
 
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL)
+	# find . -name "./log/*.txt" -print0 | xargs -0 rm
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJGNL} ${OBJLIB} ${OBJ}
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp
@@ -77,6 +78,9 @@ fclean: clean
 	$(RM) webserv.dSYM
 	$(RM) www/tester/file_should_exist_after
 	$(RM) log/*.txt
+
+launch: all
+	./webserv conf/tester.conf
 
 tester:
 	../../intra/tester http://localhost:8080

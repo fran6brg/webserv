@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	Client *c;
 
 	//logger start
-	LOG_START(Logger::DEBUG, "OUIOUIOUIO", false);
+	LOG_START(Logger::DEBUG, "", false);
 	
 	signal(SIGINT, shutdown);
 
