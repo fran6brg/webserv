@@ -7,7 +7,7 @@ if [ -z "$1" ]
 fi
 
 echo "make fclean"
-make fclean
+make fclean 2> /dev/null || true
 
 echo "git add ."
 git add .
