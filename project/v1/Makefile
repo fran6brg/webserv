@@ -76,7 +76,7 @@ fclean: clean
 	$(RM) $(NAME)
 	$(RM) webserv.dSYM
 	$(RM) www/tester/file_should_exist_after
-	$(RM) log.txt
+	$(RM) log/*.txt
 
 tester:
 	../../intra/tester http://localhost:8080

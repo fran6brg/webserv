@@ -1,0 +1,35 @@
+INFO : server1(8080) -> accept_fd = 8
+INFO : [1;34mclient constructor 127.0.0.1:57322[1;0m
+INFO : server1 has now 1 clients connected
+INFO : reading not set for client 8
+INFO : writing not set for client 8
+DEBUG: ---------------
+
+
+DEBUG: select(nfds=9, readfds, writefds, NULL, NULL)
+DEBUG: iterating over existing servers ...
+INFO : reading request of client 8
+DEBUG: --- start recv() ---
+DEBUG: recv() -> ret = 82 | bytes = 82
+DEBUG: c->recv_status = 0
+DEBUG: ret > 0
+DEBUG: c->recv_status == HEADER
+INFO : writing not set for client 8
+DEBUG: ---------------
+
+
+DEBUG: select(nfds=9, readfds, writefds, NULL, NULL)
+DEBUG: iterating over existing servers ...
+INFO : reading request of client 8
+DEBUG: --- start recv() ---
+DEBUG: recv() -> ret = 12 | bytes = 94
+DEBUG: c->recv_status = 0
+DEBUG: ret > 0
+DEBUG: c->recv_status == HEADER
+INFO : writing not set for client 8
+DEBUG: ---------------
+
+
+DEBUG: select(nfds=9, readfds, writefds, NULL, NULL)
+DEBUG: iterating over existing servers ...
+INFO : [1;32mnew client on server server1[1;0m

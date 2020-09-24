@@ -1,0 +1,24 @@
+INFO : server1(8080) -> accept_fd = 9
+INFO : [1;34mclient constructor 127.0.0.1:57314[1;0m
+INFO : server1 has now 2 clients connected
+INFO : reading not set for client 8
+INFO : sending response to client 8
+DEBUG: test if GET == GET
+DEBUG: _to_send = HTTP/1.1 200 OK
+Content-Length: 800
+Last-Modified: Thu, 24 Sep 2020 23:52:30 CEST
+Date: Thu, 24 Sep 2020 23:58:34 CEST
+Server: webserv
+Content-Type: text/html
+
+
+INFO : server1(8080) -> send = OK | ret = 967
+DEBUG: sendResponse: c->_response._bytes_send=967 >= _to_send.length()=967 -> disconnecting client
+INFO : [1;31mclosing connection for client 8[1;0m
+INFO : server1 has now 1 client(s) connected
+DEBUG: ---------------
+
+
+DEBUG: select(nfds=10, readfds, writefds, NULL, NULL)
+DEBUG: iterating over existing servers ...
+INFO : [1;32mnew client on server server1[1;0m

@@ -18,11 +18,9 @@ int main(int argc, char *argv[])
 	//logger start
 	LOG_START(Logger::DEBUG, "OUIOUIOUIO", false);
 	
-	(void)argc;
-	(void)argv;
 	signal(SIGINT, shutdown);
 
-	if (/*argc != 2 || */!g_conf.parse(argv[1]))
+	if (argc != 2 || !g_conf.parse(argv[1]))
         return (EXIT_ERROR);
 
     // loop

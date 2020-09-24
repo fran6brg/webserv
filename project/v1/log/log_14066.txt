@@ -1,0 +1,11 @@
+INFO : server1(8080) -> accept_fd = 8
+INFO : [1;34mclient constructor 127.0.0.1:57260[1;0m
+INFO : server1 has now 1 clients connected
+INFO : reading not set for client 8
+INFO : writing not set for client 8
+DEBUG: ---------------
+
+
+DEBUG: select(nfds=9, readfds, writefds, NULL, NULL)
+DEBUG: iterating over existing servers ...
+INFO : [1;32mnew client on server server1[1;0m
