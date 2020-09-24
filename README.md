@@ -1,11 +1,11 @@
 # 1. usage
 
 ```
-cd project/v1 && make && ./webserv conf/mini_conf
+cd project/v1 && make && ./webserv conf/tester.conf
 ```
 in another shell:
 ```
-cd project/v1 && python3 ./tests/test.py
+cd project/v1 && make tester
 ```
 
 # 2. quality readings
