@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	Client *c;
 
 	//logger start
-	LOG_START(Logger::DEBUG, "log.txt", false);
+	LOG_START(Logger::DEBUG, "", false);
 	
 	(void)argc;
 	(void)argv;

@@ -126,3 +126,12 @@ body = "x" * 100000000
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.post('http://localhost:8080/directory/youpi.bla', data=body)
 	printResponse(r, i)
+
+# ---
+i += 1
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test POST http://localhost:8080/post_body with a size of 200:\n" + bcolors.ENDC)
+body = "x" * 200
+headers = { "Transfer-Encoding": "chunked", "Content-Type": "test/file", "Accept-Encoding": "gzip" }
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.post('http://localhost:8080/post_body', data=body, headers=headers)
+	printResponse(r, i)

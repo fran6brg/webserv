@@ -93,7 +93,7 @@ class Request
 		std::string 										_referer; // 13 l'adresse de la page web précédente à partir de laquelle un lien a été suivi pour demander la page courante. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Referer
 		std::string 										_user_agent; // 14 string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/User-Agent
 
-		// std::string 										_secret_header;
+		std::string 										_secret_header;
 
 		/*
 		** Request body

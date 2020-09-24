@@ -137,8 +137,8 @@ void Request::fill_request(std::string key, std::string value)
         _user_agent = value;
     else if (key == "Transfer-Encoding") // 17
         _transfer_encoding = value;
-    // else if (key == "X-Secret-Header-For-Test") //
-    //     _secret_header = value;
+    else if (key == "X-Secret-Header-For-Test") //
+        _secret_header = value;
 
     // other headers not to be handled cf. subject
     else if (key == "Connection")
@@ -180,7 +180,7 @@ void Request::init(void)
     _body_length = -1;
     _body_type = -1;
 
-    // _secret_header.clear();
+    _secret_header.clear();
 }
 
 std::map<std::string, std::string> Request::headers_to_map(void)
@@ -202,7 +202,8 @@ std::map<std::string, std::string> Request::headers_to_map(void)
    ret["Host"] = _host;
    ret["Referer"] = _referer;
    ret["User-Agent"] = _user_agent;
-//    ret["X-Secret-Header-For-Test"] = _secret_header;
+   if (!_secret_header.empty())
+       ret["X-Secret-Header-For-Test"] = _secret_header;
 
    return (ret);
 }
@@ -591,8 +592,8 @@ void Request::display(void)
     ss1 << " 7) _content_language:"; // 7
     print_map(ss1, _content_language);
     ss1 << " 8) _content_length: " << _content_length << std::endl; // 8
-    ss1 << " 9) _content_location:" << _content_location << std::endl; // 9
-    ss1 << "10) _content_type:" << _content_type << std::endl; // 10
+    ss1 << " 9) _content_location: " << _content_location << std::endl; // 9
+    ss1 << "10) _content_type: " << _content_type << std::endl; // 10
     ss1 << "11) _date: " << _date << std::endl; // 11
     ss1 << "12) _host: " << _host << std::endl; // 12
     ss1 << "13) _referer: " << _referer << std::endl; // 13

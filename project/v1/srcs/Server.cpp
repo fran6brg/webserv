@@ -279,14 +279,20 @@ int Server::sendResponse(Client *c)
 
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
 
-        if (ret == 0 || ret >= c->_response._to_send.length())
+        if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length()) // >= ou juste > ?
         {
-            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send="
+                + std::to_string(c->_response._bytes_send) + " >= _to_send.length()="
+                + std::to_string(c->_response._to_send.length())
+                + " -> disconnecting client");
             c->_is_connected = false;
         }
         else
         {
-            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " < _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> keep going send()");
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send="
+                + std::to_string(c->_response._bytes_send) + " < _to_send.length()="
+                + std::to_string(c->_response._to_send.length())
+                + " -> keep going send()");
         }
     }
     return (1);

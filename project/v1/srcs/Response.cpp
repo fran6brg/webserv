@@ -53,6 +53,7 @@ void Response::init(void)
 int Response::concat_to_send(void)
 {
     std::stringstream ss;
+    std::string response_headers;
     size_t i;
     
     // 1. Status Line
@@ -93,9 +94,15 @@ int Response::concat_to_send(void)
     // 3. Request body
     // ss << "\r\n\r\n"; // double or simple CRLF after the headers ?
     ss << "\r\n"; // CRLF et non pas \n\n https://stackoverflow.com/questions/29131727/http-header-and-message-body-separator-clarification
+    if (_content_length >= 100)
+        response_headers = ss.str();
+    
     if (!_body.empty())                 { ss << _body; }
     // Convert
+    if (_content_length < 100)
+        response_headers = ss.str();
     _to_send = ss.str();
+    LOG_WRT(Logger::DEBUG, "_to_send = " + response_headers);
     return (1);
 }
 
