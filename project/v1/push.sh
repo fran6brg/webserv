@@ -15,7 +15,8 @@ git add .
 echo "git commit -m $1"
 git commit -m $1
 
-read -p "Push ? \n> " -n 1 -r
+echo "Push ?"
+read -p "> " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
