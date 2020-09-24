@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	Client *c;
 
 	//logger start
-	LOG_START(Logger::DEBUG, "", false);
+	LOG_START(Logger::DEBUG, "OUIOUIOUIO", false);
 	
 	(void)argc;
 	(void)argv;
@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
 			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
 				LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
+				Logger::ChangeFile();
 				s->acceptNewClient(); // connexion et création du nouveau client
 			}
 

@@ -23,8 +23,12 @@ void Logger::Start(Priority minPriority, const std::string &logFile, bool date)
     instance.active = true;
 	instance.isdate = date;
     instance.minPriority = minPriority;
-    if (logFile != "")
-        instance.fileStream.open(logFile.c_str());
+    instance.request = 0;
+	if (logFile != "")
+	{
+    	std::string file_name = "./log/log_" + std::to_string(instance.request) + ".txt";
+        instance.fileStream.open(file_name);
+	}
 }
  
 void Logger::Stop()
@@ -33,13 +37,23 @@ void Logger::Stop()
     if (instance.fileStream.is_open())
         instance.fileStream.close();
 }
- 
+
+void Logger::ChangeFile(void)
+{
+   	instance.request++;
+    if (instance.fileStream.is_open())
+	{
+    	std::string file_name = "./log/log_" + std::to_string(instance.request) + ".txt";
+       	instance.fileStream.close();
+        instance.fileStream.open(file_name);
+	}
+}
+
 void Logger::Write(Priority priority, const std::string &message)
 {
     if (instance.active && priority >= instance.minPriority)
     {
-        std::ostream& stream
-            = instance.fileStream.is_open() ? instance.fileStream : std::cout;
+        std::ostream& stream = instance.fileStream.is_open() ? instance.fileStream : std::cout;
  
         stream  << PRIORITY_NAMES[priority]
 				<< std::setw(7 - (PRIORITY_NAMES[priority]).length());
