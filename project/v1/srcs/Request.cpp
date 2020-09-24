@@ -179,6 +179,7 @@ void Request::init(void)
     // autres variables qui ne sont pas des headers
     _body_length = -1;
     _body_type = -1;
+    _saved_error = -1;
 
     _secret_header.clear();
 }
@@ -540,10 +541,10 @@ void Request::parse_body_chunked()
                     LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): pos = " + std::to_string(pos));
                     if (pos == std::string::npos) // on a bien une ligne
                         break ;
-                    // else if (pos != _client->_line_size)
-                    // {
-                    //     /* code */
-                    // }
+                    else if (_location->_max_body != 1 && pos > _location->_max_body)
+                    {
+                        _saved_error = REQUEST_ENTITY_TOO_LARGE_413;
+                    }
                     LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): substr(0, " + std::to_string(_client->_line_size) + ")");
                     body.append(_client->_concat_body.substr(0, _client->_line_size));
                     _client->_concat_body.erase(0, _client->_line_size + 2);

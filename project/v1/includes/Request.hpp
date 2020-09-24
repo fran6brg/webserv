@@ -58,8 +58,9 @@ class Request
 		Location			*_location;
 		std::string			_buffer;
 		std::string 		_file;
-		std::string			_file_name; // 16
+		std::string			_file_name;
 		int					_body_length;
+		int					_saved_error; // saving an error status code while keep going reading the end of the request, to allow the select() to switch on the right to write on _accept_fd
 	
 		/*
 		** Request Line

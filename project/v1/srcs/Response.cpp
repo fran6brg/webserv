@@ -329,9 +329,11 @@ int				Response::service_unaviable(Request *req)
 
 int				Response::request_entity_too_large(Request *req)
 {
-    if (req->_content_length > 0 && req->_location->_max_body > 0)
+    if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
+        || (req->_content_length > 0 && req->_location->_max_body > 0))
     {
-        if (req->_content_length > req->_location->_max_body)
+        if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
+            || (req->_content_length > req->_location->_max_body))
         {
             LOG_WRT(Logger::INFO, "Response::request_entity_too_large()\n");
             _status_code = REQUEST_ENTITY_TOO_LARGE_413;
