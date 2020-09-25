@@ -28,4 +28,10 @@
 // https://stackoverflow.com/questions/3627941/global-variable-within-multiple-files
 extern Conf g_conf;
 
+/*
+** Debug
+*/
+
+void print_clients();
+
 #endif

@@ -59,6 +59,8 @@ class Client
 		std::string	_last_request;
 		std::string	_retry_after;
 
+		std::string	_complete_time;
+
 		// Ajout
     	enum status
     	{

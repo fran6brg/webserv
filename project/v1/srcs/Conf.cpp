@@ -19,7 +19,8 @@ Conf::Conf()
 	FD_ZERO(&_save_exceptfds);
     _timeout.tv_sec = 5;
 	_timeout.tv_usec = 0;
-}
+    // debug
+    _nb_requests_received = 0;}
 
 /*
 ** other class methods

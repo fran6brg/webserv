@@ -56,7 +56,10 @@ class Conf
         // other variables
         std::vector<Server*>	_servers;
         std::list<int>          _active_fds;
-
+        
+        // debug
+        int                     _nb_requests_received;
+    
     /*
     ** methods
     */

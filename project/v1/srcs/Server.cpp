@@ -133,7 +133,8 @@ int Server::acceptNewClient(void)
         }
         else
 			LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
-        return (0);
+        exit(EXIT_FAILURE);
+        // return (0);
     }
     else
     {
@@ -277,8 +278,7 @@ int Server::sendResponse(Client *c)
                     0)) == -1)
     {
         LOG_WRT(Logger::ERROR, "Server::sendResponse -> send(): " + std::string(strerror(errno)));
-        // if (errno != EWOULDBLOCK && errno != EAGAIN)
-            c->_is_connected = false;
+        c->_is_connected = false;
         return (0);
     }
     else
@@ -289,11 +289,22 @@ int Server::sendResponse(Client *c)
 
         if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length()) // >= ou juste > ?
         {
-            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send="
-                + std::to_string(c->_response._bytes_send) + " >= _to_send.length()="
-                + std::to_string(c->_response._to_send.length())
-                + " -> disconnecting client");
-            c->_is_connected = false;
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
+            // if (errno != EWOULDBLOCK && errno != EAGAIN)
+            // if (c->_complete_time.empty())
+            // {
+            //     LOG_WRT(Logger::DEBUG, "c->_complete_time = " + c->_complete_time);
+            //     c->_complete_time = utils_tmp::get_date();
+            //     FD_SET(c->_accept_fd, &g_conf._save_readfds);
+            // }
+            // else
+            // {
+            //     LOG_WRT(Logger::DEBUG, "getSecondsDiff() = " + std::to_string(utils_tmp::getSecondsDiff(c->_complete_time)));
+            //     if (utils_tmp::getSecondsDiff(c->_complete_time) >= 2)
+                    c->_is_connected = false;
+            //     else
+            //         ;
+            // }
         }
         else
         {
@@ -311,6 +322,8 @@ int Server::handleClientRequest(Client *c)
     int ok_read = 0;
     int ok_write = 0;
 
+    LOG_WRT(Logger::DEBUG, "Server::handleClientRequest() of client " + std::to_string(c->_accept_fd));
+    // print_clients();
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
         LOG_WRT(Logger::INFO, "reading request of client " + std::to_string(c->_accept_fd));

@@ -27,6 +27,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 
 	recv_status = HEADER;
 	_line_size = -1;
+	_complete_time.clear();
 
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "client constructor " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }

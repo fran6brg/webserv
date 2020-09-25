@@ -10,6 +10,26 @@ void	shutdown(int sig)
 	exit(EXIT_SUCCESS);
 }
 
+void print_clients()
+{
+    Server *s;
+    Client *c;
+    LOG_WRT(Logger::DEBUG, "-------------------------------");
+    std::vector<Server*>::iterator it_s = g_conf._servers.begin();
+    for (; it_s != g_conf._servers.end(); it_s++)
+    {
+        s = *it_s;
+        LOG_WRT(Logger::DEBUG, "SERVER : " + s->_name);
+        std::vector<Client*>::iterator it_c = s->_clients.begin();
+        for (; it_c != s->_clients.end(); it_c++)
+        {
+            c = *it_c;
+            LOG_WRT(Logger::DEBUG, "<==>CLIENT fd=" + std::to_string(c->_accept_fd));
+        }
+    }
+    LOG_WRT(Logger::DEBUG, "-------------------------------");
+}
+
 int main(int argc, char *argv[])
 {
 	Server *s;
@@ -49,6 +69,9 @@ int main(int argc, char *argv[])
 				if (g_conf.get_nb_open_fds() < 256)
 				{
 					s->acceptNewClient(); // connexion et création du nouveau client
+					g_conf._nb_requests_received += 1;
+					LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_requests_received = " + std::to_string(g_conf._nb_requests_received) + std::string(RESET));
+
 				}
 				else
 					s->saveNewClient(); // ?
@@ -77,6 +100,7 @@ int main(int argc, char *argv[])
 					// }
 					// else
 					// {
+						// print_clients();
 						it_c = s->_clients.erase(it_c);
 						delete c;
 					// }

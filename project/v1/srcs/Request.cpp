@@ -544,6 +544,7 @@ void Request::parse_body_chunked()
                     else if (_location->_max_body != 1 && pos > _location->_max_body)
                     {
                         _saved_error = REQUEST_ENTITY_TOO_LARGE_413;
+                        LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): REQUEST_ENTITY_TOO_LARGE_413");
                     }
                     LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): substr(0, " + std::to_string(_client->_line_size) + ")");
                     body.append(_client->_concat_body.substr(0, _client->_line_size));

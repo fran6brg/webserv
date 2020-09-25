@@ -138,3 +138,19 @@ void utils_tmp::remove_return(std::string &str)
     if (pos != std::string::npos)
         str.erase(pos);
 }
+
+int	utils_tmp::getSecondsDiff(std::string complete_time)
+{
+	struct tm		complete;
+	struct tm		*now;
+	struct timeval	now_timeval;
+	int				diff;
+
+	strptime(complete_time.c_str(), "%a, %d %b %Y %T", &complete);
+	gettimeofday(&now_timeval, NULL);
+	now = localtime(&now_timeval.tv_sec);
+	diff = (now->tm_hour - complete.tm_hour) * 3600;
+	diff += (now->tm_min - complete.tm_min) * 60;
+	diff += (now->tm_sec - complete.tm_sec);
+	return (diff);
+}
