@@ -154,3 +154,63 @@ int	utils_tmp::getSecondsDiff(std::string complete_time)
 	diff += (now->tm_sec - complete.tm_sec);
 	return (diff);
 }
+
+void	utils_tmp::ft_getline(std::string &b, std::string &line)
+{
+    size_t					pos;
+
+    pos = b.find("\n");
+
+    if (pos != std::string::npos)
+    {
+        line = std::string (b, 0, pos++);
+        b = b.substr(pos);
+    }
+    else
+    {
+        if (b[b.size() - 1] == '\n')
+            b = b.substr(b.size());
+        else
+        {
+            line = b;
+            b = b.substr(b.size());
+        }
+    }
+}
+
+std::vector<std::string> utils_tmp::split(const std::string& str, char delim)
+{
+    std::vector<std::string> strings;
+    size_t start;
+    size_t end = 0;
+    while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
+    {
+        end = str.find(delim, start);
+        strings.push_back(str.substr(start, end - start));
+    }
+    return strings;
+}
+
+std::string utils_tmp::trim(const std::string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+
+    if (std::string::npos == first)
+        return str;
+    size_t last = str.find_last_not_of(' ');
+    return (std::string(str.substr(first, (last - first + 1)))); // std::string() autour du substr pour bien s'assurer qu'on a le \0 à la fin de value sinon ça peut bug
+}
+
+void utils_tmp::print_map(std::stringstream &ss1, std::map<int, std::string> map)
+{
+    size_t i = 0;
+    
+    if (map.empty())
+        ss1 << std::endl;
+    else
+    {
+        while (i < map.size())
+            ss1 << " " << map[i++];
+        ss1 << std::endl;
+    }
+}

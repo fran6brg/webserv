@@ -9,7 +9,7 @@ git add .
 
 echo
 echo "Enter a commit message:"
-read -p "> " msg
+MSG= read -r -p "> " msg
 echo "git commit -m $msg"
 git commit -m $msg
 

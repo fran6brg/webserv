@@ -108,7 +108,8 @@ Client	*Server::search_existing_client(Client *c)
 
 	while (i < _client_saved.size())
 	{
-		if (_client_saved[i]->_ip == c->_ip)
+		if (_client_saved[i]->_ip == c->_ip
+        && _client_saved[i]->_port == c->_port)
 			return (_client_saved[i]);
 		i++;
 	}
@@ -156,6 +157,7 @@ int Server::acceptNewClient(void)
 int Server::saveNewClient(void)
 {
     LOG_WRT(Logger::INFO, std::string(MAGENTA_C) + "save Client on " + _name + std::string(RESET));
+    exit(EXIT_FAILURE);
     return (1);
 }
 
@@ -291,16 +293,16 @@ int Server::sendResponse(Client *c)
         {
             LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
             // if (errno != EWOULDBLOCK && errno != EAGAIN)
-            // if (c->_complete_time.empty())
+            // if (c->_last_complete_time.empty())
             // {
-            //     LOG_WRT(Logger::DEBUG, "c->_complete_time = " + c->_complete_time);
-            //     c->_complete_time = utils_tmp::get_date();
+            //     LOG_WRT(Logger::DEBUG, "c->_last_complete_time = " + c->_last_complete_time);
+            //     c->_last_complete_time = utils_tmp::get_date();
             //     FD_SET(c->_accept_fd, &g_conf._save_readfds);
             // }
             // else
             // {
-            //     LOG_WRT(Logger::DEBUG, "getSecondsDiff() = " + std::to_string(utils_tmp::getSecondsDiff(c->_complete_time)));
-            //     if (utils_tmp::getSecondsDiff(c->_complete_time) >= 2)
+            //     LOG_WRT(Logger::DEBUG, "getSecondsDiff() = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_complete_time)));
+            //     if (utils_tmp::getSecondsDiff(c->_last_complete_time) >= 2)
                     c->_is_connected = false;
             //     else
             //         ;
@@ -323,6 +325,10 @@ int Server::handleClientRequest(Client *c)
     int ok_write = 0;
 
     LOG_WRT(Logger::DEBUG, "Server::handleClientRequest() of client " + std::to_string(c->_accept_fd));
+    
+    if (c->_accept_fd == -1)
+        return (ok_read && ok_write);
+
     // print_clients();
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {

@@ -59,18 +59,18 @@ class Client
 		std::string	_last_request;
 		std::string	_retry_after;
 
-		std::string	_complete_time;
+		std::string	_last_complete_time;
 
-		// Ajout
     	enum status
     	{
 			HEADER,
 			BODY,
 			COMPLETE,
+			WAITING,
 			ERROR
     	};
+        
 		int	        recv_status;
-		//----------
 
     /*
     ** methods
@@ -78,6 +78,7 @@ class Client
 
     private:
         Client();
+
     protected:
         //
 
@@ -85,7 +86,7 @@ class Client
         Client(Server *server, int accept_fd, struct sockaddr_in addr);
         ~Client();
 
-        int parse_request(void);
+        void reset(void);
 
     /*
     ** friends

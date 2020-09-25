@@ -30,8 +30,8 @@
 #include "Code.hpp"
 // #include "Client.hpp"
 
-std::vector<std::string>	split(const std::string& str, char delim);
-std::string 				trim(const std::string& str);
+// std::vector<std::string>	split(const std::string& str, char delim);
+// std::string 				trim(const std::string& str);
 class Client;
 
 /*
@@ -100,6 +100,12 @@ class Response
 		std::string 				_to_send;
 
 		/*
+		** Other headers (not mentionned in the subject but useful to consider)
+		*/
+
+		std::string			 		_keep_alive; // 18 allows the sender to hint about how the connection may be used to set a timeout and a maximum amount of requests. https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Alive
+
+		/*
 		** Other
 		*/
 
@@ -111,6 +117,7 @@ class Response
 
 	private:
 		void init(void);
+		void reset(void);
 		int concat_to_send(void);
 
 	protected:

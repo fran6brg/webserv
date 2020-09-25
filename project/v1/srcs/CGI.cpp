@@ -181,7 +181,7 @@ void        Response::get_cgi_ret(Request *req)
         if (line.find("Status:") != std::string::npos
             && req->_location->_cgi_root != "")
         {
-            split_ret = split(line, ' ');
+            split_ret = utils_tmp::split(line, ' ');
             _status_code = std::stoi(split_ret[1]);
             split_ret.clear();
         }
@@ -194,8 +194,8 @@ void        Response::get_cgi_ret(Request *req)
             && req->_location->_cgi_root != "")
         {
             split_ret.clear();
-            split_ret = split(line, ':');
-            _content_type[0] = trim(split_ret[1]);
+            split_ret = utils_tmp::split(line, ':');
+            _content_type[0] = utils_tmp::trim(split_ret[1]);
             split_ret.clear();
         }
         else

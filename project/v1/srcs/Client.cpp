@@ -27,7 +27,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 
 	recv_status = HEADER;
 	_line_size = -1;
-	_complete_time.clear();
+	_last_complete_time.clear();
 
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "client constructor " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
@@ -48,10 +48,27 @@ Client::~Client()
 ** other class methods
 */
 
-int Client::parse_request(void)
+void Client::reset(void)
 {
-    _request.init();
-    return (1);
+	// _accept_fd = -1; ??
+	_is_connected = true;
+	
+    _request.reset();
+    _response.init();
+
+	FD_SET(_accept_fd, &g_conf._save_readfds);
+	FD_CLR(_accept_fd, &g_conf._readfds);
+	FD_CLR(_accept_fd, &g_conf._save_writefds);
+	FD_CLR(_accept_fd, &g_conf._writefds);
+
+	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
+	
+	recv_status = HEADER;
+	_line_size = -1;
+	
+	// _last_complete_time.clear(); surtout pas
+
+	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
 
 //void		Client::check_client_exist(void)

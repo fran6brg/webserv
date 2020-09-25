@@ -2,6 +2,12 @@
 #define CONF_HPP
 
 /*
+** Const
+*/
+
+#define CLIENT_CONNECTION_TIMEOUT  5
+
+/*
 ** Libraries
 */
 

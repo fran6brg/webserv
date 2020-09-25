@@ -4,16 +4,7 @@
 ** constructors / destructors
 */
 
-Response::Response(void)/*:
-    _http_version(std::string("")),
-    _reason_phrase(std::string("")),
-    _allow(std::string("")),
-    _last_modified(std::string("")),
-    _location(std::string("")),
-    _date(std::string("")),
-    _retry_after(std::string("")),
-    _server(std::string("")),
-    _to_send(std::string(""))*/
+Response::Response(void)
 {
     init();
 }
@@ -46,6 +37,8 @@ void Response::init(void)
     _body.clear();
     // Content to write in fd
     _to_send.clear();
+    // Other headers
+    _keep_alive.clear();
     // Other
     _bytes_send = 0;
 }
@@ -102,7 +95,7 @@ int Response::concat_to_send(void)
     if (_content_length < 100)
         response_headers = ss.str();
     _to_send = ss.str();
-    LOG_WRT(Logger::DEBUG, "_to_send = " + response_headers);
+    LOG_WRT(Logger::DEBUG, "_to_send = \n" + response_headers + "--------------------\n");
     return (1);
 }
 
@@ -289,7 +282,7 @@ int				Response::unauthorized(Request *req)
      	
         // LOG_WRT(Logger::DEBUG, "req->_authorization = " + req->_authorization);
         std::vector<std::string> tokens;
-        tokens = split(req->_authorization, ' ');
+        tokens = utils_tmp::split(req->_authorization, ' ');
         std::string creds = tokens[1];
      	// LOG_WRT(Logger::DEBUG, "creds = " + creds);
      	
@@ -356,4 +349,13 @@ int				Response::not_found(Request *req)
     std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
     _body = buffer;
 	return (1);
+}
+
+/*
+** Reset before waiting for new call
+*/
+
+void Response::reset(void)
+{
+    init();
 }

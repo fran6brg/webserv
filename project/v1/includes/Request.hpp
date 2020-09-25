@@ -99,14 +99,20 @@ class Request
 		/*
 		** Request body
 		*/
+
 		int			 										_body_type;
 		std::string 										_text_body;
 		std::map<int, std::pair<std::string, std::string> > _body; // 15
 		// si post body = "a=1&b=2" -> {1: {"a": "1"}, 2: {"b": "2"}}
 		// ou alors simple body = "abc" -> {1: {"": "abc"}}
 
-		// Not a request header according to https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding but needed
+		/*
+		** // Other headers not mentionned in the subject
+		**
+		*/
+
 		std::string			 								_transfer_encoding; // 17 specifies the form of encoding used to safely transfer the payload body to the user. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding
+		std::string			 								_keep_alive; // 18 allows the sender to hint about how the connection may be used to set a timeout and a maximum amount of requests. https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Alive
 
 	/*
 	** methods
@@ -119,29 +125,28 @@ class Request
 		//
 
 	public:
+		// Request.cpp
 		Request();
 		void 				init();
-
 		std::map<std::string, std::string>	headers_to_map(void);
+		void 				reset();
 
+		// Parsing.cpp
     	int 				parse_request_line(void);
     	int 				parse_headers(void);
-    	//int 				parse_application_type_body(void);
-    	//int 				parse_form_type_body(void);
-    	//int 				parse_text_type_body(void);
-
-    	//int 				parse_chunked_body(void);
-		void				parse_query_string();
+		void    			create_autoindex();
 		int					get_location(std::string *uri, std::vector<Location*> location);
 		int					parse_filename(std::vector<Location*> location);
 		int 				parse(std::vector<Location*> location);
-		void 				display(void);
 
-		void 				update_body();
 		void 				parse_body_length();
 		void 				parse_body_chunked();
+		void 				update_body();
 
-		void    			create_autoindex();
+		void				parse_query_string();
+
+		// Debug.cpp
+		void 				display(void);
 
 	/*
 	** friends

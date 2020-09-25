@@ -2,7 +2,7 @@
 #define HEADERS_HPP
 
 /*
-** CONST
+** Const
 */
 
 #define RET_ERROR		0
@@ -31,7 +31,5 @@ extern Conf g_conf;
 /*
 ** Debug
 */
-
-void print_clients();
 
 #endif

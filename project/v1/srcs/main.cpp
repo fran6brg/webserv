@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
 				LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
-				Logger::ChangeFile();
+				// Logger::ChangeFile();
 				if (g_conf.get_nb_open_fds() < 256)
 				{
 					s->acceptNewClient(); // connexion et création du nouveau client
@@ -83,10 +83,13 @@ int main(int argc, char *argv[])
 			for (; it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
-				
-				s->handleClientRequest(c);
 
-				if (!c->_is_connected) // si 'ressource temporary unavailable' || si le client est déconnecté
+				s->handleClientRequest(c);
+				
+				if (!c->_is_connected)
+					c->reset();
+
+				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > CLIENT_CONNECTION_TIMEOUT)
 				{
 					// if (!c->_retry_after.empty())
 					// {
