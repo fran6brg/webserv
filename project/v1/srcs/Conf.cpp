@@ -75,6 +75,10 @@ int Conf::get_nfds(void) const
     return (*std::max_element(_active_fds.begin(), _active_fds.end()) + 1); // https://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector
 }
 
+int Conf::get_nb_open_fds(void) const
+{
+    return (_active_fds.size()); // https://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector
+}
 
 void Conf::add_fd(int fd)
 {

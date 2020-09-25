@@ -75,6 +75,7 @@ class Conf
         int parse(char *conf);
         void reset_fd_sets(void);
         int get_nfds(void) const;
+        int get_nb_open_fds(void) const;
 
         void add_fd(int fd);
         void remove_fd(int fd);

@@ -65,10 +65,14 @@ class Server
 		~Server();
     
         int start(void);
+        
         int acceptNewClient(void);
+        int saveNewClient(void);
+        
         int recvRequest(Client *c);
         int sendResponse(Client *c);
         int handleClientRequest(Client *c);
+
 		Client  *search_existing_client(Client *c);
 
     /*

@@ -46,7 +46,13 @@ int main(int argc, char *argv[])
 			{
 				LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
 				Logger::ChangeFile();
-				s->acceptNewClient(); // connexion et création du nouveau client
+				if (g_conf.get_nb_open_fds() < 256)
+				{
+					s->acceptNewClient(); // connexion et création du nouveau client
+				}
+				else
+					s->saveNewClient(); // ?
+				
 			}
 
 			// 2

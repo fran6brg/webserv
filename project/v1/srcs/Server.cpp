@@ -121,6 +121,8 @@ int Server::acceptNewClient(void)
     struct sockaddr_in	client_addr;
     int addrlen = sizeof(client_addr);
 
+    LOG_WRT(Logger::INFO, std::string(MAGENTA_C) + "get_nb_open_fds() = " + std::to_string(g_conf.get_nb_open_fds()) + " | OPEN_MAX = " + std::to_string(OPEN_MAX) + std::string(RESET));
+
     bzero(&client_addr, sizeof(client_addr));
     if ((accept_fd = accept(_socket_fd, (struct sockaddr *)&client_addr, (socklen_t*)&addrlen)) == -1)
     {
@@ -148,6 +150,12 @@ int Server::acceptNewClient(void)
 
         return (1);
     }
+}
+
+int Server::saveNewClient(void)
+{
+    LOG_WRT(Logger::INFO, std::string(MAGENTA_C) + "save Client on " + _name + std::string(RESET));
+    return (1);
 }
 
 int Server::recvRequest(Client *c)
