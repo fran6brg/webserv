@@ -87,11 +87,9 @@ int main(int argc, char *argv[])
 				s->handleClientRequest(c);
 				
           		LOG_WRT(Logger::DEBUG, "getSecondsdiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_complete_time)));
-          		LOG_WRT(Logger::DEBUG, "_last_complete_time = " + c->_last_complete_time);
-				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > 100000000)//CLIENT_CONNECTION_TIMEOUT)
+          		//LOG_WRT(Logger::DEBUG, "_last_complete_time = " + c->_last_complete_time);
+				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > CLIENT_CONNECTION_TIMEOUT)
 				{
-          			LOG_WRT(Logger::DEBUG, "getSecondsdiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_complete_time)));
-          			LOG_WRT(Logger::DEBUG, "_last_complete_time = " + c->_last_complete_time);
 					it_c = s->_clients.erase(it_c);
 					delete c;
           			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
