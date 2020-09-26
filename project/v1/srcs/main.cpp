@@ -73,11 +73,11 @@ int main(int argc, char *argv[])
 					LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_requests_received = " + std::to_string(g_conf._nb_requests_received) + std::string(RESET));
 
 				}
-				else
-					s->saveNewClient(); // ?
+		//		else
+				//	s->saveNewClient(); // ?
 				
 			}
-
+	
 			// 2
 			std::vector<Client*>::iterator it_c = s->_clients.begin();
 			for (; it_c != s->_clients.end(); it_c++)
@@ -85,28 +85,19 @@ int main(int argc, char *argv[])
 				c = *it_c;
 
 				s->handleClientRequest(c);
-
-				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > CLIENT_CONNECTION_TIMEOUT)
+				
+          		LOG_WRT(Logger::DEBUG, "getSecondsdiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_complete_time)));
+          		LOG_WRT(Logger::DEBUG, "_last_complete_time = " + c->_last_complete_time);
+				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > 100000000)//CLIENT_CONNECTION_TIMEOUT)
 				{
-					// if (!c->_retry_after.empty())
-					// {
-					// 	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
-					// 	FD_CLR(c->_accept_fd, &g_conf._save_writefds);
-					// 	g_conf.remove_fd(c->_accept_fd);
-					// 	close(c->_accept_fd);
-					// 	c->_accept_fd = -1;
-					// 	s->_client_saved.push_back(c);
-					// 	it_c = s->_clients.erase(it_c);
-					// }
-					// else
-					// {
-						// print_clients();
-						it_c = s->_clients.erase(it_c);
-						delete c;
-					// }
+          			LOG_WRT(Logger::DEBUG, "getSecondsdiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_complete_time)));
+          			LOG_WRT(Logger::DEBUG, "_last_complete_time = " + c->_last_complete_time);
+					it_c = s->_clients.erase(it_c);
+					delete c;
           			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
 					if (s->_clients.empty())
 						break;
+				
 				}
 				
 				if (!c->_is_connected)
