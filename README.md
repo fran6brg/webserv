@@ -3,7 +3,7 @@ work in progress
 # 1. usage
 
 ```
-cd project/v1 && make && ./webserv conf/tester.conf
+cd project/v1 && make launch
 ```
 in another shell:
 ```
