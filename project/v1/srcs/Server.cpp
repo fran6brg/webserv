@@ -70,7 +70,7 @@ int Server::start(void)
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> bind=OK");
 
-    if (listen(_socket_fd, 42) == -1)
+    if (listen(_socket_fd, 242) == -1)
 	{
 		LOG_WRT(Logger::ERROR, "Server::start -> listen(): " + std::string(strerror(errno)));
         return (0);

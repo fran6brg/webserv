@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 			{
 				LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
 				// Logger::ChangeFile();
-				if (g_conf.get_nb_open_fds() < 256)
+				if (g_conf.get_nb_open_fds() < OPEN_MAX)
 				{
 					s->acceptNewClient(); // connexion et création du nouveau client
 					g_conf._nb_requests_received += 1;
@@ -85,9 +85,6 @@ int main(int argc, char *argv[])
 				c = *it_c;
 
 				s->handleClientRequest(c);
-				
-				if (!c->_is_connected)
-					c->reset();
 
 				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > CLIENT_CONNECTION_TIMEOUT)
 				{
@@ -111,6 +108,9 @@ int main(int argc, char *argv[])
 					if (s->_clients.empty())
 						break;
 				}
+				
+				if (!c->_is_connected)
+					c->reset();
 			}
 		}
 		LOG_WRT(Logger::DEBUG, "---------------\n\n");

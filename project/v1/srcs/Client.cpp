@@ -57,6 +57,7 @@ void Client::reset(void)
     _response.init();
 
 	FD_SET(_accept_fd, &g_conf._save_readfds);
+	
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);

@@ -5,7 +5,7 @@
 ** Const
 */
 
-#define CLIENT_CONNECTION_TIMEOUT  5
+#define CLIENT_CONNECTION_TIMEOUT  10
 
 /*
 ** Libraries
