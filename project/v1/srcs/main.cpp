@@ -30,13 +30,35 @@ void print_clients()
     LOG_WRT(Logger::DEBUG, "-------------------------------");
 }
 
+int erase_client(Server *s, Client *c, std::vector<Client*>::iterator &it_c)
+{
+	it_c = s->_clients.erase(it_c);
+	delete c;
+	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
+
+	print_clients();
+	if (s->_clients.empty())
+	{
+		LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
+		return (1);
+	}
+	else
+	{
+		LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
+		it_c = s->_clients.begin();
+	}
+	LOG_WRT(Logger::INFO, s->_name + " go to next client");
+	return (0);
+}
+
+
 int main(int argc, char *argv[])
 {
 	Server *s;
 	Client *c;
 
 	//logger start
-	LOG_START(Logger::CLEAR, "", false);
+	LOG_START(Logger::DEBUG, "", false);
 	
 	signal(SIGINT, shutdown);
 
@@ -57,7 +79,6 @@ int main(int argc, char *argv[])
 			// pour chaque serveur:
 			// 1 - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
 			// 2 - on itère sur les clients du serveur pour les servir
-
 
 			// 1
 			// FD_ISSET(): check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
@@ -89,19 +110,10 @@ int main(int argc, char *argv[])
 
 				if (!c->_is_connected)
 				{
-					it_c = s->_clients.erase(it_c);
-					delete c;
-					if (s->_clients.empty())
-					{
-	          			LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
+					if (erase_client(s, c, it_c))
 						break;
-					}
 					else
-					{
-	          			LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
-						it_c = s->_clients.begin();
 						continue ;
-					}
 				}
 
 				if (!c->_is_finished)
@@ -121,25 +133,10 @@ int main(int argc, char *argv[])
 										+ std::to_string(c->_accept_fd)
 										+ " TIMEOUT "
 										+ std::to_string(10 /*CLIENT_CONNECTION_TIMEOUT*/));
-					
-					it_c = s->_clients.erase(it_c);
-					delete c;
-
-          			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
-					
-					print_clients();
-
-					if (s->_clients.empty())
-					{
-	          			LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
+					if (erase_client(s, c, it_c))
 						break;
-					}
 					else
-					{
-	          			LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
-						it_c = s->_clients.begin();
-					}
-					LOG_WRT(Logger::INFO, s->_name + " go to next client");
+						continue ;
 				}
 			}
 		}
