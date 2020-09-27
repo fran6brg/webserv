@@ -23,7 +23,7 @@ class Server;
 ** Const
 */
 
-# define RECV_BUFFER    40000
+# define RECV_BUFFER    65536
 
 /*
 ** Class
@@ -50,6 +50,7 @@ class Client
         Request     _request;
         Response    _response;
 
+        bool        _is_finished;
         bool        _is_connected;
 
         char        *_buffermalloc;

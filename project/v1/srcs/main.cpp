@@ -84,10 +84,27 @@ int main(int argc, char *argv[])
 			{
 				c = *it_c;
 
-				if (!c)
+				if (!c) // what ?
 					break;
 
-				if (c->_is_connected)
+				if (!c->_is_connected)
+				{
+					it_c = s->_clients.erase(it_c);
+					delete c;
+					if (s->_clients.empty())
+					{
+	          			LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
+						break;
+					}
+					else
+					{
+	          			LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
+						it_c = s->_clients.begin();
+						continue ;
+					}
+				}
+
+				if (!c->_is_finished)
 					s->handleClientRequest(c);
 
 				LOG_WRT(Logger::DEBUG, "client "
@@ -95,7 +112,7 @@ int main(int argc, char *argv[])
 										+ " secondsDiff = "
 										+ std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
 
-				if (!c->_is_connected) // si on a fini d'envoyer la réponse
+				if (c->_is_finished) // si on a fini d'envoyer la réponse
 					c->reset();
 
 				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= 10 /*CLIENT_CONNECTION_TIMEOUT*/)

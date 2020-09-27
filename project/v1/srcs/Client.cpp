@@ -54,7 +54,7 @@ Client::~Client()
 void Client::reset(void)
 {
 	// _accept_fd = -1; ??
-	_is_connected = true;
+	_is_finished = false;
 	
     _request.reset();
     _response.init();

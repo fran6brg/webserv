@@ -6,7 +6,7 @@
 /*   By: froussel <froussel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/12 14:54:47 by froussel          #+#    #+#             */
-/*   Updated: 2020/09/12 17:07:08 by froussel         ###   ########.fr       */
+/*   Updated: 2020/09/27 16:18:26 by froussel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "stdlib.h"
 # include "unistd.h"
 
-# define BUFFER_SIZE 100024
+# define BUFFER_SIZE 65536
 
 int			get_next_line(int fd, char **line);
 size_t		ft_strlen(const char *s);
