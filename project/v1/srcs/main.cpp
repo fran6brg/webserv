@@ -84,33 +84,46 @@ int main(int argc, char *argv[])
 			{
 				c = *it_c;
 
-				s->handleClientRequest(c);
+				if (!c)
+					break;
 
-				if (utils_tmp::getSecondsDiff(c->_last_complete_time) > CLIENT_CONNECTION_TIMEOUT)
-				{
-					// if (!c->_retry_after.empty())
-					// {
-					// 	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
-					// 	FD_CLR(c->_accept_fd, &g_conf._save_writefds);
-					// 	g_conf.remove_fd(c->_accept_fd);
-					// 	close(c->_accept_fd);
-					// 	c->_accept_fd = -1;
-					// 	s->_client_saved.push_back(c);
-					// 	it_c = s->_clients.erase(it_c);
-					// }
-					// else
-					// {
-						// print_clients();
-						it_c = s->_clients.erase(it_c);
-						delete c;
-					// }
-          			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
-					if (s->_clients.empty())
-						break;
-				}
-				
-				if (!c->_is_connected)
+				if (c->_is_connected)
+					s->handleClientRequest(c);
+
+				LOG_WRT(Logger::DEBUG, "client "
+										+ std::to_string(c->_accept_fd)
+										+ " secondsDiff = "
+										+ std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
+
+				if (!c->_is_connected) // si on a fini d'envoyer la réponse
 					c->reset();
+
+				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= 10 /*CLIENT_CONNECTION_TIMEOUT*/)
+				{
+					LOG_WRT(Logger::DEBUG, "client "
+										+ std::to_string(c->_accept_fd)
+										+ " TIMEOUT "
+										+ std::to_string(10 /*CLIENT_CONNECTION_TIMEOUT*/));
+					
+					it_c = s->_clients.erase(it_c);
+					delete c;
+
+          			LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
+					
+					print_clients();
+
+					if (s->_clients.empty())
+					{
+	          			LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
+						break;
+					}
+					else
+					{
+	          			LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
+						it_c = s->_clients.begin();
+					}
+					LOG_WRT(Logger::INFO, s->_name + " go to next client");
+				}
 			}
 		}
 		LOG_WRT(Logger::DEBUG, "---------------\n\n");

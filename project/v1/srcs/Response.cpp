@@ -63,7 +63,7 @@ int Response::concat_to_send(void)
     if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
     // if (!_content_type.empty())         { ss << "Content-Type: " << _content_type << "\r\n"; }
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
-    if (!_retry_after.empty())        { ss << "Retry-After: " << _retry_after << "\r\n"; }
+    if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
     if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }

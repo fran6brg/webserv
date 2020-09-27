@@ -23,7 +23,7 @@ class Server;
 ** Const
 */
 
-# define RECV_BUFFER    10000
+# define RECV_BUFFER    40000
 
 /*
 ** Class
@@ -59,7 +59,7 @@ class Client
 		std::string	_last_request;
 		std::string	_retry_after;
 
-		std::string	_last_complete_time;
+		std::string	_last_active_time;
 
     	enum status
     	{

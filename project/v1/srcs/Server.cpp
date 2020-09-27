@@ -140,7 +140,22 @@ int Server::acceptNewClient(void)
     else
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));
-		Client	*c = new Client(this, accept_fd, client_addr);
+
+        // std::string test_ip;
+        // int test_port;
+        // test_ip = inet_ntoa(client_addr.sin_addr); // todo: à recoder si non autorisée
+        // test_port = htons(client_addr.sin_port);
+        // std::vector<Client *>::iterator it_c = _clients.begin();
+        // for (; it_c != _clients.end(); it_c++)
+        // {
+        //     if (test_ip == (*it_c)->_ip && test_port == (*it_c)->_port)
+        //     {
+    	// 		LOG_WRT(Logger::DEBUG, "accepted client with same ip/port");
+        //         exit(1);
+        //     }
+        // }
+    	
+        Client	*c = new Client(this, accept_fd, client_addr);
 		// Client	*temp = search_existing_client(c);
 		// if (temp != NULL)
 		// {
@@ -165,7 +180,9 @@ int Server::recvRequest(Client *c)
 {
     int ret = 0;
     errno = 0;
-
+    int bytes;
+    
+    LOG_WRT(Logger::DEBUG, "--- start recv() ---");
     // https://stackoverflow.com/questions/13736064/recv-connection-reset-by-peer
     // 'Connection reset by peer' has a number of causes,
     // but the most common one is that you have written to a connection that has already been closed by the peer.
@@ -185,10 +202,10 @@ int Server::recvRequest(Client *c)
 
     // bzero(c->_buffer, 1000);
 
-    LOG_WRT(Logger::DEBUG, "--- start recv() ---");
-    int bytes = strlen(c->_buffermalloc);
+    bytes = strlen(c->_buffermalloc);
     ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
+
     LOG_WRT(Logger::DEBUG, "recv() -> ret = " + std::to_string(ret) + " | bytes = " + std::to_string(bytes));
     LOG_WRT(Logger::DEBUG, "c->recv_status = " + std::to_string(c->recv_status));
 	if (ret == -1)
@@ -200,14 +217,15 @@ int Server::recvRequest(Client *c)
             c->_is_connected = false;
         return (0);
     }
-    else if (ret == 0)
+    else if (ret == 0) // ça veut dire que la connexion est finie
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> client(" + std::to_string(c->_accept_fd) + ") closed");
         c->_is_connected = false;
         return (0);
     }
     else
-	{ 
+	{
+        c->_last_active_time = utils_tmp::get_date();
         LOG_WRT(Logger::DEBUG, "ret > 0");
         // todo: Replace if by switch
         c->_buffermalloc[bytes] = '\0';
@@ -285,6 +303,8 @@ int Server::sendResponse(Client *c)
     }
     else
     {
+        c->_last_active_time = utils_tmp::get_date();
+
         c->_response._bytes_send += ret;
 
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
@@ -292,25 +312,11 @@ int Server::sendResponse(Client *c)
         if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length()) // >= ou juste > ?
         {
             LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
-            // if (errno != EWOULDBLOCK && errno != EAGAIN)
-            // if (c->_last_complete_time.empty())
-            // {
-            //     LOG_WRT(Logger::DEBUG, "c->_last_complete_time = " + c->_last_complete_time);
-            //     c->_last_complete_time = utils_tmp::get_date();
-            //     FD_SET(c->_accept_fd, &g_conf._save_readfds);
-            // }
-            // else
-            // {
-            //     LOG_WRT(Logger::DEBUG, "getSecondsDiff() = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_complete_time)));
-            //     if (utils_tmp::getSecondsDiff(c->_last_complete_time) >= 2)
-                    c->_is_connected = false;
-            //     else
-            //         ;
-            // }
+            c->_is_connected = false;
         }
         else
         {
-            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send="
+            LOG_WRT(Logger::DEBUG, "sendResponse(): _bytes_send="
                 + std::to_string(c->_response._bytes_send) + " < _to_send.length()="
                 + std::to_string(c->_response._to_send.length())
                 + " -> keep going send()");
@@ -327,7 +333,7 @@ int Server::handleClientRequest(Client *c)
     LOG_WRT(Logger::DEBUG, "Server::handleClientRequest() of client " + std::to_string(c->_accept_fd));
     
     if (c->_accept_fd == -1)
-        return (ok_read && ok_write);
+        return (ok_read || ok_write);
 
     // print_clients();
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
@@ -357,5 +363,5 @@ int Server::handleClientRequest(Client *c)
     else
         LOG_WRT(Logger::INFO, "writing not set for client " + std::to_string(c->_accept_fd));
 
-    return (ok_read && ok_write);
+    return (ok_read || ok_write);
 }

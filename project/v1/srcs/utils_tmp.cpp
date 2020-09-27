@@ -139,12 +139,12 @@ void utils_tmp::remove_return(std::string &str)
         str.erase(pos);
 }
 
-int	utils_tmp::getSecondsDiff(std::string complete_time)
+size_t	utils_tmp::getSecondsDiff(std::string complete_time)
 {
 	struct tm		complete;
 	struct tm		*now;
 	struct timeval	now_timeval;
-	int				diff;
+	size_t			diff = 0;
 
 	strptime(complete_time.c_str(), "%a, %d %b %Y %T", &complete);
 	gettimeofday(&now_timeval, NULL);
