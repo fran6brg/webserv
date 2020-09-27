@@ -11,6 +11,10 @@
 #define EXIT_ERROR      1
 #define EXIT_SUCCESS    0
 
+#ifdef __linux__
+# define OPEN_MAX FOPEN_MAX
+#endif
+
 /*
 ** Libraries
 */
