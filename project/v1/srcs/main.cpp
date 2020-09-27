@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 				if (c->_is_finished) // si on a fini d'envoyer la réponse
 					c->reset();
 
-				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= 10 /*CLIENT_CONNECTION_TIMEOUT*/)
+				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= 20 /*CLIENT_CONNECTION_TIMEOUT*/)
 				{
 					LOG_WRT(Logger::DEBUG, "client "
 										+ std::to_string(c->_accept_fd)
