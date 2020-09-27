@@ -189,6 +189,7 @@ int				Response::bad_request(Request *req)
 	if (accepted_method(req))
         return (0);
     _status_code = BAD_REQUEST_400;
+	_allow = vector_to_string(req->_location->_method, ',');
 	std::string path = "./www/old/error/400.html";
     std::ifstream error400(path);
     std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());

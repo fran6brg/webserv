@@ -50,36 +50,46 @@ def printResponse(r, i):
 	# print (r.encoding)
 	print ("------------------\n")
 
-# PUT -------------------------------------------------------------------------
+# HEAD -------------------------------------------------------------------------
 
 i = 0;
 
+print (bcolors.OKBLUE + "\n" + str(i) + ". BASIC Test head\n" + bcolors.ENDC)
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/youpi.bad_extension\n" + bcolors.ENDC)
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/youpi.bad_extension')
+	r = requests.head('http://localhost:8080/')
 	printResponse(r, i)
 
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head \n" + bcolors.ENDC)
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/oulalala\n" + bcolors.ENDC)
+headers = {'Accept-Language': 'fr'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/oulalala')
+	r = requests.head('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/\n" + bcolors.ENDC)
+headers = {'Accept-Language': 'en'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/')
+	r = requests.head('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/youpi.bla\n" + bcolors.ENDC)
+headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/youpi.bla')
+	r = requests.head('http://localhost:8080/test/yolo', headers=headers)
 	printResponse(r, i)
 
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/nop/other.pouac\n" + bcolors.ENDC)
+headers = {'Accept-Charset': 'iso-8859-1'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/nop/other.pouac')
+	r = requests.head('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
+
+# -------------------------------------------------------------------------------	

@@ -50,16 +50,18 @@ def printResponse(r, i):
 	# print (r.encoding)
 	print ("------------------\n")
 
-# PUT -------------------------------------------------------------------------
+# GET -------------------------------------------------------------------------
 
 i = 0;
 
+print (bcolors.OKBLUE + "\n" + str(i) + ". BASIC Test Get\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/')
 	printResponse(r, i)
 
 # ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get with Accept-Language header: fr \n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'fr'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -67,6 +69,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get with Accept-Language header: en \n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'en'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -74,6 +77,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get with Accept-Language: fr && Accept-Charset: utf8 \n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -81,6 +85,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get with Accept-Charset: iso-8859-1\n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Charset': 'iso-8859-1'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -88,27 +93,24 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get with cgi\n" + bcolors.ENDC)
+i += 1
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.get('http://localhost:8080/index.cgi')
+	printResponse(r, i)
+
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get with auto_index\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/auto_index')
 	printResponse(r, i)
 
 # ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Get without auto_index\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/index.php')
-	printResponse(r, i)
-
-# ---
-i += 1
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/index.html?var1=value1&var2=value2&var3=value3')
-	printResponse(r, i)
-
-# -------------------------------------------------------------------------------	
-i += 1
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/add.html')
+	r = requests.get('http://localhost:8080/no_auto_index')
 	printResponse(r, i)
 
 # -------------------------------------------------------------------------------	

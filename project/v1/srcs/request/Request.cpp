@@ -41,6 +41,7 @@ void    Request::init(void)
     _file.clear();
     
     _secret_header.clear();
+    _location = NULL;
 }
 
 /*

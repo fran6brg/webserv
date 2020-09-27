@@ -61,7 +61,7 @@ OBJREQ		= 	$(addprefix $(OBJREQ_PATH)/,$(OBJREQ_NAME))
 
 
 all: $(NAME)
-
+	@touch ./www/old/delete/to_delete
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL) $(OBJREQ)
 	# find . -name "./log/*.txt" -print0 | xargs -0 rm
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJ} ${OBJLIB} ${OBJGNL} $(OBJREQ)
