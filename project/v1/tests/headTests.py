@@ -50,21 +50,47 @@ def printResponse(r, i):
 	# print (r.encoding)
 	print ("------------------\n")
 
-# DELETE -------------------------------------------------------------------------
+# HEAD -------------------------------------------------------------------------
 
 i = 0;
 
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test delete: SUCCESS\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". BASIC Test head\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.delete('http://localhost:8080/delete/')
+	r = requests.head('http://localhost:8080/')
+	printResponse(r, i)
+
+<<<<<<< HEAD:project/v1/tests/headTests.py
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head \n" + bcolors.ENDC)
+i += 1
+headers = {'Accept-Language': 'fr'}
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.head('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test delete: no content\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
 i += 1
+headers = {'Accept-Language': 'en'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.delete('http://localhost:8080/delete/no_content')
+	r = requests.head('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
-# DELETE -------------------------------------------------------------------------
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
+i += 1
+headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.head('http://localhost:8080/test/yolo', headers=headers)
+	printResponse(r, i)
+
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
+i += 1
+headers = {'Accept-Charset': 'iso-8859-1'}
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.head('http://localhost:8080/test', headers=headers)
+	printResponse(r, i)
+
+# -------------------------------------------------------------------------------	

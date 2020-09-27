@@ -30,7 +30,6 @@ SRC_NAME	=  	Conf.cpp \
 LIB_NAME 	= 	connect.cpp \
 		   		delete.cpp \
 		   		get.cpp \
-		   		head.cpp \
 		   		option.cpp \
 		   		put.cpp \
 		   		trace.cpp \
@@ -61,7 +60,7 @@ OBJREQ		= 	$(addprefix $(OBJREQ_PATH)/,$(OBJREQ_NAME))
 
 
 all: $(NAME)
-
+	@touch ./www/old/delete/to_delete
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL) $(OBJREQ)
 	# find . -name "./log/*.txt" -print0 | xargs -0 rm
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJ} ${OBJLIB} ${OBJGNL} $(OBJREQ)

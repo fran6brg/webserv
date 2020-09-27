@@ -22,19 +22,11 @@ void			Response::get(Request *req)
 	{
 		LOG_WRT(Logger::DEBUG, "get: cgi\n");
 		ft_cgi(req);
-
-
-		//******************************
-		//get_cgi_ret(req);
 		_status_code = OK_200;
 		_content_type[0] = "text/html";
-		//******************************
-
-
 		_last_modified = get_last_modif(req->_file);
 		std::ifstream temp("./www/temp_file");
 		std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());
-
 		_body = buffer;
 		remove("./www/temp_file");
 	}

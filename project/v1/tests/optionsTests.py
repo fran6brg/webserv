@@ -22,8 +22,8 @@ class bcolors:
 
 def props(cls):   
   return [i for i in cls.__dict__.keys() if i[:1] != '_']
-# https://stackoverflow.com/questions/16923898/how-to-get-the-raw-content-of-a-response-in-requests-with-python
-# https://stackoverflow.com/questions/9058305/getting-attributes-of-a-class
+# https://stackoverflow.com/questions/16923898/how-to-options-the-raw-content-of-a-response-in-requests-with-python
+# https://stackoverflow.com/questions/9058305/optionsting-attributes-of-a-class
 
 def printResponse(r, i):
 
@@ -50,21 +50,31 @@ def printResponse(r, i):
 	# print (r.encoding)
 	print ("------------------\n")
 
-# DELETE -------------------------------------------------------------------------
+# HEAD -------------------------------------------------------------------------
 
 i = 0;
+print (bcolors.OKBLUE + "\n" + str(i) + ". Options renvoi les METHODS autorisé par la location ! \n" + bcolors.ENDC)
 
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test delete: SUCCESS\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans / \n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.delete('http://localhost:8080/delete/')
+	r = requests.options('http://localhost:8080/')
 	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test delete: no content\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans /delete \n" + bcolors.ENDC)
 i += 1
+headers = {'Accept-Language': 'fr'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.delete('http://localhost:8080/delete/no_content')
+	r = requests.options('http://localhost:8080/test', headers=headers)
 	printResponse(r, i)
 
-# DELETE -------------------------------------------------------------------------
+# ---
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans /auto_index \n" + bcolors.ENDC)
+i += 1
+headers = {'Accept-Language': 'en'}
+if len(tests_to_run) == 0 or i in tests_to_run:
+	r = requests.options('http://localhost:8080/auto_index', headers=headers)
+	printResponse(r, i)
+
+# -------------------------------------------------------------------------------	
