@@ -105,10 +105,10 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/index.html?var1=value1&var2=value2&var3=value3')
 	printResponse(r, i)
 
-# -------------------------------------------------------------------------------	
+# ---
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/add.html')
 	printResponse(r, i)
 
-# -------------------------------------------------------------------------------	
+# ---

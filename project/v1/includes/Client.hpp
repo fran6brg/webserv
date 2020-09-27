@@ -57,9 +57,6 @@ class Client
 		std::string	_concat_body;
         int         _line_size;
 
-		std::string	_last_request;
-		std::string	_retry_after;
-
 		std::string	_last_active_time;
 
     	enum status

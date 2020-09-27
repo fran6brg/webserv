@@ -27,6 +27,7 @@
 
 // https://stackoverflow.com/questions/3627941/global-variable-within-multiple-files
 extern Conf g_conf;
+void print_clients_of_all_servers(void);
 
 /*
 ** Debug

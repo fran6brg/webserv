@@ -60,26 +60,26 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/directory/youpi.bad_extension')
 	printResponse(r, i)
 
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/oulalala\n" + bcolors.ENDC)
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/oulalala')
-	printResponse(r, i)
+# i += 1
+# print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/oulalala\n" + bcolors.ENDC)
+# if len(tests_to_run) == 0 or i in tests_to_run:
+# 	r = requests.get('http://localhost:8080/directory/oulalala')
+# 	printResponse(r, i)
 
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/\n" + bcolors.ENDC)
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/')
-	printResponse(r, i)
+# i += 1
+# print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/\n" + bcolors.ENDC)
+# if len(tests_to_run) == 0 or i in tests_to_run:
+# 	r = requests.get('http://localhost:8080/')
+# 	printResponse(r, i)
 
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/youpi.bla\n" + bcolors.ENDC)
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/youpi.bla')
-	printResponse(r, i)
+# i += 1
+# print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/youpi.bla\n" + bcolors.ENDC)
+# if len(tests_to_run) == 0 or i in tests_to_run:
+# 	r = requests.get('http://localhost:8080/directory/youpi.bla')
+# 	printResponse(r, i)
 
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/nop/other.pouac\n" + bcolors.ENDC)
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.get('http://localhost:8080/directory/nop/other.pouac')
-	printResponse(r, i)
+# i += 1
+# print (bcolors.OKBLUE + "\n" + str(i) + ". Test GET http://localhost:8080/directory/nop/other.pouac\n" + bcolors.ENDC)
+# if len(tests_to_run) == 0 or i in tests_to_run:
+# 	r = requests.get('http://localhost:8080/directory/nop/other.pouac')
+# 	printResponse(r, i)

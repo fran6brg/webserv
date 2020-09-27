@@ -29,7 +29,7 @@ void Response::init(void)
     _last_modified.clear();
     _location.clear();
     _date.clear();
-    _retry_after.clear();
+    _retry_after = -1;
     _server.clear();
     _transfer_encoding.clear();
     _www_authenticate.clear();
@@ -63,10 +63,9 @@ int Response::concat_to_send(void)
     if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
     // if (!_content_type.empty())         { ss << "Content-Type: " << _content_type << "\r\n"; }
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
-    if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
+    if (_retry_after >= 0)              { ss << "Retry-After: " << std::to_string(_retry_after) << "\r\n"; }
     if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
-    if (!_retry_after.empty())          { ss << "Retry-After: " << _retry_after << "\r\n"; }
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
     // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\r\n"; }
     // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\r\n"; }
@@ -122,32 +121,20 @@ int Response::format_to_send(Request *req)
 		_location = get_location_header(req);	
 	_content_language.clear();
     _content_location.clear();
-    _retry_after.clear();
     _transfer_encoding.clear();
     _www_authenticate.clear();
 	// Response body
 	if (req->_method == "HEAD")
 		_body.clear();
     concat_to_send();
-//	_retry_after = "Tue, 22 Sep 2020 21:50:48 CEST";
-	if (!_retry_after.empty())
-		req->_client->_retry_after = _retry_after;
 	return (1);
 }
 
 void		Response::handle_response(Request *req)
 {
-	if (!req->_client->_retry_after.empty())
-	{
-		if (compare_date(get_date(), req->_client->_retry_after) == 1)
-			req->_client->_retry_after.clear();
-		else
-		{
-			service_unaviable(req); // 503
-			return ;
-		}
-	}
-    if (bad_request(req)) // 400
+	if (service_unavailable(req)) // 503
+        return ;
+    else if (bad_request(req)) // 400
 		return ;
 	else if (method_not_allowed(req)) // 405
 		return ;
@@ -169,7 +156,6 @@ void		Response::handle_response(Request *req)
 		trace(req);
 	else if (req->_method == "CONNECT")
 		connect(req);
-	req->_client->_last_request = get_date();
 }
 
 int		Response::accepted_method(Request *req)
@@ -308,16 +294,20 @@ int				Response::unauthorized(Request *req)
 	    return (0);
 }
 
-int				Response::service_unaviable(Request *req)
+int				Response::service_unavailable(Request *req)
 {
-	LOG_WRT(Logger::INFO, "Response::service_unaviable()\n");
-	_status_code = SERVICE_UNAVAILABLE_503;
-	_retry_after = req->_client->_retry_after;
-	std::string path = "./www/old/error/503.html";
-	std::ifstream error503(path);
-	std::string buffer((std::istreambuf_iterator<char>(error503)), std::istreambuf_iterator<char>());
-	_body = buffer;
-	return (1);
+    if (_retry_after == UNAVAILABLE_TIME)
+    {
+        LOG_WRT(Logger::INFO, "Response::service_unavailable()\n");
+        _status_code = SERVICE_UNAVAILABLE_503;
+        std::string path = "./www/old/error/503.html";
+        std::ifstream error503(path);
+        std::string buffer((std::istreambuf_iterator<char>(error503)), std::istreambuf_iterator<char>());
+        _body = buffer;
+        return (1);
+    }    
+    else
+        return (0);
 }
 
 int				Response::request_entity_too_large(Request *req)

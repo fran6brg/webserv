@@ -11,10 +11,10 @@ LIB_PATH	= 	./srcs/methods
 GNL_PATH	= 	./srcs/get_next_line
 REQ_PATH	= 	./srcs/request
 
-OBJ_PATH	= 	./obj
-OBJLIB_PATH	= 	./obj
-OBJGNL_PATH	= 	./obj
-OBJREQ_PATH	= 	./obj
+OBJ_PATH	= 	./objs
+OBJLIB_PATH	= 	./objs
+OBJGNL_PATH	= 	./objs
+OBJREQ_PATH	= 	./objs
 
 SRC_NAME	=  	Conf.cpp \
 				main.cpp \
