@@ -116,41 +116,34 @@ int Server::acceptNewClient(void)
     }
     else
     {
-		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));
-
-        // std::string test_ip;
-        // int test_port;
-        // test_ip = inet_ntoa(client_addr.sin_addr); // todo: à recoder si non autorisée
-        // test_port = htons(client_addr.sin_port);
-        // std::vector<Client *>::iterator it_c = _clients.begin();
-        // for (; it_c != _clients.end(); it_c++)
-        // {
-        //     if (test_ip == (*it_c)->_ip && test_port == (*it_c)->_port)
-        //     {
-    	// 		LOG_WRT(Logger::DEBUG, "accepted client with same ip/port");
-        //         exit(1);
-        //     }
-        // }
-    	
+		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));	
         Client	*c = new Client(this, accept_fd, client_addr);
-		// Client	*temp = search_existing_client(c);
-		// if (temp != NULL)
-		// {
-		// 	c->_retry_after = temp->_retry_after;
-		// 	c->_last_request = temp->_last_request;
-		// }
-		_clients.push_back(c);
-		LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
 
+        if (g_conf.get_nb_open_fds() > OPEN_MAX - OPEN_MAX_PADDING)
+        {
+            LOG_WRT(Logger::INFO, std::string(MAGENTA_C)
+                + "service unavailable (503) on "
+                + _name
+                + " get_nb_open_fds() = "
+                + std::to_string(g_conf.get_nb_open_fds())
+                + std::string(RESET));
+            
+            FD_CLR(c->_accept_fd, &g_conf._save_readfds); // no need to read request since response is same: 503
+            FD_SET(c->_accept_fd, &g_conf._save_writefds); // need to know when response can be written in _accept_fd
+            
+            c->_response._retry_after = UNAVAILABLE_TIME;
+            c->recv_status = Client::COMPLETE;
+
+            _clients_503.push_back(c);
+        }
+        else
+		{
+            _clients.push_back(c);
+		    LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
+        }
+        
         return (1);
     }
-}
-
-int Server::saveNewClient(void)
-{
-    LOG_WRT(Logger::INFO, std::string(MAGENTA_C) + "save Client on " + _name + std::string(RESET));
-    exit(EXIT_FAILURE);
-    return (1);
 }
 
 int Server::recvRequest(Client *c)
@@ -312,7 +305,7 @@ int Server::handleClientRequest(Client *c)
     if (c->_accept_fd == -1)
         return (ok_read || ok_write);
 
-    // print_clients();
+    // print_clients_of_all_servers();
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
         LOG_WRT(Logger::INFO, "reading request of client " + std::to_string(c->_accept_fd));

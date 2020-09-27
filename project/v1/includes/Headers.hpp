@@ -11,6 +11,10 @@
 #define EXIT_ERROR      1
 #define EXIT_SUCCESS    0
 
+#ifdef __linux__
+# define OPEN_MAX FOPEN_MAX
+#endif
+
 /*
 ** Libraries
 */
@@ -27,6 +31,7 @@
 
 // https://stackoverflow.com/questions/3627941/global-variable-within-multiple-files
 extern Conf g_conf;
+void print_clients_of_all_servers(void);
 
 /*
 ** Debug

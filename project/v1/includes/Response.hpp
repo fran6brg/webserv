@@ -28,10 +28,7 @@
 #include "Utils.hpp"
 #include "Request.hpp"
 #include "Code.hpp"
-// #include "Client.hpp"
 
-// std::vector<std::string>	split(const std::string& str, char delim);
-// std::string 				trim(const std::string& str);
 class Client;
 
 /*
@@ -79,7 +76,7 @@ class Response
 		std::string 				_location; // indique l'URL vers laquelle rediriger une page. Il a un sens seulement lorsqu'il est servi avec une réponse d'état 3xx (redirection) ou 201 (créé). https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Location
 		// - Autres:
 		std::string 				_date; // la date et l'heure d'origine du message. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Date
-		std::string 				_retry_after; // indicates how long the user agent should wait before making a follow-up request. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Retry-After
+		int			 				_retry_after; // indicates how long the user agent should wait before making a follow-up request. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Retry-After
 		// - Contexte de réponse:
 		std::string 				_server; // contient des informations à propos du système (ou sous-système) en place sur le serveur qui s'occupe de la requête. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Serveur
 		// - Contexte de réponse:
@@ -145,7 +142,7 @@ class Response
 		int				unauthorized(Request *req);
 		int				request_entity_too_large(Request *req);
 		int				not_found(Request *req);
-		int             service_unaviable(Request *req);
+		int             service_unavailable(Request *req);
 
 		char			**create_env_tab(Request *req);
 		void			ft_cgi(Request *req);

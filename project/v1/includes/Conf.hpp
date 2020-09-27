@@ -5,7 +5,8 @@
 ** Const
 */
 
-#define CLIENT_CONNECTION_TIMEOUT  20
+#define CLIENT_CONNECTION_TIMEOUT  10
+#define OPEN_MAX_PADDING           10
 
 /*
 ** Libraries
@@ -64,7 +65,7 @@ class Conf
         std::list<int>          _active_fds;
         
         // debug
-        int                     _nb_requests_received;
+        int                     _nb_accept_opered;
     
     /*
     ** methods

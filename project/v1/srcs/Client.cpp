@@ -74,11 +74,3 @@ void Client::reset(void)
 
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
-
-//void		Client::check_client_exist(void)
-//{
-//}
-
-//void		Clients::close_connection(void)
-//{
-//}

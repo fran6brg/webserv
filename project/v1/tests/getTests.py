@@ -113,4 +113,4 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.get('http://localhost:8080/no_auto_index')
 	printResponse(r, i)
 
-# -------------------------------------------------------------------------------	
+# ---

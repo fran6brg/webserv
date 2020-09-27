@@ -20,7 +20,7 @@ Conf::Conf()
     _timeout.tv_sec = 5;
 	_timeout.tv_usec = 0;
     // debug
-    _nb_requests_received = 0;}
+    _nb_accept_opered = 0;}
 
 /*
 ** other class methods

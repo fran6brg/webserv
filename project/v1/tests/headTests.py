@@ -60,6 +60,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.head('http://localhost:8080/')
 	printResponse(r, i)
 
+<<<<<<< HEAD:project/v1/tests/headTests.py
 # ---
 print (bcolors.OKBLUE + "\n" + str(i) + ". Test head \n" + bcolors.ENDC)
 i += 1

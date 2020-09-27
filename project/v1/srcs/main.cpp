@@ -10,7 +10,7 @@ void	shutdown(int sig)
 	exit(EXIT_SUCCESS);
 }
 
-void print_clients()
+void print_clients_of_all_servers(void)
 {
     Server *s;
     Client *c;
@@ -36,7 +36,7 @@ int erase_client(Server *s, Client *c, std::vector<Client*>::iterator &it_c)
 	delete c;
 	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
 
-	print_clients();
+	print_clients_of_all_servers();
 	if (s->_clients.empty())
 	{
 		LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
@@ -52,10 +52,38 @@ int erase_client(Server *s, Client *c, std::vector<Client*>::iterator &it_c)
 }
 
 
+int erase_client_from_vector(Server *s,
+	std::vector<Client*> &v,
+	std::vector<Client*>::iterator &it_c)
+{
+	Client *c = *it_c;
+	it_c = v.erase(it_c);
+	delete c;
+	
+	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(v.size()) + " client(s) connected");
+
+	print_clients_of_all_servers();
+
+	if (v.empty())
+	{
+		LOG_WRT(Logger::INFO, s->_name + " v.empty()");
+		return (1);
+	}
+	else
+	{
+		LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
+		it_c = v.begin();
+	}
+	
+	LOG_WRT(Logger::INFO, s->_name + " go to next client");
+	return (0);
+}
+
 int main(int argc, char *argv[])
 {
 	Server *s;
 	Client *c;
+	std::vector<Client*>::iterator it_c;
 
 	//logger start
 	LOG_START(Logger::DEBUG, "", false);
@@ -78,7 +106,8 @@ int main(int argc, char *argv[])
 			s = *it_s;
 			// pour chaque serveur:
 			// 1 - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
-			// 2 - on itère sur les clients du serveur pour les servir
+			// 2 - on itère sur les clients_503 du serveur pour les servir
+			// 3 - on itère sur les clients du serveur pour les servir
 
 			// 1
 			// FD_ISSET(): check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
@@ -87,21 +116,41 @@ int main(int argc, char *argv[])
 			{
 				LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
 				// Logger::ChangeFile();
-				if (g_conf.get_nb_open_fds() < OPEN_MAX)
-				{
-					s->acceptNewClient(); // connexion et création du nouveau client
-					g_conf._nb_requests_received += 1;
-					LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_requests_received = " + std::to_string(g_conf._nb_requests_received) + std::string(RESET));
-
-				}
-		//		else
-				//	s->saveNewClient(); // ?
-				
+				s->acceptNewClient(); // connexion et création du nouveau client
+				g_conf._nb_accept_opered += 1;
+				LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_accept_opered = " + std::to_string(g_conf._nb_accept_opered) + std::string(RESET));
 			}
 	
 			// 2
-			std::vector<Client*>::iterator it_c = s->_clients.begin();
-			for (; it_c != s->_clients.end(); it_c++)
+			for (it_c = s->_clients_503.begin(); it_c != s->_clients_503.end(); it_c++)
+			{
+				c = *it_c;
+				if (!c->_is_connected)
+				{
+					if (erase_client_from_vector(s, s->_clients_503, it_c))
+						break;
+					else
+						continue ;
+				}
+				if (!c->_is_finished)
+					s->handleClientRequest(c);
+				if (c->_is_finished) // si on a fini d'envoyer la réponse
+						c->reset();
+				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= CLIENT_CONNECTION_TIMEOUT)
+				{
+					LOG_WRT(Logger::DEBUG, "client "
+										+ std::to_string(c->_accept_fd)
+										+ " TIMEOUT "
+										+ std::to_string(CLIENT_CONNECTION_TIMEOUT));
+					if (erase_client_from_vector(s, s->_clients_503, it_c))
+						break;
+					else
+						continue ;
+				}			}
+
+			// 3
+			c = NULL;
+			for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
 
@@ -127,12 +176,12 @@ int main(int argc, char *argv[])
 				if (c->_is_finished) // si on a fini d'envoyer la réponse
 					c->reset();
 
-				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= 10 /*CLIENT_CONNECTION_TIMEOUT*/)
+				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= CLIENT_CONNECTION_TIMEOUT)
 				{
 					LOG_WRT(Logger::DEBUG, "client "
 										+ std::to_string(c->_accept_fd)
 										+ " TIMEOUT "
-										+ std::to_string(10 /*CLIENT_CONNECTION_TIMEOUT*/));
+										+ std::to_string(CLIENT_CONNECTION_TIMEOUT));
 					if (erase_client(s, c, it_c))
 						break;
 					else

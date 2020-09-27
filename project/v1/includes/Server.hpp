@@ -2,6 +2,12 @@
 #define SERVER_HPP
 
 /*
+** Const
+*/
+
+#define UNAVAILABLE_TIME  10
+
+/*
 ** Libraries
 */
 
@@ -48,7 +54,7 @@ class Server
 
         std::vector<Location*>      _locations;        
         std::vector<Client*>        _clients;
-        std::vector<Client*>        _client_saved;
+        std::vector<Client*>        _clients_503;
 
     /*
     ** methods
@@ -67,14 +73,11 @@ class Server
         int start(void);
         
         int acceptNewClient(void);
-        int saveNewClient(void);
         
         int recvRequest(Client *c);
         int sendResponse(Client *c);
         int handleClientRequest(Client *c);
-
-		Client  *search_existing_client(Client *c);
-
+        
     /*
     ** friends
     */
