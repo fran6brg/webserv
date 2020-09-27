@@ -15,7 +15,7 @@ void			Response::get(Request *req)
 	std::ifstream file(req->_file);
 	if ((req->_method == "GET" 
 		&& ((req->_location->_cgi_root != ""
-		&& is_extension(req->_file, req->_location->_cgi)) 
+		&& is_extension(req->_file, ".cgi")) 
 		|| (req->_location->_php_root != ""
 		&& is_extension(req->_file, ".php"))))
 		&& file.good())

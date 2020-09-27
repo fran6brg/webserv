@@ -88,8 +88,9 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	$(RM) webserv.dSYM
-	$(RM) www/tester/file_should_exist_after
 	$(RM) log/*.txt
+	$(RM) www/tester/file_should_exist_after
+	$(RM) www/tester/multiple_same
 
 launch: all
 	./webserv conf/tester.conf

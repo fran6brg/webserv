@@ -8,15 +8,6 @@ Server::Server(std::string serverName, int port, std::string host, std::string e
     _name(serverName), _port(port), _socket_fd(-1), _error(error_page), _host(host)
 {
     bzero(&_addr, sizeof(_addr));
-
-	// --- > location et error a definir dans le prasing de la conf
-	//_error = "./www/old/error";
-	
-    //Location *location1 = new Location("/", "./www/old", "index.html", "GET,POST,HEAD,OPTIONS,TRACE");
-	//_locations.push_back(location1);
-
-	//Location *location2 = new Location("/test", "./www/old/test", "index.html", "DELETE");
-	//_locations.push_back(location2);
 }
 
 Server::~Server()
@@ -100,20 +91,6 @@ int Server::start(void)
 
     LOG_WRT(Logger::INFO, "****************\n\n");
     return (1);
-}
-
-Client	*Server::search_existing_client(Client *c)
-{
-	int		i = 0;
-
-	while (i < _client_saved.size())
-	{
-		if (_client_saved[i]->_ip == c->_ip
-        && _client_saved[i]->_port == c->_port)
-			return (_client_saved[i]);
-		i++;
-	}
-	return (NULL);
 }
 
 int Server::acceptNewClient(void)
@@ -331,7 +308,7 @@ int Server::handleClientRequest(Client *c)
     int ok_write = 0;
 
     LOG_WRT(Logger::DEBUG, "Server::handleClientRequest() of client " + std::to_string(c->_accept_fd));
-    
+
     if (c->_accept_fd == -1)
         return (ok_read || ok_write);
 
@@ -346,7 +323,6 @@ int Server::handleClientRequest(Client *c)
     }
     else
         LOG_WRT(Logger::INFO, "reading not set for client " + std::to_string(c->_accept_fd));
-
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {
         if (c->recv_status != Client::COMPLETE)

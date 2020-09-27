@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	Client *c;
 
 	//logger start
-	LOG_START(Logger::DEBUG, "", false);
+	LOG_START(Logger::CLEAR, "", false);
 	
 	signal(SIGINT, shutdown);
 
@@ -73,11 +73,11 @@ int main(int argc, char *argv[])
 					LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_requests_received = " + std::to_string(g_conf._nb_requests_received) + std::string(RESET));
 
 				}
-				else
-					s->saveNewClient(); // ?
+		//		else
+				//	s->saveNewClient(); // ?
 				
 			}
-
+	
 			// 2
 			std::vector<Client*>::iterator it_c = s->_clients.begin();
 			for (; it_c != s->_clients.end(); it_c++)
