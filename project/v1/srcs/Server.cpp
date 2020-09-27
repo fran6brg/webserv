@@ -289,7 +289,7 @@ int Server::sendResponse(Client *c)
         if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length()) // >= ou juste > ?
         {
             LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
-            c->_is_connected = false;
+            c->_is_finished = true;
         }
         else
         {

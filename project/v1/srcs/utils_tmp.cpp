@@ -49,57 +49,51 @@ bool utils_tmp::file_exists(const char *filename)
 	return (stat (filename, &buffer) == 0);
 }
 
-int	utils_tmp::read_file(int fd, std::string file, std::string &buff)
+/*
+std::string		Config::readFile(char *file)
 {
-	(void)fd;
+	int 				fd;
+	int					ret;
+	char				buf[4096];
+	std::string			parsed;
 
-	std::fstream newfile;
-
-	newfile.open(file, std::ios::in); //open a file to perform read operation using file object
-	if (newfile.is_open())
-	{ //checking whether the file is open
-		std::string tp;
-		while (getline(newfile, tp))
-		{					   //read data from file object and put it into string.
-			buff += tp + "\n"; //print the data of the string
-		}
-		newfile.close(); //close the file object.
+	fd = open(file, O_RDONLY);
+	while ((ret = read(fd, buf, 4095)) > 0)
+	{
+		buf[ret] = '\0';
+		parsed += buf;
 	}
+	close(fd);
+	return (parsed);
+}
+*/
 
-	/*
+int	utils_tmp::read_file(std::string file, std::string &buff)
+{
+	int fd;
+	int ret;
+	char buffer[BUFFER_SIZE + 1];
 
-	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK, 0666)) == -1)//mettre dans read file
+	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
 		return (-1);
-		int i = 0;
-	while ((ret = get_next_line(fd, &cline)))
+	while ((ret = read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
-		std::cout << "line:" << i << std::endl;
-		++i;
-		line = cline;
-		free(cline);
-		cline=NULL;
-		buff += line + "\n";
+		buffer[ret] = '\0'; 
+		buff += buffer;
 	}
-	if (cline)
-	{
-		line = cline;
-		free(cline);
-		buff += line;
-	}
-	if (ret < 0)
-		return (-1);*/
-	return (0);
+	close(fd);
+	return (ret);
 }
 
-std::string utils_tmp::extract_body(std::string &buff)
+int utils_tmp::extract_body(std::string &buff)
 {
-
-	//size_t pos = buff.find("\r\n\r\n");
-	//buff.erase(0, pos + 4);
-
-	std::string res;
-	res = buff.erase(0, (buff.find("\r\n\r\n") + 4));
-	return (buff);
+	size_t pos;
+	
+	if ((pos = buff.find("\r\n\r\n")) == std::string::npos)
+		return (-1);
+	buff.erase(0, pos + 4);
+		
+	return (0);
 }
 
 int utils_tmp::hexa_to_dec(const char *hexVal)
