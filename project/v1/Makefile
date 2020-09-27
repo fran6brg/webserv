@@ -91,6 +91,7 @@ fclean: clean
 	$(RM) log/*.txt
 	$(RM) www/tester/file_should_exist_after
 	$(RM) www/tester/multiple_same
+	$(RM) www/tester/temp_file
 
 launch: all
 	./webserv conf/tester.conf
