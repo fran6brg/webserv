@@ -211,11 +211,20 @@ void utils_tmp::print_map(std::stringstream &ss1, std::map<int, std::string> map
 
 void utils_tmp::free_strtab(char ***tab)
 {
-    size_t i = sizeof(tab)/sizeof(tab[0]);
+    // size_t i = sizeof(tab)/sizeof(tab[0]);
+    
+    size_t i = 0;
+    while ((*tab)[i])
+    {
+        i++;
+    }
+
     size_t j = 0;
 
-    while (j < i)
+    // while ((*tab)[j])
+    while (j <= i)
     {
         free((*tab)[j++]);
     }
+    free(*tab);
 }

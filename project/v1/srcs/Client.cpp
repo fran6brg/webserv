@@ -47,6 +47,9 @@ Client::~Client()
 	g_conf.remove_fd(_accept_fd); 
 	close(_accept_fd);
 	_accept_fd = -1;
+
+	// delete _request;
+	// delete _response;
 }
 
 /*

@@ -90,7 +90,8 @@ void Config_parser::parse_conf()
 	while ((ret = get_next_line(fd, &cline)) && ++line_count)
 	{
 		line = cline;
-		free(cline);cline=NULL;
+		free(cline);
+		cline = NULL;
 		//LOG_WRT(Logger::DEBUG, "Conf    [" + std::to_string(line_count) + "] " + line);
 		line.erase(std::remove_if(line.begin(), line.end(), utils_tmp::isspace), line.end());
 		if (line.length() == 7 && line.compare("server{") == 0)
@@ -115,7 +116,8 @@ void Config_parser::parse_server()
 	{
 		line = cline;
 		//erase_semicol(line); if { or } return
-		free(cline);cline=NULL;
+		free(cline);
+		cline = NULL;
 		//LOG_WRT(Logger::DEBUG, "Server  [" + std::to_string(line_count) + "] " + line);
 		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
@@ -155,7 +157,8 @@ void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv
 	while ((ret = get_next_line(fd, &cline)) && ++line_count)
 	{
 		line = cline;
-		free(cline);cline=NULL;
+		free(cline);
+		cline = NULL;
 		//LOG_WRT(Logger::DEBUG, "Location[" + std::to_string(line_count) + "] " + line);
 		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")

@@ -46,7 +46,7 @@ char			**Response::create_env_tab(Request *req)
 	// args_to_map["PATH_TRANSLATED"] = client.conf["path"];
 	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_text_body.length()); // longueur des données véhiculées dans la requête (POST)
 
-	if (req->_query != "")
+	if (!req->_query.empty())
 		args_to_map["QUERY_STRING"] = req->_query; // données transmises au CGI via l'URL (GET)
 	else
 		args_to_map["QUERY_STRING"]; // données transmises au CGI via l'URL (GET)
@@ -89,11 +89,11 @@ char			**Response::create_env_tab(Request *req)
 	// 3
 	args_to_tab = (char **)malloc(sizeof(char *) * (args_to_map.size() + 1));
 	it = args_to_map.begin();
-	int i = -1;
+	int i = 0;
 	while (it != args_to_map.end())
 	{
 		LOG_WRT(Logger::DEBUG, it->first + " = " +  it->second);
-		args_to_tab[++i] = strdup((it->first + "=" + it->second).c_str());
+		args_to_tab[i++] = strdup((it->first + "=" + it->second).c_str());
 		++it;
 	}
 	args_to_tab[i] = NULL;
@@ -157,15 +157,16 @@ void		Response::ft_cgi(Request *req)
 				write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
 				close(tubes[1]);
 			}
+
 			waitpid(pid, &status, 0);
 			if (WIFEXITED(status))
 				LOG_WRT(Logger::DEBUG, "WEXITSTATUS(status) = " + std::to_string(WEXITSTATUS(status)));
-
 			close(tubes[0]);
 			close(temp_fd);
+
+			utils_tmp::free_strtab(&args);
+			utils_tmp::free_strtab(&env);
 		}
-		utils_tmp::free_strtab(&args);
-		utils_tmp::free_strtab(&env);
     }
 }
 
