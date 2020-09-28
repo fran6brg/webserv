@@ -69,7 +69,7 @@ void Logger::Write(Priority priority, const std::string &message)
     }
 }
 
-int Logger::Error(const std::string &message)//errno bool
+int Logger::Error(const std::string &message)
 {
 	if (errno != 0)
 		Logger::Write(Logger::ERROR, message + " -> (" + std::string(strerror(errno)) + ")");

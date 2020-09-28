@@ -39,31 +39,17 @@ char			**Response::create_env_tab(Request *req)
 	args_to_map["SERVER_SOFTWARE"] = g_conf._webserv; // nom et version du démon HTTP
 	args_to_map["REQUEST_URI"] = req->_uri;
 	args_to_map["REQUEST_METHOD"] = req->_method; // méthode associée à la requête en cours de traitement
-	// args_to_map["REMOTE_HOST"] = req->_host; // nom de la machine d'où vient la requête 
 	args_to_map["REMOTE_ADDR"] = req->_client->_ip; // adresse IP de la machine d'où vient la requête
-	// Ajouter le nom du fichier au path ???
 	args_to_map["PATH_INFO"] = req->_uri; // chaîne entre SCRIPT_PATH et QUERY_STRING dans l'URL
-	// args_to_map["PATH_TRANSLATED"] = client.conf["path"];
 	args_to_map["CONTENT_LENGTH"] = std::to_string(req->_text_body.length()); // longueur des données véhiculées dans la requête (POST)
-
 	if (!req->_query.empty())
 		args_to_map["QUERY_STRING"] = req->_query; // données transmises au CGI via l'URL (GET)
 	else
 		args_to_map["QUERY_STRING"]; // données transmises au CGI via l'URL (GET)
-	//if (req->_content_type == "chunked")
-	//	args_to_map["CONTENT_TYPE"] = "text/plain"; // type MIME des données véhiculées dans la requête
-	//else
-		args_to_map["CONTENT_TYPE"] = req->_content_type; // type MIME des données véhiculées dans la requête
-
-	// if (client.conf.find("exec") != client.conf.end())
-	// 	args_to_map["SCRIPT_NAME"] = client.conf["exec"]; // chemin du CGI à partir de la racine du serveur HTTP
-	// else
-	// 	args_to_map["SCRIPT_NAME"] = client.conf["path"]; // chemin du CGI à partir de la racine du serveur HTTP
+	args_to_map["CONTENT_TYPE"] = req->_content_type; // type MIME des données véhiculées dans la requête
 	args_to_map["SCRIPT_NAME"] = req->_location->_cgi_root; // chemin du CGI à partir de la racine du serveur HTTP
-
 	args_to_map["SERVER_NAME"] = req->_client->_server->_name; // nom ou adresse IP de la machine serveur HTTP
 	args_to_map["SERVER_PORT"] = std::to_string(req->_client->_server->_port); // numéro du port (TCP) vers lequel la requête a été envoyée
-
 	if (!req->_authorization.empty())
 	{
 		pos = req->_authorization.find(" ");
@@ -71,11 +57,6 @@ char			**Response::create_env_tab(Request *req)
 		args_to_map["REMOTE_USER"] = req->_authorization.substr(pos + 1); // si authentification, nom de l'utilisateur associé à la requête
 		args_to_map["REMOTE_IDENT"] = req->_authorization.substr(pos + 1); // login de connexion de l'utilisateur (pas souvent supporté)
 	}
-
-	// if (client.conf.find("php") != client.conf.end() && req->_uri.find(".php") != std::string::npos)
-	// 	args_to_map["REDIRECT_STATUS"] = "200";
-
-	// 2
 	headers = req->headers_to_map();
 	std::map<std::string, std::string>::iterator it = headers.begin();
 	while (it != headers.end())
@@ -84,9 +65,6 @@ char			**Response::create_env_tab(Request *req)
 			args_to_map["HTTP_" + it->first] = it->second; // une variable pour chaque champ contenu dans l'en-tête HTTP
 		++it;
 	}
-	// displayMap(args_to_map); // debug
-
-	// 3
 	args_to_tab = (char **)malloc(sizeof(char *) * (args_to_map.size() + 1));
 	it = args_to_map.begin();
 	int i = 0;
@@ -97,7 +75,6 @@ char			**Response::create_env_tab(Request *req)
 		++it;
 	}
 	args_to_tab[i] = NULL;
-
 	return (args_to_tab);
 }
 

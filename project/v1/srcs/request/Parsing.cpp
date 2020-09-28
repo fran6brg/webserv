@@ -58,12 +58,10 @@ int     Request::parse_headers()
 
 void    Request::fill_request(std::string key, std::string value)
 {
-    // std::cout << "key: " << key << ", value: -" << value << "-" << std::endl;
-
     size_t i = 0;
     std::vector<std::string> tokens;
 
-    if (key == "Accept-Charset") // 4 example: Accept-Charset: utf-8, iso-8859-1;q=0.5
+    if (key == "Accept-Charset")
     {
         tokens = utils_tmp::split(value, ',');
         if (!tokens.empty())
@@ -75,7 +73,7 @@ void    Request::fill_request(std::string key, std::string value)
             }
         }
     }
-    else if (key == "Accept-Language") // 5 example: Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
+    else if (key == "Accept-Language")
     {
         tokens = utils_tmp::split(value, ',');
         if (!tokens.empty())
@@ -87,9 +85,9 @@ void    Request::fill_request(std::string key, std::string value)
             }
         }
     }
-    else if (key == "Authorization") // 6
+    else if (key == "Authorization")
         _authorization = value;
-    else if (key == "Content-Language") // 7 example: Content-Language: de-DE || Content-Language: en-US || Content-Language: de-DE, en-CA
+    else if (key == "Content-Language")
     {
         tokens = utils_tmp::split(value, ',');
         if (!tokens.empty())
@@ -103,9 +101,9 @@ void    Request::fill_request(std::string key, std::string value)
     }        
     else if (key == "Content-Length") // 8
         _content_length = std::stoi(value);
-    else if (key == "Content-Location") // 9 example: Content-Location: <url>
+    else if (key == "Content-Location") // 9
         _content_location = value;
-    else if (key == "Content-Type") // 10 example: Content-Type: text/html; charset=utf-8 || Content-Type: multipart/form-data; boundary=something
+    else if (key == "Content-Type") // 10
         _content_type = value;
     else if (key == "Date") // 11
         _date = value;
@@ -121,8 +119,6 @@ void    Request::fill_request(std::string key, std::string value)
         _secret_header = value;
     else if (key == "Keep-Alive") // ?
         _keep_alive = value;
-
-    // other headers not to be handled cf. subject
     else if (key == "Connection")
         ;
     else if (key == "Accept-Encoding")
@@ -169,12 +165,9 @@ int	    Request::get_location(std::string *uri, std::vector<Location*> locations
     **	Recuperer la location presente dans le fichier de config
     **	a partir de l'uri present dans la requete
     */
-
 	int			j;
 	std::string uri_tmp;
 
-
-	// Verifie si l'uri est present dans les locations
 	for (std::size_t i = 0; i < locations.size(); ++i)
 	{
 		if (locations[i]->_uri == *uri)
@@ -183,8 +176,6 @@ int	    Request::get_location(std::string *uri, std::vector<Location*> locations
 			return (1);
 		}
 	}
-
-	// Sinon check les sous dossiers de l'uri (jusqu'a "/") pour voir s'ils correspondent a une location 
 	j = (*uri).size() - 1;
 	uri_tmp = *uri;
     while (uri_tmp.size() > 0)
@@ -226,7 +217,7 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 			_file = _location->_root + "/" + _file;
 		if (stat(_file.c_str(), &info) == 0)
 		{
-			 if (S_ISDIR(info.st_mode)) // Verifier si le path est un dossier, si oui ajouter l'index (índex.html) a la fin du path
+			 if (S_ISDIR(info.st_mode))
 			 {
 				if (_location->_autoindex == 1 && _method == "GET")
 					create_autoindex();
@@ -248,7 +239,7 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 ** 1. Request line + 2. Headers + 3. Filename
 */
 
-int     Request::parse(std::vector<Location*> location) // parse header
+int     Request::parse(std::vector<Location*> location)
 {
     LOG_WRT(Logger::DEBUG, "Request::parse()");
     
@@ -288,7 +279,7 @@ void    Request::parse_body_length()
 		body += _client->_concat_body.substr(0, cut);
         LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
-		memset(buff, 0, RECV_BUFFER + 1); // reset buff for other request
+		memset(buff, 0, RECV_BUFFER + 1);
 	}
 	else
 	{
@@ -316,8 +307,6 @@ void    Request::parse_body_chunked()
         LOG_WRT(Logger::DEBUG, "--- start while ---");
         LOG_WRT(Logger::DEBUG, "_client->_concat_body len = " + std::to_string(_client->_concat_body.length()));
         LOG_WRT(Logger::DEBUG, "_client->_line_size       = " + std::to_string(_client->_line_size));
-        // LOG_WRT(Logger::DEBUG, "_client->_concat_body     = " + _client->_concat_body);
-
         pos = _client->_concat_body.find("\r\n"); // .find("\r\n"); -> "[\r\n]\r\n"
         if (pos == std::string::npos)
             break ;
@@ -340,7 +329,7 @@ void    Request::parse_body_chunked()
                 {
                     pos = _client->_concat_body.find("\r\n");
                     LOG_WRT(Logger::DEBUG, "Request::parse_body_chunked(): pos = " + std::to_string(pos));
-                    if (pos == std::string::npos) // on a bien une ligne
+                    if (pos == std::string::npos)
                         break ;
                     else if (_location->_max_body != 1 && pos > _location->_max_body)
                     {

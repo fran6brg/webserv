@@ -29,21 +29,6 @@ void Request::display(void)
     ss1 << "13) _referer            " << _referer << std::endl; // 13
     ss1 << "14) _user_agent         " << _user_agent << std::endl; // 14
     ss1 << "15) _text_body length   " << std::to_string(_text_body.length()) /*: " << _text_body */<< std::endl; // 14
-    // ss1 << "15) _body:" << std::endl; // 15
-    // if (_body.empty())
-    //     ss1 << std::endl;
-    // else
-    // {
-    //     i = 0;
-    //     while (i < _body.size())
-    //     {
-    //         if (i > 0)
-    //             ss1 << " ";
-    //         ss1 << _body[i].first << "=" << _body[i].second;
-    //         i++;
-    //     }
-    //     ss1 << std::endl;
-    // }
     ss1 << "16) _file               " << _file << std::endl;
     ss1 << "17) _transfer_encoding  " << _transfer_encoding << std::endl;
     ss1 << "18) _keep_alive         " << _keep_alive << std::endl;

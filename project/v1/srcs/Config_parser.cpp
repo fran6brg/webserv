@@ -92,7 +92,6 @@ void Config_parser::parse_conf()
 		line = cline;
 		free(cline);
 		cline = NULL;
-		//LOG_WRT(Logger::DEBUG, "Conf    [" + std::to_string(line_count) + "] " + line);
 		line.erase(std::remove_if(line.begin(), line.end(), utils_tmp::isspace), line.end());
 		if (line.length() == 7 && line.compare("server{") == 0)
 			parse_server();
@@ -115,10 +114,8 @@ void Config_parser::parse_server()
 	while ((ret = get_next_line(fd, &cline)) && ++line_count)
 	{
 		line = cline;
-		//erase_semicol(line); if { or } return
 		free(cline);
 		cline = NULL;
-		//LOG_WRT(Logger::DEBUG, "Server  [" + std::to_string(line_count) + "] " + line);
 		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
 		{
@@ -148,8 +145,6 @@ void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv
 
 	// init
 	new_loc.max_body = -1;
-	// todo: init other member variables to null or -1 (if needed ?)
-
 	if (!(token.size() == 3 && token[2][0] == '{')
 		&& !(token.size() == 2 && token[1][token[1].length() - 1] == '{'))
 		fail("Bad location: " + line + "[" + std::to_string(line_count) + "]");
@@ -159,7 +154,6 @@ void Config_parser::parse_location(std::vector<std::string> &token, t_serv &serv
 		line = cline;
 		free(cline);
 		cline = NULL;
-		//LOG_WRT(Logger::DEBUG, "Location[" + std::to_string(line_count) + "] " + line);
 		std::vector<std::string> tokens= utils_tmp::split_string(line, WHITE_SPACE);
 		if (tokens.size() == 1 && tokens[0] == "}")
 		{

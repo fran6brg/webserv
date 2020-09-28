@@ -20,10 +20,9 @@ void Response::init(void)
     _http_version.clear();
     _status_code = 0;
     _reason_phrase.clear();
-    // Request Headers, dans l'ordre du sujet
     _allow.clear();
     _content_language.clear();
-    _content_length = 0; // est-ce qu'on peut avoir un content_length de 0 ?
+    _content_length = 0;
     _content_location.clear();
     _content_type.clear();
     _last_modified.clear();
@@ -55,20 +54,14 @@ int Response::concat_to_send(void)
     ss << _reason_phrase << "\r\n";
 
     // 2. Request Headers, dans l'ordre du sujet
-    // if (!_content_language.empty())     { ss << "content_language: " << _content_language << "\r\n"; }
-    // if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (_content_length >= 0)
         ss << "Content-Length: " << _content_length << "\r\n";
-    // if (!_content_location.empty())     { ss << "content_location: " << _content_location << "\r\n"; }
     if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
-    // if (!_content_type.empty())         { ss << "Content-Type: " << _content_type << "\r\n"; }
     if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
     if (_retry_after >= 0)              { ss << "Retry-After: " << std::to_string(_retry_after) << "\r\n"; }
     if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
-    // if (!_transfer_encoding.empty())    { ss << "transfer_encoding: " << _transfer_encoding << "\r\n"; }
-    // if (!_www_authenticate.empty())     { ss << "www_authenticate: " << _www_authenticate << "\r\n"; }
     if (!_content_type.empty())
 	{
 		ss << "Content-Type:";
@@ -84,11 +77,9 @@ int Response::concat_to_send(void)
 	}
 
     // 3. Request body
-    // ss << "\r\n\r\n"; // double or simple CRLF after the headers ?
-    ss << "\r\n"; // CRLF et non pas \n\n https://stackoverflow.com/questions/29131727/http-header-and-message-body-separator-clarification
+    ss << "\r\n";
     if (_content_length >= 100)
         response_headers = ss.str();
-    
     if (!_body.empty())                 { ss << _body; }
     // Convert
     if (_content_length < 100)
@@ -111,8 +102,6 @@ int Response::format_to_send(Request *req)
 	
 	// Response headers, dans l'ordre du sujet
     _date = get_date();
-    // LOG_WRT(Logger::DEBUG, "format_to_send: " + _date);
-
     _server = g_conf._webserv;
 	if ((req->_method == "GET" || req->_method == "HEAD" || req->_method == "PUT" || req->_method == "POST")
     && (_status_code == OK_200 || _status_code == CREATED_201) && _content_type[0] == "")
@@ -268,12 +257,9 @@ int				Response::unauthorized(Request *req)
      	LOG_WRT(Logger::DEBUG, "inside unauthorized():");
      	LOG_WRT(Logger::DEBUG, "1) req->_location->_auth = " + req->_location->_auth);
      	
-        // LOG_WRT(Logger::DEBUG, "req->_authorization = " + req->_authorization);
         std::vector<std::string> tokens;
         tokens = utils_tmp::split(req->_authorization, ' ');
         std::string creds = tokens[1];
-     	// LOG_WRT(Logger::DEBUG, "creds = " + creds);
-     	
         LOG_WRT(Logger::DEBUG, "2) base64_decode(creds) = " + base64_decode(creds));
         if (req->_location->_auth == base64_decode(creds))
         {

@@ -32,8 +32,6 @@ int Server::start(void)
     }
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> socket=" + std::to_string(_socket_fd));
-
-	
 	// SO_REUSEADDR option on the listening socket: to avoid “Address already in use” error when binding(). 
     // How to use setsockopt() with the SO_REUSEADDR option?
     // https://stackoverflow.com/questions/21515946/what-is-sol-socket-used-for
@@ -45,7 +43,6 @@ int Server::start(void)
     }
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> setsockopt=OK");
-
 	// set struct sockaddr_in
 	_addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = htonl(INADDR_ANY); // https://stackoverflow.com/questions/16508685/understanding-inaddr-any-for-socket-programming
@@ -66,7 +63,6 @@ int Server::start(void)
     }
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> listen=OK");
-
 	// http://beej.us/guide/bgnet/html/#selectman
 	// Note for Linux users: Linux’s select() can return “ready-to-read” and then not actually be ready to read, thus causing the subsequent read() call to block.
 	// You can work around this bug by setting O_NONBLOCK flag on the receiving socket so it errors with EWOULDBLOCK, then ignoring this error if it occurs. 

@@ -28,8 +28,6 @@ Conf::Conf()
 
 int Conf::parse(char *file)
 {
-	/*************************/
-
 	Config_parser conf(file);
 	conf.setup_server(_servers);
 
@@ -39,22 +37,6 @@ int Conf::parse(char *file)
 		if (!_servers[i]->start())
         	return (0);
 	}
-
-	/************************/
-    // création à la main
-
-/*    std::string n1 ("server1");
-    Server *s1 = new Server(n1, 8080);
-    if (!s1->start())
-        return (0);
-    _servers.push_back(s1);
-
-    std::string n2 ("server2");
-    Server *s2 = new Server(n2, 4443);
-    if (!s2->start())
-        return (0);
-    _servers.push_back(s2);*/
-
     return (1);
 }
 
@@ -72,7 +54,6 @@ int Conf::get_nfds(void) const
     **
     ** nfds est le numéro du plus grand descripteur de fichier des 3 ensembles, plus 1.
     */
-    // return (_nfds + 1);
     return (*std::max_element(_active_fds.begin(), _active_fds.end()) + 1); // https://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector
 }
 

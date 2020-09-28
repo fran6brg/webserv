@@ -91,7 +91,6 @@ int utils_tmp::hexa_to_dec(const char *hexVal)
             base = base * 16; 
         } 
     }
-	//std::cout << "dec_val="<<dec_val << " hexVal"<<hexVal<<std::endl;
     return (dec_val); 
 } 
 
@@ -163,7 +162,7 @@ std::string utils_tmp::trim(const std::string& str)
     if (std::string::npos == first)
         return str;
     size_t last = str.find_last_not_of(' ');
-    return (std::string(str.substr(first, (last - first + 1)))); // std::string() autour du substr pour bien s'assurer qu'on a le \0 à la fin de value sinon ça peut bug
+    return (std::string(str.substr(first, (last - first + 1))));
 }
 
 void utils_tmp::print_map(std::stringstream &ss1, std::map<int, std::string> map)
