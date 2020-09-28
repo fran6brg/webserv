@@ -1,10 +1,6 @@
 #ifndef CONFIG_PARSER_HPP
 # define CONFIG_PARSER_HPP
 
-// DEBUG
-// * still reachable byte when exit with wrong input file on linux
-// ? make the route able to accept uploaded files and configure where it should be saved
-
 # include <string>
 # include <vector>
 # include <fcntl.h>
@@ -33,7 +29,6 @@
 # define _AUTO_INDEX "auto_index"
 # define _MAX_BODY "max_body"
 # define _AUTH "auth"
-// # define _LISTING "autoindex"
 
 class Conf;
 
@@ -42,9 +37,9 @@ extern Conf g_conf;
 typedef struct	s_loc
 {
 	std::string					uri;
-	std::vector<std::string>	method; // HTTP Methods
-	std::string					root;       // directory or a file from where the file should be search
-	std::string					index;      // default file
+	std::vector<std::string>	method;
+	std::string					root;
+	std::string					index;
 	std::string					cgi_path;
 	std::string					php_path;
 	std::string					cgi;
@@ -61,7 +56,7 @@ typedef struct	s_serv
 {
 	std::string	host;
 	std::string	name;
-	std::string	port; // Replace by vector<int>
+	std::string	port;
 	std::string	error_page;
 	std::vector<t_loc> loc;
 }				t_serv;

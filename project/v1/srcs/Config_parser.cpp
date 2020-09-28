@@ -74,7 +74,26 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 
 void Config_parser::check_conf()
 {
-	
+	for (size_t i = 0; i < serv.size(); ++i)
+	{
+		for (size_t j = 0; j < serv.size(); ++j)
+			if (i != j && serv[i].port == serv[j].port)
+				fail("Duplicate ports");
+
+		int is_default_root = 0;
+		for (size_t y = 0; y < serv[i].loc.size(); ++y)
+		{
+			if (serv[i].loc[y].uri == "/")
+				is_default_root = 1;
+			for (size_t z = 0; z < serv[i].loc[y].method.size(); z++)
+				if (!utils_tmp::is_valide_methods(serv[i].loc[y].method[z]))
+					fail("Not valide methode");
+			if (serv[i].loc[y].auto_index < -1 || serv[i].loc[y].auto_index > 1)
+				fail("auto_index unvalid (on = 1 / off = 0)");
+		}
+		if (!is_default_root)
+			fail("Server need default location root");
+	}
 }
 
 void Config_parser::parse_conf()
@@ -96,6 +115,8 @@ void Config_parser::parse_conf()
 		line.erase(std::remove_if(line.begin(), line.end(), utils_tmp::isspace), line.end());
 		if (line.length() == 7 && line.compare("server{") == 0)
 			parse_server();
+		else if (line[0] == '#')
+			continue ;
 		else if (line.length() != 0)
 			fail("bad syntax [" + std::to_string(line_count) + "]");	
 	}

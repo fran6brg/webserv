@@ -33,7 +33,7 @@ public:
 	static std::string trim(const std::string& str);
 	static void print_map(std::stringstream &ss1, std::map<int, std::string> map);
 	static void free_strtab(char ***tab);
-
+	static int is_valide_methods(std::string &meth);
 };
 
 #endif
