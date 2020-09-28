@@ -30,28 +30,6 @@ void print_clients_of_all_servers(void)
     LOG_WRT(Logger::DEBUG, "-------------------------------");
 }
 
-int erase_client(Server *s, Client *c, std::vector<Client*>::iterator &it_c)
-{
-	it_c = s->_clients.erase(it_c);
-	delete c;
-	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(s->_clients.size()) + " client(s) connected");
-
-	print_clients_of_all_servers();
-	if (s->_clients.empty())
-	{
-		LOG_WRT(Logger::INFO, s->_name + " s->_clients.empty()");
-		return (1);
-	}
-	else
-	{
-		LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
-		it_c = s->_clients.begin();
-	}
-	LOG_WRT(Logger::INFO, s->_name + " go to next client");
-	return (0);
-}
-
-
 int erase_client_from_vector(Server *s,
 	std::vector<Client*> &v,
 	std::vector<Client*>::iterator &it_c)
@@ -85,15 +63,10 @@ int main(int argc, char *argv[])
 	Client *c;
 	std::vector<Client*>::iterator it_c;
 
-	//logger start
-	LOG_START(Logger::DEBUG, "", false);
-	
+	LOG_START(Logger::INFO, "", false);
 	signal(SIGINT, shutdown);
-
 	if (argc != 2 || !g_conf.parse(argv[1]))
         return (EXIT_ERROR);
-
-    // loop
     while (g_conf._on)
     {
 		if (g_conf.run_select() == -1)
@@ -109,19 +82,18 @@ int main(int argc, char *argv[])
 			// 2 - on itère sur les clients_503 du serveur pour les servir
 			// 3 - on itère sur les clients du serveur pour les servir
 
-			// 1
 			// FD_ISSET(): check si le fd est dans le set (de ceux qui sont prêts à être lu, grâce au select).
-			// the socket is "readable" if the remote peer (the client) closes it / select() returns if a read() will not block, not only when there's data available (meaning also if EOF) (https://stackoverflow.com/questions/6453149/select-says-socket-is-ready-to-read-when-it-is-definitely-not-actually-is-close)
+			// the socket is "readable" if the remote peer (the client) closes it / select() returns if a read() will not block, not only when there's data available (meaning also if EOF)
+			// (https://stackoverflow.com/questions/6453149/select-says-socket-is-ready-to-read-when-it-is-definitely-not-actually-is-close)
 			if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 			{
 				LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
 				// Logger::ChangeFile();
-				s->acceptNewClient(); // connexion et création du nouveau client
+				s->acceptNewClient();
 				g_conf._nb_accept_opered += 1;
 				LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_accept_opered = " + std::to_string(g_conf._nb_accept_opered) + std::string(RESET));
 			}
 	
-			// 2
 			for (it_c = s->_clients_503.begin(); it_c != s->_clients_503.end(); it_c++)
 			{
 				c = *it_c;
@@ -134,7 +106,7 @@ int main(int argc, char *argv[])
 				}
 				if (!c->_is_finished)
 					s->handleClientRequest(c);
-				if (c->_is_finished) // si on a fini d'envoyer la réponse
+				if (c->_is_finished)
 						c->reset();
 				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= CLIENT_CONNECTION_TIMEOUT)
 				{
@@ -146,20 +118,16 @@ int main(int argc, char *argv[])
 						break;
 					else
 						continue ;
-				}			}
-
-			// 3
+				}
+			}
 			c = NULL;
 			for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
 			{
 				c = *it_c;
 
-				if (!c) // what ?
-					break;
-
 				if (!c->_is_connected)
 				{
-					if (erase_client(s, c, it_c))
+					if (erase_client_from_vector(s, s->_clients, it_c))
 						break;
 					else
 						continue ;
@@ -173,7 +141,7 @@ int main(int argc, char *argv[])
 										+ " secondsDiff = "
 										+ std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
 
-				if (c->_is_finished) // si on a fini d'envoyer la réponse
+				if (c->_is_finished)
 					c->reset();
 
 				if (utils_tmp::getSecondsDiff(c->_last_active_time) >= CLIENT_CONNECTION_TIMEOUT)
@@ -182,7 +150,7 @@ int main(int argc, char *argv[])
 										+ std::to_string(c->_accept_fd)
 										+ " TIMEOUT "
 										+ std::to_string(CLIENT_CONNECTION_TIMEOUT));
-					if (erase_client(s, c, it_c))
+					if (erase_client_from_vector(s, s->_clients, it_c))
 						break;
 					else
 						continue ;

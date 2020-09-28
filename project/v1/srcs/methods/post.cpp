@@ -11,16 +11,19 @@ void		Response::post(Request *req)
 	{
 		ft_cgi(req);// check if error
 		get_cgi_ret(req);
-		LOG_WRT(Logger::DEBUG, "Response::post(): avant read_file");
-		if (utils_tmp::read_file("./www/temp_file", _body) == -1)
-		{
-			LOG_WRT(Logger::DEBUG, "Response::post(): read_file -> error");
-			_status_code = INTERNAL_ERROR_500;
-			remove("./www/temp_file");
-			return ;
-		}
+		LOG_WRT(Logger::DEBUG, "Response::post(): avant get_buffer");
+		
+		utils_tmp::get_buffer("./www/temp_file", _body);
+		// if (utils_tmp::get_buffer("./www/temp_file", _body) == -1)
+		// {
+		// 	LOG_WRT(Logger::DEBUG, "Response::post(): get_buffer -> error");
+		// 	_status_code = INTERNAL_ERROR_500;
+		// 	remove("./www/temp_file");
+		// 	return ;
+		// }
+
 		remove("./www/temp_file");
-		//LOG_WRT(Logger::DEBUG, "Response::post(): après read_file");
+		//LOG_WRT(Logger::DEBUG, "Response::post(): après get_buffer");
 		if (utils_tmp::extract_body(_body) == -1)
 		{
 			LOG_WRT(Logger::DEBUG, "Response::post(): extract_body -> error");

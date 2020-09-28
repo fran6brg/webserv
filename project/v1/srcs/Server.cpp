@@ -23,8 +23,6 @@ Server::~Server()
 int Server::start(void)
 {
     errno = 0;
-//	FD_ZERO(&(g_conf._save_readfds));
-//	FD_ZERO(&(g_conf._save_writefds));
 	
     // socket
 	if ((_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -77,7 +75,7 @@ int Server::start(void)
 	// O_NONBLOCK ou O_NDELAY : Le fichier est ouvert en mode « non bloquant ».
 	// Ni la fonction open() ni aucune autre opération ultérieure sur ce fichier ne laissera le processus appelant en attente.
 	// Pour la manipulation des FIFO (tubes nommés), voir également fifo(7). Pour une discussion sur l'effet de O_NONBLOCK conjointement aux verrouillages de fichier impératifs et aux baux de fichiers, voir fcntl(2).
-	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1) // cf. subject
+	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		LOG_WRT(Logger::ERROR, "Server::start -> fcntl(): " + std::string(strerror(errno)));
         return (0);
@@ -85,7 +83,6 @@ int Server::start(void)
     else
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> fcntl=OK");
 	
-    // important: on ajoute _socket_fd à la liste des fd à surveiller pour recevoir une requête
 	FD_SET(_socket_fd, &g_conf._save_readfds);
     g_conf.add_fd(_socket_fd);    
 
@@ -104,19 +101,12 @@ int Server::acceptNewClient(void)
     bzero(&client_addr, sizeof(client_addr));
     if ((accept_fd = accept(_socket_fd, (struct sockaddr *)&client_addr, (socklen_t*)&addrlen)) == -1)
     {
-        if (errno != EWOULDBLOCK && errno != EAGAIN)
-        {
-			LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
-            g_conf._on = false;
-        }
-        else
-			LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
-        exit(EXIT_FAILURE);
-        // return (0);
+        LOG_WRT(Logger::ERROR, "Server::acceptNewClient -> accept(): " + std::string(strerror(errno)));
+        return (0);
     }
     else
     {
-		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));	
+		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));	
         Client	*c = new Client(this, accept_fd, client_addr);
 
         if (g_conf.get_nb_open_fds() > 400 - OPEN_MAX_PADDING)
@@ -130,10 +120,8 @@ int Server::acceptNewClient(void)
             
             FD_CLR(c->_accept_fd, &g_conf._save_readfds); // no need to read request since response is same: 503
             FD_SET(c->_accept_fd, &g_conf._save_writefds); // need to know when response can be written in _accept_fd
-            
             c->_response._retry_after = UNAVAILABLE_TIME;
             c->recv_status = Client::COMPLETE;
-
             _clients_503.push_back(c);
         }
         else
@@ -141,7 +129,6 @@ int Server::acceptNewClient(void)
             _clients.push_back(c);
 		    LOG_WRT(Logger::INFO, _name + " has now " + std::to_string(_clients.size()) + " clients connected");
         }
-        
         return (1);
     }
 }
@@ -170,8 +157,6 @@ int Server::recvRequest(Client *c)
     // it's not allowed to block-it will return -1 and errno will be set to EWOULDBLOCK.
     // The non-blocking mode is set by changing one of the socket's flags.
 
-    // bzero(c->_buffer, 1000);
-
     bytes = strlen(c->_buffermalloc);
     ret = recv(c->_accept_fd, c->_buffermalloc + bytes, RECV_BUFFER - bytes, 0);
     bytes += ret;
@@ -183,11 +168,10 @@ int Server::recvRequest(Client *c)
 		LOG_WRT(Logger::ERROR, "Server::recvRequest -> recv(): " + std::string(strerror(errno)));
         // https://stackoverflow.com/questions/10318191/reading-socket-eagain-resource-temporarily-unavailable
         // EAGAIN does not mean you're disconnected, it just means "there's nothing to read now; try again later".
-        if (errno != EWOULDBLOCK /*|| errno != EAGAIN*/)
-            c->_is_connected = false;
+        c->_is_connected = false;
         return (0);
     }
-    else if (ret == 0) // ça veut dire que la connexion est finie
+    else if (ret == 0)
     {
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> client(" + std::to_string(c->_accept_fd) + ") closed");
         c->_is_connected = false;
@@ -197,7 +181,6 @@ int Server::recvRequest(Client *c)
 	{
         c->_last_active_time = utils_tmp::get_date();
         LOG_WRT(Logger::DEBUG, "ret > 0");
-        // todo: Replace if by switch
         c->_buffermalloc[bytes] = '\0';
         if (c->recv_status == Client::HEADER)
         {
@@ -207,7 +190,7 @@ int Server::recvRequest(Client *c)
                 LOG_WRT(Logger::DEBUG, "found \"\\r\\n\\r\\n\"");
             	c->_request._buffer = std::string(c->_buffermalloc, bytes);
                 LOG_WRT(Logger::DEBUG, "RAW REQUEST (" + std::to_string(bytes) + "):\n---\n" + std::string(c->_request._buffer) + "---");
-            	c->_request.parse(_locations); // parse only header
+            	c->_request.parse(_locations);
                 if (c->_request._transfer_encoding == "chunked" || c->_request._content_length >= 0)
 				{
                     c->recv_status = Client::BODY;
@@ -238,7 +221,6 @@ int Server::recvRequest(Client *c)
             LOG_WRT(Logger::DEBUG, "RAW REQUEST (" + std::to_string(bytes) + "):\n---\n" + std::string(c->_request._buffer) + "---");
             FD_SET(c->_accept_fd, &g_conf._save_writefds);          
             c->_request.display();
-            //LOG_WRT(Logger::CLEAR, "TEXT BODY: " + c->_request._text_body);
 		}
 		if (c->recv_status ==  Client::ERROR)
 		{
@@ -279,9 +261,13 @@ int Server::sendResponse(Client *c)
 
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
 
-        if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length()) // >= ou juste > ?
+        if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length())
         {
-            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send="
+                + std::to_string(c->_response._bytes_send)
+                + " >= _to_send.length()="
+                + std::to_string(c->_response._to_send.length())
+                + " -> disconnecting client");
             c->_is_finished = true;
         }
         else
@@ -305,7 +291,6 @@ int Server::handleClientRequest(Client *c)
     if (c->_accept_fd == -1)
         return (ok_read || ok_write);
 
-    // print_clients_of_all_servers();
     if (FD_ISSET(c->_accept_fd, &g_conf._readfds))
     {
         LOG_WRT(Logger::INFO, "reading request of client " + std::to_string(c->_accept_fd));
@@ -315,13 +300,13 @@ int Server::handleClientRequest(Client *c)
             ok_read = 1;
     }
     else
-        LOG_WRT(Logger::INFO, "reading not set for client " + std::to_string(c->_accept_fd));
+        LOG_WRT(Logger::DEBUG, "reading not set for client " + std::to_string(c->_accept_fd));
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {
         if (c->recv_status != Client::COMPLETE)
         {
             c->recv_status = Client::COMPLETE;
-            LOG_WRT(Logger::INFO, "Server::handleClientRequest() passing recv_status to COMPLETE for client " + std::to_string(c->_accept_fd));
+            LOG_WRT(Logger::DEBUG, "Server::handleClientRequest() passing recv_status to COMPLETE for client " + std::to_string(c->_accept_fd));
         }
         LOG_WRT(Logger::INFO, "sending response to client " + std::to_string(c->_accept_fd));
         if (!sendResponse(c))
@@ -330,7 +315,7 @@ int Server::handleClientRequest(Client *c)
             ok_write = 1;
     }
     else
-        LOG_WRT(Logger::INFO, "writing not set for client " + std::to_string(c->_accept_fd));
+        LOG_WRT(Logger::DEBUG, "writing not set for client " + std::to_string(c->_accept_fd));
 
     return (ok_read || ok_write);
 }

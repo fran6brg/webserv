@@ -49,40 +49,11 @@ bool utils_tmp::file_exists(const char *filename)
 	return (stat (filename, &buffer) == 0);
 }
 
-/*
-std::string		Config::readFile(char *file)
+void utils_tmp::get_buffer(std::string file, std::string &buff)
 {
-	int 				fd;
-	int					ret;
-	char				buf[4096];
-	std::string			parsed;
-
-	fd = open(file, O_RDONLY);
-	while ((ret = read(fd, buf, 4095)) > 0)
-	{
-		buf[ret] = '\0';
-		parsed += buf;
-	}
-	close(fd);
-	return (parsed);
-}
-*/
-
-int	utils_tmp::read_file(std::string file, std::string &buff)
-{
-	int fd;
-	int ret;
-	char buffer[BUFFER_SIZE + 1];
-
-	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
-		return (-1);
-	while ((ret = read(fd, buffer, BUFFER_SIZE)) > 0)
-	{
-		buffer[ret] = '\0'; 
-		buff += buffer;
-	}
-	close(fd);
-	return (ret);
+    std::ifstream temp(file);
+    std::string buffer((std::istreambuf_iterator<char>(temp)), std::istreambuf_iterator<char>());
+    buff = buffer;
 }
 
 int utils_tmp::extract_body(std::string &buff)

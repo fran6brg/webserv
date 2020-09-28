@@ -95,11 +95,11 @@ fclean: clean
 launch: all
 	./webserv conf/tester.conf
 
-ubuntu_launch: all
-	./webserv conf/ubuntu_tester.conf
-
 tester:
 	../../intra/tester http://localhost:8080
+
+ubuntu_launch: all
+	./webserv conf/ubuntu_tester.conf
 
 ubuntu_tester: 
 	../../intra/ubuntu_tester http://localhost:8080
