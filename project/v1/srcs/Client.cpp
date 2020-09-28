@@ -68,8 +68,7 @@ void Client::reset(void)
 	
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
-	FD_CLR(_accept_fd, &g_conf._writefds);
-
+	FD_CLR(_accept_fd, &g_conf._writefds);	
 	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 	
 	recv_status = HEADER;
