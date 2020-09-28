@@ -7,17 +7,21 @@
 int     Request::parse_request_line()
 {
     std::string line;
-    utils_tmp::ft_getline(_buffer, line);
-    std::vector<std::string> tokens = utils_tmp::split(line, ' ');
+    std::vector<std::string> tokens;
 
-    if (tokens.size() != 3)
-        return (0);
-    else
+    while (1)
     {
-        _method = tokens[0];
-        _uri = tokens[1];
-        _http_version = tokens[2];
-    }
+        line.clear();
+        utils_tmp::ft_getline(_buffer, line);
+        tokens = utils_tmp::split(line, ' ');
+        if (tokens.size() == 3)
+            break ;
+    }    
+    LOG_WRT(Logger::DEBUG, "Request::parse_request_line() = " + line);
+
+    _method = tokens[0];
+    _uri = tokens[1];
+    _http_version = tokens[2];
     return (1);
 }
 
@@ -246,6 +250,8 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 
 int     Request::parse(std::vector<Location*> location) // parse header
 {
+    LOG_WRT(Logger::DEBUG, "Request::parse()");
+    
     parse_request_line();
 	parse_filename(location);
     parse_headers();
