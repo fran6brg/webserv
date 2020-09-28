@@ -113,60 +113,55 @@ void		Response::ft_cgi(Request *req)
 	std::string	binaire;
 	int status;
 
-	int CGI = 1; // TEMPORAIRE
-    if (CGI)
-    {
-		if (req->_location->_cgi_root != "")
-			binaire = req->_location->_cgi_root;
-		else
-			binaire = req->_location->_php_root;
-        env = create_env_tab(req);
-        args = (char **)(malloc(sizeof(char *) * 3));
-		if (req->_location->_cgi_root != "")
-        	args[0] = strdup(req->_location->_cgi_root.c_str());
-		else
-        	args[0] = strdup(req->_location->_php_root.c_str());
-		args[1] = strdup(req->_file.c_str());
-        args[2] = NULL;
-		temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
-		pipe(tubes);
+	if (req->_location->_cgi_root != "")
+		binaire = req->_location->_cgi_root;
+	else
+		binaire = req->_location->_php_root;
+    env = create_env_tab(req);
+    args = (char **)(malloc(sizeof(char *) * 3));
+	if (req->_location->_cgi_root != "")
+	    args[0] = strdup(req->_location->_cgi_root.c_str());
+	else
+      	args[0] = strdup(req->_location->_php_root.c_str());
+	args[1] = strdup(req->_file.c_str());
+    args[2] = NULL;
+	temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
+	pipe(tubes);
 
-		if (req->_method == "GET")
+	if (req->_method == "GET")
+		close(tubes[1]);
+	if ((pid = fork()) == 0)
+	{
+		dup2(temp_fd, 1);
+		if (stat(binaire.c_str(), &php) != 0 ||
+		!(php.st_mode & S_IFREG))
+		{
+			std::cout << "Erreur CGI\n";
+			exit(1);
+		}
+		dup2(tubes[0], 0);
+		errno = 0;
+		if ((ret = execve(binaire.c_str(), args, env)) == -1)
+		{
+			std::cout << "error execve: " << std::string(strerror(errno)) << std::endl;
+			exit(1);
+		}			
+	}
+	else
+	{
+		if (req->_method == "POST")
+		{
+			write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
 			close(tubes[1]);
-		if ((pid = fork()) == 0)
-		{
-			dup2(temp_fd, 1);
-			if (stat(binaire.c_str(), &php) != 0 ||
-			!(php.st_mode & S_IFREG))
-			{
-				std::cout << "Erreur CGI\n";
-				exit(1);
-			}
-			dup2(tubes[0], 0);
-			errno = 0;
-			if ((ret = execve(binaire.c_str(), args, env)) == -1)
-			{
-				std::cout << "error execve: " << std::string(strerror(errno)) << std::endl;
-				exit(1);
-			}			
 		}
-		else
-		{
-			if (req->_method == "POST")
-			{
-				write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
-				close(tubes[1]);
-			}
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			LOG_WRT(Logger::DEBUG, "WEXITSTATUS(status) = " + std::to_string(WEXITSTATUS(status)));
+		close(tubes[0]);
+		close(temp_fd);
 
-			waitpid(pid, &status, 0);
-			if (WIFEXITED(status))
-				LOG_WRT(Logger::DEBUG, "WEXITSTATUS(status) = " + std::to_string(WEXITSTATUS(status)));
-			close(tubes[0]);
-			close(temp_fd);
-
-			utils_tmp::free_strtab(&args);
-			utils_tmp::free_strtab(&env);
-		}
+		utils_tmp::free_strtab(&args);
+		utils_tmp::free_strtab(&env);
     }
 }
 
