@@ -191,3 +191,17 @@ void utils_tmp::free_strtab(char ***tab)
     }
     free(*tab);
 }
+
+int utils_tmp::is_valide_methods(std::string &meth)
+{
+	if (meth == "GET"
+     || meth == "HEAD"
+     || meth == "PUT"
+     || meth == "POST"
+     || meth == "DELETE"
+     || meth == "OPTIONS"
+	 || meth == "TRACE"
+	 || meth == "CONNECT")
+		return (1);
+	return (0);
+}
