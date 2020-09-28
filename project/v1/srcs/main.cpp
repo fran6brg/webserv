@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 	std::vector<Client*>::iterator it_c;
 
 	//logger start
-	LOG_START(Logger::CLEAR, "", false);
+	LOG_START(Logger::DEBUG, "", false);
 	
 	signal(SIGINT, shutdown);
 

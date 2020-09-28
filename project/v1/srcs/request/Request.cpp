@@ -34,7 +34,7 @@ void    Request::init(void)
     // Other headers not mentionned in the subject
     _keep_alive.clear();
 
-    // autres variables qui ne sont pas des headers
+    // Autres variables qui ne sont pas des headers
     _body_length = -1;
     _body_type = -1;
     _saved_error = -1;

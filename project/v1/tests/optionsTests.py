@@ -53,7 +53,7 @@ def printResponse(r, i):
 # HEAD -------------------------------------------------------------------------
 
 i = 0;
-print (bcolors.OKBLUE + "\n" + str(i) + ". Options renvoi les METHODS autorisé par la location ! \n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Options renvoie les METHODS autorisées par la location ! \n" + bcolors.ENDC)
 
 print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans / \n" + bcolors.ENDC)
 i += 1
@@ -66,7 +66,7 @@ print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans /delete \n" + bcolo
 i += 1
 headers = {'Accept-Language': 'fr'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.options('http://localhost:8080/test', headers=headers)
+	r = requests.options('http://localhost:8080/delete', headers=headers)
 	printResponse(r, i)
 
 # ---

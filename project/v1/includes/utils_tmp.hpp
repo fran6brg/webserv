@@ -32,6 +32,7 @@ public:
 	static std::vector<std::string> split(const std::string& str, char delim);
 	static std::string trim(const std::string& str);
 	static void print_map(std::stringstream &ss1, std::map<int, std::string> map);
+	static void free_strtab(char ***tab);
 
 };
 

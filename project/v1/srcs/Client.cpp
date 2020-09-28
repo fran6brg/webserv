@@ -42,6 +42,8 @@ Client::~Client()
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
 
+	free(_buffermalloc);
+
 	g_conf.remove_fd(_accept_fd); 
 	close(_accept_fd);
 	_accept_fd = -1;

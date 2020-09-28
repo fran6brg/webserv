@@ -54,7 +54,7 @@ def printResponse(r, i):
 
 i = 0;
 
-print (bcolors.OKBLUE + "\n" + str(i) + ". BASIC Test head\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Basic test head\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
 	r = requests.head('http://localhost:8080/')
@@ -62,7 +62,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 
 <<<<<<< HEAD:project/v1/tests/headTests.py
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test head \n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head fr\n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'fr'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -70,7 +70,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head en\n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'en'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -78,7 +78,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head fr utf8\n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -86,7 +86,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test head\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test head iso-8859-1\n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Charset': 'iso-8859-1'}
 if len(tests_to_run) == 0 or i in tests_to_run:
