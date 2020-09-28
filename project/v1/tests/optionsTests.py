@@ -58,7 +58,7 @@ print (bcolors.OKBLUE + "\n" + str(i) + ". Options renvoie les METHODS autorisé
 print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans / \n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.options('http://localhost:8080/')
+	r = requests.options('http://localhost:8081/')
 	printResponse(r, i)
 
 # ---
@@ -66,7 +66,7 @@ print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans /delete \n" + bcolo
 i += 1
 headers = {'Accept-Language': 'fr'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.options('http://localhost:8080/delete', headers=headers)
+	r = requests.options('http://localhost:8081/delete', headers=headers)
 	printResponse(r, i)
 
 # ---
@@ -74,7 +74,7 @@ print (bcolors.OKBLUE + "\n" + str(i) + ". Test Options dans /auto_index \n" + b
 i += 1
 headers = {'Accept-Language': 'en'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.options('http://localhost:8080/auto_index', headers=headers)
+	r = requests.options('http://localhost:8081/auto_index', headers=headers)
 	printResponse(r, i)
 
 # -------------------------------------------------------------------------------	

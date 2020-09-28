@@ -60,7 +60,7 @@ i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' == Update file 'abc' that doesn't exist:\n" + bcolors.ENDC)
 body = "abc"
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/putTests/abc', data=body)
+	r = requests.put('http://localhost:8081/putTests/abc', data=body)
 	printResponse(r, i)
 
 # ---
@@ -68,7 +68,7 @@ i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' that already exists == Update file 'abc':\n" + bcolors.ENDC)
 body = "def"
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/putTests/abc', data=body)
+	r = requests.put('http://localhost:8081/putTests/abc', data=body)
 	printResponse(r, i)
 
 # ---
@@ -82,7 +82,7 @@ i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". PUT on uri that doesn't exist:\n" + bcolors.ENDC)
 body = "this uri doesn't exist (should return 404)"
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/doesnotexist/abc', data=body)
+	r = requests.put('http://localhost:8081/doesnotexist/abc', data=body)
 	printResponse(r, i)
 
 # ---
@@ -90,7 +90,7 @@ i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". PUT not allowed:\n" + bcolors.ENDC)
 body = "not allowed"
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/postTests/abc', data=body)
+	r = requests.put('http://localhost:8081/postTests/abc', data=body)
 	printResponse(r, i)
 
 # ---
@@ -104,7 +104,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 #     yield 'hi'
 #     yield 'there'
 
-# r = requests.put('http://localhost:8080/putTests/chunked.txt', data=gen())
+# r = requests.put('http://localhost:8081/putTests/chunked.txt', data=gen())
 # printResponse(r, i)
 
 # ---
@@ -113,7 +113,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 # i += 1
 # print (bcolors.OKBLUE + "\n" + str(i) + ". invalid chunked PUT\n" + bcolors.ENDC)
 # body = "invalid chunked PUT"
-# r = requests.put('http://localhost:8080/putTests/chunked.txt', data=body)
+# r = requests.put('http://localhost:8081/putTests/chunked.txt', data=body)
 # printResponse(r, i)
 
 # ---
@@ -122,7 +122,7 @@ i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Auth success:\n" + bcolors.ENDC)
 body = "auth success"
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/auth/file', auth=HTTPBasicAuth('user', 'pass'), data=body)
+	r = requests.put('http://localhost:8081/auth/file', auth=HTTPBasicAuth('user', 'pass'), data=body)
 	printResponse(r, i)
 
 # ---
@@ -131,7 +131,7 @@ i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Auth failed:\n" + bcolors.ENDC)
 body = "auth failed"
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/auth/file', auth=HTTPBasicAuth('user', 'fail'), data=body)
+	r = requests.put('http://localhost:8081/auth/file', auth=HTTPBasicAuth('user', 'fail'), data=body)
 	printResponse(r, i)
 
 # ---
@@ -141,7 +141,7 @@ print (bcolors.OKBLUE + "\n" + str(i) + ". max body < content length -> 413:\n" 
 body = "1234"
 # headers = {'Max-Body': '3'} -> location
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/maxbody/file', data=body)
+	r = requests.put('http://localhost:8081/maxbody/file', data=body)
 	printResponse(r, i)
 
 
@@ -152,5 +152,5 @@ print (bcolors.OKBLUE + "\n" + str(i) + "< chunked ->\n" + bcolors.ENDC)
 body = "14\r\nabcdefghijklmnopqrst\r\nA\r\n0123456789\r\n0\r\n\r\n"
 headers = {'Transfer-Encoding': 'chunked'}
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8080/putTests/abc', data=body, headers=headers)
+	r = requests.put('http://localhost:8081/putTests/abc', data=body, headers=headers)
 	printResponse(r, i)

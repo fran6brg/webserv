@@ -57,14 +57,14 @@ i = 0;
 print (bcolors.OKBLUE + "\n" + str(i) + ". Test delete: SUCCESS\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.delete('http://localhost:8080/delete/')
+	r = requests.delete('http://localhost:8081/delete/')
 	printResponse(r, i)
 
 # ---
 print (bcolors.OKBLUE + "\n" + str(i) + ". Test delete: no content\n" + bcolors.ENDC)
 i += 1
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.delete('http://localhost:8080/delete/no_content')
+	r = requests.delete('http://localhost:8081/delete/no_content')
 	printResponse(r, i)
 
 # DELETE -------------------------------------------------------------------------

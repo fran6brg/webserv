@@ -44,16 +44,16 @@ int erase_client_from_vector(Server *s,
 
 	if (v.empty())
 	{
-		LOG_WRT(Logger::INFO, s->_name + " v.empty()");
+		LOG_WRT(Logger::DEBUG, s->_name + " v.empty()");
 		return (1);
 	}
 	else
 	{
-		LOG_WRT(Logger::INFO, s->_name + " il reste encore des clients");
+		LOG_WRT(Logger::DEBUG, s->_name + " il reste encore des clients");
 		it_c = v.begin();
 	}
 	
-	LOG_WRT(Logger::INFO, s->_name + " go to next client");
+	LOG_WRT(Logger::DEBUG, s->_name + " go to next client");
 	return (0);
 }
 
