@@ -14,6 +14,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
     _ip = inet_ntoa(addr.sin_addr); // todo: à recoder si non autorisée
 	_port = htons(addr.sin_port); // todo: à recoder si non autorisée
 	_request._client = this;
+	_response._client = this;
 	// select():
 	FD_SET(_accept_fd, &g_conf._save_readfds);
 	// FD_SET(_accept_fd, &g_conf._readfds);

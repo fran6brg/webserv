@@ -177,7 +177,7 @@ int				Response::bad_request(Request *req)
     LOG_WRT(Logger::DEBUG, "BAD_REQUEST_400\n");
     _status_code = BAD_REQUEST_400;
 	_allow = vector_to_string(req->_location->_method, ',');
-	std::string path = "./www/old/error/400.html";
+	std::string path = std::string(_client->_server->_error + "/400.html");
     std::ifstream error400(path);
     std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
     _body = buffer;
@@ -195,7 +195,7 @@ int				Response::method_not_allowed(Request *req)
 	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
     _status_code = METHOD_NOT_ALLOWED_405;
 	_allow = vector_to_string(req->_location->_method, ',');
-	std::string path = "./www/old/error/405.html";
+	std::string path = std::string(_client->_server->_error + "/405.html");
     std::ifstream error405(path);
     std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
     _body = buffer;
@@ -285,7 +285,7 @@ int				Response::unauthorized(Request *req)
 	    {
             LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ko unauthorized\n");
             _status_code = UNAUTHORIZED_401;
-            std::string path = "./www/old/error/401.html";
+            std::string path = std::string(_client->_server->_error + "/401.html");
             std::ifstream error401(path);
             std::string buffer((std::istreambuf_iterator<char>(error401)), std::istreambuf_iterator<char>());
             _body = buffer;
@@ -302,7 +302,7 @@ int				Response::service_unavailable(Request *req)
     {
         LOG_WRT(Logger::INFO, "Response::service_unavailable()\n");
         _status_code = SERVICE_UNAVAILABLE_503;
-        std::string path = "./www/old/error/503.html";
+        std::string path = std::string(_client->_server->_error + "/503.html");
         std::ifstream error503(path);
         std::string buffer((std::istreambuf_iterator<char>(error503)), std::istreambuf_iterator<char>());
         _body = buffer;
@@ -322,7 +322,7 @@ int				Response::request_entity_too_large(Request *req)
         {
             LOG_WRT(Logger::INFO, "Response::request_entity_too_large()\n");
             _status_code = REQUEST_ENTITY_TOO_LARGE_413;
-            std::string path = "./www/old/error/413.html";
+            std::string path = std::string(_client->_server->_error + "/413.html");
             std::ifstream error413(path);
             std::string buffer((std::istreambuf_iterator<char>(error413)), std::istreambuf_iterator<char>());
             _body = buffer;
@@ -336,7 +336,7 @@ int				Response::not_found(Request *req)
 {
 	(void)req;
     _status_code = NOT_FOUND_404;
-	std::string path = "./www/old/error/404.html";
+	std::string path = std::string(_client->_server->_error + "/404.html");
     std::ifstream error404(path);
     std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
     _body = buffer;

@@ -107,6 +107,7 @@ void		Response::ft_cgi(Request *req)
     char 	**args;
     int  	tubes[2];
     int		ret;
+    int		ret2;
 	int		temp_fd;
 	pid_t	pid;
 	struct stat php;
@@ -136,7 +137,7 @@ void		Response::ft_cgi(Request *req)
 		if (stat(binaire.c_str(), &php) != 0 ||
 		!(php.st_mode & S_IFREG))
 		{
-			std::cout << "Erreur CGI\n";
+			std::cout << "error CGI\n";
 			exit(1);
 		}
 		dup2(tubes[0], 0);
@@ -151,7 +152,11 @@ void		Response::ft_cgi(Request *req)
 	{
 		if (req->_method == "POST")
 		{
-			write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
+			ret2 = write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
+			if (ret2 == -1)
+				_status_code = INTERNAL_ERROR_500;
+			else if (ret2 == 0)
+				;
 			close(tubes[1]);
 		}
 		waitpid(pid, &status, 0);

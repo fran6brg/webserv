@@ -4,6 +4,7 @@ void		Response::post(Request *req)
 {
 	int			fd;
 	//std::string buff;
+	int ret;
 
 	if (((req->_location->_cgi_root != "" && is_extension(req->_file, req->_location->_cgi))
 		|| (req->_location->_php_root != "" && is_extension(req->_file, "php")))) // check file is good
@@ -52,7 +53,11 @@ void		Response::post(Request *req)
 			_status_code = CREATED_201;
 			_body = "Ressource created";
 		}
-		write(fd, req->_text_body.c_str(), req->_text_body.length());
+		ret = write(fd, req->_text_body.c_str(), req->_text_body.length());
+		if (ret == -1)
+			_status_code = INTERNAL_ERROR_500;
+		else if (ret == 0)
+			;
 		LOG_WRT(Logger::DEBUG, "req->_text_body(" + std::to_string(req->_text_body.length()) + ")= " + req->_text_body);
 		close(fd);
 	}

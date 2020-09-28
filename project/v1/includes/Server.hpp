@@ -45,7 +45,7 @@ class Server
         //
 
     public:
-		std::string					_host; // Add but never use
+		std::string					_host;
         std::string                 _name;
         int                         _port;
 		std::string					_error;

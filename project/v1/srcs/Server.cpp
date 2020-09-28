@@ -271,7 +271,7 @@ int Server::sendResponse(Client *c)
         c->_is_connected = false;
         return (0);
     }
-    else
+    else if (ret >= 0)
     {
         c->_last_active_time = utils_tmp::get_date();
 
