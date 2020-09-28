@@ -119,7 +119,7 @@ int Server::acceptNewClient(void)
 		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));	
         Client	*c = new Client(this, accept_fd, client_addr);
 
-        if (g_conf.get_nb_open_fds() > OPEN_MAX - OPEN_MAX_PADDING)
+        if (g_conf.get_nb_open_fds() > 400 - OPEN_MAX_PADDING)
         {
             LOG_WRT(Logger::INFO, std::string(MAGENTA_C)
                 + "service unavailable (503) on "

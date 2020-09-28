@@ -172,8 +172,9 @@ int		Response::accepted_method(Request *req)
 
 int				Response::bad_request(Request *req)
 {
-	if (accepted_method(req))
+    if (accepted_method(req))
         return (0);
+    LOG_WRT(Logger::DEBUG, "BAD_REQUEST_400\n");
     _status_code = BAD_REQUEST_400;
 	_allow = vector_to_string(req->_location->_method, ',');
 	std::string path = "./www/old/error/400.html";

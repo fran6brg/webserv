@@ -164,8 +164,8 @@ void		Response::ft_cgi(Request *req)
 			close(tubes[0]);
 			close(temp_fd);
 
-			utils_tmp::free_strtab(&args);
-			utils_tmp::free_strtab(&env);
+			// utils_tmp::free_strtab(&args);
+			// utils_tmp::free_strtab(&env);
 		}
     }
 }

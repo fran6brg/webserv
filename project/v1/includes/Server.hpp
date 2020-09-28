@@ -5,7 +5,7 @@
 ** Const
 */
 
-#define UNAVAILABLE_TIME  15
+#define UNAVAILABLE_TIME  20
 
 /*
 ** Libraries
