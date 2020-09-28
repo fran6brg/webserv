@@ -13,7 +13,13 @@ void		Response::post(Request *req)
 		get_cgi_ret(req);
 		LOG_WRT(Logger::DEBUG, "Response::post(): avant get_buffer");
 		
-		utils_tmp::get_buffer("./www/temp_file", _body);
+		if (utils_tmp::get_buffer("./www/temp_file", _body) == -1)
+		{
+            LOG_WRT(Logger::DEBUG, "Response::post(): read_file -> error");
+            _status_code = INTERNAL_ERROR_500;
+            remove("./www/temp_file");
+            return ;
+        }
 		// if (utils_tmp::get_buffer("./www/temp_file", _body) == -1)
 		// {
 		// 	LOG_WRT(Logger::DEBUG, "Response::post(): get_buffer -> error");
