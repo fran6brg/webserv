@@ -190,7 +190,7 @@ int Server::recvRequest(Client *c)
                 if (c->_request._transfer_encoding == "chunked" || c->_request._content_length >= 0)
 				{
                     c->recv_status = Client::BODY;
-                    
+                    c->_request._buffer.clear();
                     c->_concat_body = std::string(c->_buffermalloc);
                     size_t pos = c->_concat_body.find("\r\n\r\n");
                     c->_concat_body.erase(0, pos + 4);
@@ -198,7 +198,7 @@ int Server::recvRequest(Client *c)
                     memset(c->_buffermalloc, 0, RECV_BUFFER + 1);
                 }
                 else
-                    c->recv_status = Client::COMPLETE;       
+                    c->recv_status = Client::COMPLETE;
 			}
 			else if (bytes >= RECV_BUFFER)
 			{
@@ -237,6 +237,8 @@ int Server::sendResponse(Client *c)
     {
         c->_response.handle_response(&(c->_request));
         c->_response.format_to_send(&(c->_request));
+        c->_request.reset();
+        c->_concat_body.clear();
     	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
     }
     
@@ -255,7 +257,8 @@ int Server::sendResponse(Client *c)
 
         c->_response._bytes_send += ret;
 
-		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
+		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> client "
+            + std::to_string(c->_accept_fd) + " | send = OK | ret = " + std::to_string(ret));
 
         if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length())
         {

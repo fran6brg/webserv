@@ -307,7 +307,7 @@ void    Request::parse_body_chunked()
         LOG_WRT(Logger::DEBUG, "--- start while ---");
         LOG_WRT(Logger::DEBUG, "_client->_concat_body len = " + std::to_string(_client->_concat_body.length()));
         LOG_WRT(Logger::DEBUG, "_client->_line_size       = " + std::to_string(_client->_line_size));
-        pos = _client->_concat_body.find("\r\n"); // .find("\r\n"); -> "[\r\n]\r\n"
+        pos = _client->_concat_body.find("\r\n");
         if (pos == std::string::npos)
             break ;
         else
