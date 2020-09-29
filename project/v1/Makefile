@@ -1,8 +1,8 @@
 .PHONY: all clean fclean re
 
 CC			= 	clang++
-CPPFLAGS	= 	-Wall -Wextra -Werror -g
-VERSION 	= 	-std=c++11 # -std=c++98
+CPPFLAGS	= 	-Wall -Wextra -Werror -g fsanitze=address
+VERSION 	= 	-std=c++11
 NAME 		= 	webserv
 RM 			= 	rm -rf
 
