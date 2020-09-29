@@ -3,42 +3,29 @@
 void		Response::post(Request *req)
 {
 	int			fd;
-	//std::string buff;
-	int ret;
+	int 		ret;
 
 	if (((req->_location->_cgi_root != "" && is_extension(req->_file, req->_location->_cgi))
-		|| (req->_location->_php_root != "" && is_extension(req->_file, "php")))) // check file is good
+		|| (req->_location->_php_root != "" && is_extension(req->_file, "php"))))
 	{
-		ft_cgi(req);// check if error
+		ft_cgi(req);
 		get_cgi_ret(req);
 		LOG_WRT(Logger::DEBUG, "Response::post(): avant get_buffer");
 		
 		if (utils_tmp::get_buffer("./www/temp_file", _body) == -1)
 		{
-            LOG_WRT(Logger::DEBUG, "Response::post(): read_file -> error");
+            LOG_WRT(Logger::DEBUG, "Response::post(): get_buffer -> error");
             _status_code = INTERNAL_ERROR_500;
             remove("./www/temp_file");
             return ;
         }
-		// if (utils_tmp::get_buffer("./www/temp_file", _body) == -1)
-		// {
-		// 	LOG_WRT(Logger::DEBUG, "Response::post(): get_buffer -> error");
-		// 	_status_code = INTERNAL_ERROR_500;
-		// 	remove("./www/temp_file");
-		// 	return ;
-		// }
-
 		remove("./www/temp_file");
-		//LOG_WRT(Logger::DEBUG, "Response::post(): après get_buffer");
 		if (utils_tmp::extract_body(_body) == -1)
 		{
 			LOG_WRT(Logger::DEBUG, "Response::post(): extract_body -> error");
 			_status_code = INTERNAL_ERROR_500;
 			return ;
 		}
-		//LOG_WRT(Logger::DEBUG, "Response::post(): _body.length() = " + std::to_string(_body.length()));
-		//_body.erase(_body.length() -1, 1);
-		//LOG_WRT(Logger::DEBUG, "Response::post(): _body.length() = " + std::to_string(_body.length()));
 	}
 	else
 	{

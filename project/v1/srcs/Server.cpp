@@ -255,7 +255,7 @@ int Server::sendResponse(Client *c)
 
         c->_response._bytes_send += ret;
 
-		LOG_WRT(Logger::INFO, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
+		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> send = OK | ret = " + std::to_string(ret));
 
         if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length())
         {
