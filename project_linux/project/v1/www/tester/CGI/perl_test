@@ -1,0 +1,3 @@
+#! /usr/bin/perl # env.cgi
+print "Content-type: text/html\n\n"; foreach $v (sort(keys(%ENV))) { print "$v --> $ENV{$v}<br>";
+}
