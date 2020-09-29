@@ -39,6 +39,7 @@ void    Request::init(void)
     _saved_error = -1;
     _file.clear();
     _location = NULL;
+    _buffer.clear();
     
     _secret_header.clear();
     _location = NULL;

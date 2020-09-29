@@ -30,7 +30,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 
 Client::~Client()
 {
-	LOG_WRT(Logger::INFO, std::string(RED_C) + "closing connection for client " + std::to_string(_accept_fd) + std::string(RESET));
+	LOG_WRT(Logger::INFO, std::string(RED_C) + "Destructor of client " + std::to_string(_accept_fd) + std::string(RESET));
 	FD_CLR(_accept_fd, &g_conf._save_readfds);
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
@@ -49,11 +49,13 @@ void Client::reset(void)
 {
 	_is_finished = false;
     _request.reset();
-    _response.init();
+    _response.reset();
+	_concat_body.clear();
 	FD_SET(_accept_fd, &g_conf._save_readfds);
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
-	FD_CLR(_accept_fd, &g_conf._writefds);	
+	FD_CLR(_accept_fd, &g_conf._writefds);
+	// free(_buffermalloc);
 	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;

@@ -2,14 +2,6 @@
 
 Conf g_conf;
 
-void	shutdown(int sig)
-{
-	(void)sig;
-	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
-	g_conf._on = false;
-	exit(EXIT_SUCCESS);
-}
-
 void print_clients_of_all_servers(void)
 {
     Server *s;
@@ -30,17 +22,15 @@ void print_clients_of_all_servers(void)
     LOG_WRT(Logger::DEBUG, "-------------------------------");
 }
 
-int erase_client_from_vector(Server *s,
-	std::vector<Client*> &v,
-	std::vector<Client*>::iterator &it_c)
+int erase_client_from_vector(Server *s, std::vector<Client*> &v, std::vector<Client*>::iterator &it_c)
 {
 	Client *c = *it_c;
-	it_c = v.erase(it_c);
 	delete c;
+	it_c = v.erase(it_c);
 	
 	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(v.size()) + " client(s) connected");
 
-	print_clients_of_all_servers();
+	// print_clients_of_all_servers();
 
 	if (v.empty())
 	{
@@ -55,6 +45,41 @@ int erase_client_from_vector(Server *s,
 	
 	LOG_WRT(Logger::DEBUG, s->_name + " go to next client");
 	return (0);
+}
+
+void	shutdown(int sig)
+{
+	Server *s;
+	Client *c;
+	std::vector<Client*>::iterator it_c;
+	
+	g_conf._on = false;
+	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " deleting clients ...");
+	std::vector<Server*>::iterator it_s = g_conf._servers.begin();
+	for (; it_s != g_conf._servers.end(); it_s++)
+	{
+		s = *it_s;
+		for (it_c = s->_clients_503.begin(); it_c != s->_clients_503.end(); it_c++)
+		{
+			c = *it_c;
+			if (erase_client_from_vector(s, s->_clients_503, it_c))
+				break;
+			else
+				continue;
+		}
+		c = NULL;
+		for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
+		{
+			c = *it_c;
+			if (erase_client_from_vector(s, s->_clients, it_c))
+				break;
+			else
+				continue;
+		}
+	}
+	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
+	// while (1);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])

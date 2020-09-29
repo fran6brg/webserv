@@ -75,7 +75,7 @@ int Conf::run_select(void)
 {
     reset_fd_sets(); // la fonction select() exclue les fds qui ne sont pas prêts donc il faut pouvoir reconstituer le pool de fd à chaque tour de boucle
     
-    LOG_WRT(Logger::DEBUG, "select(nfds=" + std::to_string(g_conf.get_nfds()) + ", readfds, writefds, NULL, NULL)");
+    LOG_WRT(Logger::INFO, "select(nfds=" + std::to_string(g_conf.get_nfds()) + ", readfds, writefds, NULL, NULL)");
     return (select(get_nfds(), &_readfds, &_writefds, NULL, NULL)); // todo: quid du timeout
 
     /*
