@@ -18,6 +18,5 @@ void			Response::trace(Request *req)
 		_to_send[i + 1] = '\0';
 		_to_send[i + 2] = '\0';
 		_body = _to_send;
-		// Supprimer les retour a la ligne a la fin du header avant de les envoyer dans le body ?
 	}
 }

@@ -6,11 +6,11 @@ void			Response::ft_delete(Request *req)
 	std::ifstream file(req->_file);
 	if (file.good())
 	{
-		ret = remove(req->_file.c_str()); // A remplacer par unlink() ? pourquoi ? A voir
+		ret = remove(req->_file.c_str());
 		if (!ret)
 			_status_code = OK_200;
 		else
-			_status_code = ACCEPTED_202; // requete accepte mais la supression a echoue (pas sur d'en avoir besoin)
+			_status_code = ACCEPTED_202;
 	}
 	else
 		_status_code = NO_CONTENT_204;
