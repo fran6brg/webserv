@@ -16,7 +16,7 @@
 #include <string>
 #include <iostream>
 #include <map>
-#include <utility> // std::pair, std::make_pair
+#include <utility>
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
@@ -122,7 +122,6 @@ class Response
 
 	public:
 		Response(void);
-		// ~Response(void);
 
 		int 			format_to_send(Request *req);
 

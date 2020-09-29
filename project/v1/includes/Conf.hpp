@@ -15,9 +15,9 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
-#include <sys/select.h>	// select, fd_set
-#include <string.h>		// strerror linux
-#include <signal.h>		// signal linux
+#include <sys/select.h>
+#include <string.h>	
+#include <signal.h>	
 #include <list>
 
 /*
@@ -46,7 +46,6 @@ class Conf
         //
 
     public:
-        // loop
         bool                    _on;
         std::string             _webserv;
 
@@ -79,9 +78,7 @@ class Conf
 
     public:
         Conf();
-		// ~Conf();
 
-        // int parse(char *filename);
         int parse(char *conf);
         void reset_fd_sets(void);
         int get_nfds(void) const;

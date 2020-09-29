@@ -3,8 +3,6 @@
 
 #include "Conf.hpp"
 
-// std::vector<std::string> split(const std::string &str, char delim);
-
 class Location
     {
         private:

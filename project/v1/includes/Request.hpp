@@ -16,7 +16,7 @@
 #include <string>
 #include <iostream>
 #include <map>
-#include <utility> // std::pair, std::make_pair
+#include <utility>
 #include <sstream>
 #include <sys/stat.h> 
 #include <dirent.h>
@@ -102,9 +102,6 @@ class Request
 
 		int			 										_body_type;
 		std::string 										_text_body;
-		std::map<int, std::pair<std::string, std::string> > _body; // 15
-		// si post body = "a=1&b=2" -> {1: {"a": "1"}, 2: {"b": "2"}}
-		// ou alors simple body = "abc" -> {1: {"": "abc"}}
 
 		/*
 		** // Other headers not mentionned in the subject

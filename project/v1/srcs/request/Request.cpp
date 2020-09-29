@@ -29,7 +29,6 @@ void    Request::init(void)
     _user_agent.clear();
     // Request body
     _text_body.clear();
-    _body.clear();
     _transfer_encoding.clear();
     // Other headers not mentionned in the subject
     _keep_alive.clear();

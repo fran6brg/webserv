@@ -19,7 +19,7 @@
 ** Libraries
 */
 
-#include <sys/wait.h> //linux waitpid
+#include <sys/wait.h>
 
 /*
 ** Other headers

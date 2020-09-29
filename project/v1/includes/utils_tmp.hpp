@@ -2,8 +2,8 @@
 # define UTILS_TMP_HPP
 
 # include <string>
-# include <sys/time.h>	//get_date
-# include <string.h>	//get_date
+# include <sys/time.h>
+# include <string.h>
 # include <vector>
 # include <map>
 # include <sstream>
@@ -13,7 +13,6 @@
 # include <fcntl.h>
 # include "../srcs/get_next_line/get_next_line.hpp"
 # include "Logger.hpp"
-// add a std::to_string
 
 
 class utils_tmp

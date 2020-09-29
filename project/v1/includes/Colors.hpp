@@ -21,12 +21,12 @@
 # define CYAN_B			"\033[1;46m"
 # define WHITE_B		"\033[1;47m"
 
-# define RESET			"\033[1;0m"  // (everything back to normal)
-# define BOLD       	"\033[1;1m"  // (often a brighter shade of the same colour)
+# define RESET			"\033[1;0m"
+# define BOLD       	"\033[1;1m"
 # define BOLD_OFF		"\033[1;21m"
 # define UNDERLINE		"\033[1;4m"
 # define UNDERLINE_OFF	"\033[1;24m"
-# define INVERSE		"\033[1;7m"  // (swap foreground and background colours)
+# define INVERSE		"\033[1;7m"
 # define INVERSE_OFF	"\033[1;27m"
 
 #endif

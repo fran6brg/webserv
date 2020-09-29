@@ -7,9 +7,9 @@
 
 #include <string>
 #include <iostream>
-#include <sys/socket.h> // inet_ntoa()
-#include <netinet/in.h> // inet_ntoa()
-#include <arpa/inet.h> // inet_ntoa()
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 /*
 ** Headers
