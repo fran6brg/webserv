@@ -16,5 +16,5 @@ echo $path
 # while 1 ; do grep VmPeak /proc/$wpid/status ; sleep 3 ; done
 while [ 1 ] ; do 
     grep VmPeak $path
-    sleep 3
+    sleep 0.25
 done
