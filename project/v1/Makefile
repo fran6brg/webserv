@@ -1,7 +1,7 @@
 .PHONY: all clean fclean re
 
 CC			= 	clang++
-CPPFLAGS	= 	-Wall -Wextra -Werror -g fsanitze=address
+CPPFLAGS	= 	-Wall -Wextra -Werror -g
 VERSION 	= 	-std=c++11
 NAME 		= 	webserv
 RM 			= 	rm -rf
@@ -62,7 +62,6 @@ OBJREQ		= 	$(addprefix $(OBJREQ_PATH)/,$(OBJREQ_NAME))
 all: $(NAME)
 	@touch ./www/perso/delete/to_delete
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL) $(OBJREQ)
-	# find . -name "./log/*.txt" -print0 | xargs -0 rm
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJ} ${OBJLIB} ${OBJGNL} $(OBJREQ)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp

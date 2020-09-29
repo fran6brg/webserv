@@ -236,6 +236,8 @@ int Server::sendResponse(Client *c)
     if (c->_response._bytes_send == 0)
     {
         c->_response.handle_response(&(c->_request));
+        if (c->_wfd != -1 || c->_rfd != -1)
+            return (1);
         c->_response.format_to_send(&(c->_request));
     	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
     }

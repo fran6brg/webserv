@@ -62,12 +62,12 @@ i = 0;
 #r = requests.post('http://localhost:80/', data=json.dumps(payload), headers=headers_adds)
 #printResponse(r, 0)
 
-#payload = "hello world ! icici le monde"
-#headers_adds = {
-#    "Content-Type": "text/plain",
-#}
-#r = requests.post('http://localhost:80/', payload, headers=headers_adds)
-#printResponse(r, 0)
+payload = "hello world ! icici le monde"
+headers_adds = {
+    "Content-Type": "text/plain",
+}
+r = requests.post('http://localhost:8080/bonjour', payload, headers=headers_adds)
+printResponse(r, 0)
 
 #files = {'file': open('babouin.png', 'rb')}
 #headers_adds = {
@@ -102,6 +102,8 @@ i = 0;
 #r = s.send(prepped)
 #print(r)
 
+
+
 # import base64
 # i += 1
 # if len(tests_to_run) == 0 or i in tests_to_run:
@@ -113,20 +115,20 @@ i = 0;
 # 	printResponse(r, i)
 
 # # ---
-from requests.auth import HTTPBasicAuth
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". POST http://localhost:8081/ avec auth \n" + bcolors.ENDC)
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.post('http://localhost:8081/', auth=HTTPBasicAuth('user', 'pass'))
-	printResponse(r, i)
+#from requests.auth import HTTPBasicAuth
+#i += 1
+#print (bcolors.OKBLUE + "\n" + str(i) + ". POST http://localhost:8081/ avec auth \n" + bcolors.ENDC)
+#if len(tests_to_run) == 0 or i in tests_to_run:
+#	r = requests.post('http://localhost:8081/', auth=HTTPBasicAuth('user', 'pass'))
+#	printResponse(r, i)
 
 # ---
-i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". 1K:\n" + bcolors.ENDC)
-body = "x" * 1000
-if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.post('http://localhost:8081/directory/youpi.bla', data=body)
-	printResponse(r, i)
+#i += 1
+#print (bcolors.OKBLUE + "\n" + str(i) + ". 1K:\n" + bcolors.ENDC)
+#body = "x" * 1000
+#if len(tests_to_run) == 0 or i in tests_to_run:
+#	r = requests.post('http://localhost:8081/directory/youpi.bla', data=body)
+#	printResponse(r, i)
 
 # ---
 # i += 1

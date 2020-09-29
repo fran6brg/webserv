@@ -22,6 +22,9 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	recv_status = HEADER;
 	_line_size = -1;
 	_last_active_time = utils_tmp::get_date();
+	_wfd = -1;
+	_rfd = -1;
+	_read_ok = 1;
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "client constructor " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
 
@@ -55,4 +58,27 @@ void Client::reset(void)
 	recv_status = HEADER;
 	_line_size = -1;
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
+}
+
+void	Client::write_file()
+{
+	LOG_WRT(Logger::DEBUG, "IS SET WRITE");
+	write(_wfd, _request._text_body.c_str(), _request._text_body.length());
+}
+
+void	Client::read_file(std::string &buff)
+{
+	int	ret;
+	int	status;
+	char buffer[BUFFER_SIZE + 1];
+
+	wait(NULL);
+	ret = read(_rfd, buffer, BUFFER_SIZE);
+	if (ret == 0)
+		_read_ok = 1;
+	else
+		_read_ok = 0;	
+	LOG_WRT(Logger::DEBUG, "RET =  [" + std::to_string(ret) + "]");
+	buffer[ret] = '\0'; 
+	buff += std::string(buffer);
 }

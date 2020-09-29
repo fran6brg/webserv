@@ -20,6 +20,9 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 /*
 ** Headers
@@ -145,7 +148,6 @@ class Response
 
 		char			**create_env_tab(Request *req);
 		void			ft_cgi(Request *req);
-		void			get_cgi_ret(Request *req);
 	/*
 	** friends
 	*/
