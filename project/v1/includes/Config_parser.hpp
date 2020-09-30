@@ -54,25 +54,25 @@ typedef struct	s_loc
 
 typedef struct	s_serv
 {
-	std::string	host;
-	std::string	name;
-	std::string	port;
-	std::string	error_page;
-	std::vector<t_loc> loc;
+	std::string			host;
+	std::string			name;
+	std::string			port;
+	std::string			error_page;
+	std::vector<t_loc> 	loc;
 }				t_serv;
 
 class Config_parser
 {
 private:
-	char	*conf;
-	int		fd;
-	int		line_count;
+	char				*conf;
+	int					fd;
+	int					line_count;
 	std::vector<t_serv> serv;
 
 public:
 	Config_parser(char *conf);
 	~Config_parser();
-	void setup_server(std::vector<Server *> &servers);
+	void setup_server();
 
 private:
 	void parse_conf();

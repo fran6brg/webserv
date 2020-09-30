@@ -37,11 +37,13 @@ void			Response::get(Request *req)
 		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
 		{
 			req->_client->_rfd = open(req->_file.c_str(), O_RDONLY);
+			FD_SET(req->_client->_rfd, &g_conf._save_readfds);
 			_last_modified = get_last_modif(req->_file);
 			_status_code = OK_200;
 		}
 		else
 		{
+			FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
 			close(req->_client->_rfd);
 			req->_client->_rfd = -1;
 		}

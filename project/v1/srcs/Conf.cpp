@@ -19,7 +19,7 @@ Conf::Conf()
     _timeout.tv_sec = 5;
 	_timeout.tv_usec = 0;
     // debug
-    _nb_accept_opered = 0;}
+    _nb_accepted_connections = 0;}
 
 /*
 ** other class methods
@@ -28,7 +28,7 @@ Conf::Conf()
 int Conf::parse(char *file)
 {
 	Config_parser conf(file);
-	conf.setup_server(_servers);
+	conf.setup_server();
 
 	for (size_t i = 0; i < _servers.size(); ++i)
 	{

@@ -28,7 +28,7 @@ void Config_parser::fail_double_token(int val)
 		fail("Double token [" + std::to_string(line_count) + "]");
 }
 
-void Config_parser::setup_server(std::vector<Server *> &servers)
+void Config_parser::setup_server()
 {
 	parse_conf();
 	check_conf();
@@ -36,9 +36,9 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
 		Server *server = new Server(serv[i].name, stoi(serv[i].port), serv[i].host, serv[i].error_page);
-		servers.push_back(server);
+		g_conf._servers.push_back(server);
 
-		LOG_WRT(Logger::DEBUG, "SERVER " + std::to_string(i));
+		LOG_WRT(Logger::DEBUG, "SERVER       " + std::to_string(i));
 		LOG_WRT(Logger::DEBUG, "host       = " + serv[i].host);
 		LOG_WRT(Logger::DEBUG, "name       = " + serv[i].name);
 		LOG_WRT(Logger::DEBUG, "port       = " + serv[i].port);
@@ -52,8 +52,8 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 
 			server->_locations.push_back(location);
 
-			LOG_WRT(Logger::DEBUG, "LOCATION " + std::to_string(y));
-			LOG_WRT(Logger::DEBUG, "	uri    = " + serv[i].loc[y].uri);
+			LOG_WRT(Logger::DEBUG, "	LOCATION     " + std::to_string(y));
+			LOG_WRT(Logger::DEBUG, "	uri        = " + serv[i].loc[y].uri);
 			if (serv[i].loc[y].method.size())
 				LOG_WRT(Logger::DEBUG, "	method");
 			for (size_t z = 0; z < serv[i].loc[y].method.size(); z++)
@@ -66,7 +66,6 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 			LOG_WRT(Logger::DEBUG, "	auto_index = " + std::to_string(serv[i].loc[y].auto_index));
 			LOG_WRT(Logger::DEBUG, "	max_body   = " + std::to_string(serv[i].loc[y].max_body));
 			LOG_WRT(Logger::DEBUG, "	auth       = " + serv[i].loc[y].auth);
-
 		}
 		LOG_WRT(Logger::DEBUG, "");
 	}

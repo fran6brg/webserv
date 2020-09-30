@@ -64,7 +64,7 @@ class Conf
         std::list<int>          _active_fds;
         
         // debug
-        int                     _nb_accept_opered;
+        int                     _nb_accepted_connections;
     
     /*
     ** methods
