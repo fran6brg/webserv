@@ -9,7 +9,8 @@ void		Response::post(Request *req)
 	if (((req->_location->_cgi_root != "" && is_extension(req->_file, req->_location->_cgi))
 		|| (req->_location->_php_root != "" && is_extension(req->_file, "php"))))
 	{
-		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
+		if (req->_client->_wfd == -1
+		 && req->_client->_rfd == -1)
 		{
 			ft_cgi(req);
 			_status_code = OK_200;
@@ -21,6 +22,7 @@ void		Response::post(Request *req)
 		else
 		{
 			FD_CLR(req->_client->_wfd, &g_conf._save_writefds);
+			g_conf.remove_fd(req->_client->_wfd);
 			close(req->_client->_wfd);
 			req->_client->_wfd = -1;
 		}
@@ -51,11 +53,13 @@ void		Response::post(Request *req)
 				_body = "Ressource created";
 			}
 			FD_SET(req->_client->_wfd, &g_conf._save_writefds);
+			g_conf.add_fd(req->_client->_wfd);
 		}
 		else
 		{
 			LOG_WRT(Logger::DEBUG, "req->_text_body(" + std::to_string(req->_text_body.length()) + ")= " + req->_text_body);
 			FD_CLR(req->_client->_wfd, &g_conf._save_writefds);
+			g_conf.remove_fd(req->_client->_wfd);
 			close(req->_client->_wfd);
 			req->_client->_wfd = -1;
 		}

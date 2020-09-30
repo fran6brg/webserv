@@ -35,8 +35,8 @@ Client::~Client()
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
-	free(_buffermalloc);
 	g_conf.remove_fd(_accept_fd); 
+	free(_buffermalloc);
 	close(_accept_fd);
 	_accept_fd = -1;
 }
@@ -64,6 +64,7 @@ void Client::reset(void)
 void	Client::write_file()
 {
 	int	ret;
+
 	LOG_WRT(Logger::DEBUG, "IS SET WRITE");
 	ret = write(_wfd, _request._text_body.c_str(), _request._text_body.length());
 	if (ret == -1)
@@ -84,16 +85,19 @@ void	Client::read_file(std::string &buff)
 	LOG_WRT(Logger::DEBUG, "rfd = " + std::to_string(_rfd));
 	LOG_WRT(Logger::DEBUG, "wfd = " + std::to_string(_wfd));
 	waitpid((pid_t)_pid, (int *)&status, 0);
+	
 	ret = read(_rfd, buffer, BUFFER_SIZE);
 	if (ret == -1)
 	{
 		_response._status_code = INTERNAL_ERROR_500;
 		return ;	
 	}
+	
 	if (ret == 0)
 		_read_ok = 1;
 	else if (ret > 0)
 		_read_ok = 0;
+	
 	if (ret >= 0 && !(_request._body_file.empty()))
 	{
 		LOG_WRT(Logger::DEBUG, "RET1 =  [" + std::to_string(ret) + "]");
@@ -103,6 +107,7 @@ void	Client::read_file(std::string &buff)
 		if (ret == 0)
 		{
 			// FD_CLR(_rfd, &g_conf._save_readfds);
+			// g_conf.remove_fd(_rfd); 
 			_rfd = -1;
 		}
 	}

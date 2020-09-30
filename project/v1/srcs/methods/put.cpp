@@ -27,6 +27,7 @@ void			Response::put(Request *req)
 		{
 			req->_client->_wfd  = open(req->_file.c_str(), O_APPEND|O_WRONLY|O_NONBLOCK, 0666);
 			FD_SET(req->_client->_wfd, &g_conf._save_writefds);
+			g_conf.add_fd(req->_client->_wfd);
 			LOG_WRT(Logger::DEBUG, "put: writing req->text_body (len=" + std::to_string(req->_text_body.length()) + ") inside _file\n");
 		}
 		else
@@ -38,6 +39,7 @@ void			Response::put(Request *req)
 	else
 	{
 		FD_CLR(req->_client->_wfd, &g_conf._save_writefds);
+		g_conf.remove_fd(req->_client->_wfd);
 		close(req->_client->_wfd);
 		req->_client->_wfd = -1;
 	}

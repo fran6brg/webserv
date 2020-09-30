@@ -187,6 +187,7 @@ int Response::bad_request(Request *req)
         std::string path = std::string(_client->_server->_error + "/400.html");
         req->_client->_rfd = open(path.c_str(), O_RDONLY);
         FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+        g_conf.add_fd(req->_client->_rfd);
         return (1);
     }
     else
@@ -194,6 +195,7 @@ int Response::bad_request(Request *req)
         if (accepted_method(req))
             return (0);
         FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
+        g_conf.remove_fd(req->_client->_rfd);
         close(req->_client->_rfd);
         req->_client->_rfd = -1;
         return (1);
@@ -219,6 +221,7 @@ int Response::method_not_allowed(Request *req)
         std::string path = std::string(_client->_server->_error + "/405.html");
         req->_client->_rfd = open(path.c_str(), O_RDONLY);
         FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+        g_conf.add_fd(req->_client->_rfd);
         return (1);
     }
     else
@@ -230,6 +233,7 @@ int Response::method_not_allowed(Request *req)
                 return (0);
         }
         FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
+        g_conf.remove_fd(req->_client->_rfd);
         close(req->_client->_rfd);
         req->_client->_rfd = -1;
         return (1);
@@ -320,6 +324,7 @@ int Response::unauthorized(Request *req)
                 std::string path = std::string(_client->_server->_error + "/401.html");
                 req->_client->_rfd = open(path.c_str(), O_RDONLY);
                 FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+                g_conf.add_fd(req->_client->_rfd);
                 return (1);
             }
         }
@@ -341,6 +346,7 @@ int Response::unauthorized(Request *req)
             else
             {
                 FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
+                g_conf.remove_fd(req->_client->_rfd);
                 close(req->_client->_rfd);
                 req->_client->_rfd = -1;
                 return (1);
@@ -362,6 +368,7 @@ int Response::service_unavailable(Request *req)
             std::string path = std::string(_client->_server->_error + "/503.html");
             req->_client->_rfd = open(path.c_str(), O_RDONLY);
             FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+            g_conf.add_fd(req->_client->_rfd);
             return (1);
         }
         else
@@ -372,6 +379,7 @@ int Response::service_unavailable(Request *req)
         if (_retry_after == UNAVAILABLE_TIME)
         {
             FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
+            g_conf.remove_fd(req->_client->_rfd);
             close(req->_client->_rfd);
             req->_client->_rfd = -1;
             return (1);
@@ -396,6 +404,7 @@ int Response::request_entity_too_large(Request *req)
                 LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() path =" + path + " | _rfd =" + std::to_string(req->_client->_rfd) + "\n");
                 LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() before set\n");
                 FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+                g_conf.add_fd(req->_client->_rfd);
                 LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() after set\n");
                 return (1);
             }
@@ -408,6 +417,7 @@ int Response::request_entity_too_large(Request *req)
             if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413 || (req->_content_length > req->_location->_max_body))
             {
                 FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
+                g_conf.remove_fd(req->_client->_rfd);
                 close(req->_client->_rfd);
                 req->_client->_rfd = -1;
                 return (1);
@@ -426,10 +436,12 @@ int Response::not_found(Request *req)
         std::string path = std::string(_client->_server->_error + "/404.html");
         req->_client->_rfd = open(path.c_str(), O_RDONLY);
         FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+        g_conf.add_fd(req->_client->_rfd);
     }
     else
     {
         FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
+        g_conf.remove_fd(req->_client->_rfd);
         close(req->_client->_rfd);
         req->_client->_rfd = -1;
     }
@@ -457,6 +469,7 @@ int Response::build_chunked(Request &req, char *buffer, int ret)
     if (ret == 0)
     {
         FD_CLR(_client->_rfd, &g_conf._save_readfds);
+        g_conf.remove_fd(_client->_rfd);
         close(read_fd);
         read_fd = -1;
         _client->_rfd = -1;

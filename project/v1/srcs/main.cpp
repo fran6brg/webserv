@@ -46,7 +46,43 @@ int erase_client_from_vector(Server *s, std::vector<Client*> &v, std::vector<Cli
 	return (0);
 }
 
+
 void	shutdown(int sig)
+{
+	Server *s;
+	std::vector<Server*>::iterator it_s;
+	Client *c;
+	std::vector<Client*>::iterator it_c;
+	Location *l;
+	std::vector<Location*>::iterator it_l;
+	
+	g_conf._on = false;
+	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " deleting clients ...");
+
+	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); ++it_s)
+	{
+		s = *it_s;
+		//s->_clients.clear();
+		for (it_c = s->_clients.begin(); it_c!= s->_clients.end(); ++it_c)
+			delete *it_c;
+		//s->_clients_503.clear();
+		for (it_c = s->_clients_503.begin(); it_c!= s->_clients_503.end(); ++it_c)
+			delete *it_c;//delete free buffer...
+		//s->_locations.clear();
+		for (it_l = s->_locations.begin(); it_l!= s->_locations.end(); ++it_l)
+			delete *it_l;
+		
+	}
+	//g_conf._servers.clear();
+	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); ++it_s)
+		delete *it_s;
+	
+	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " server size " + std::to_string(g_conf._servers.size()));
+	print_clients_of_all_servers();
+	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
+	exit(EXIT_SUCCESS);
+}
+/*void	shutdown(int sig)
 {
 	Server *s;
 	std::vector<Server*>::iterator it_s;
@@ -88,7 +124,7 @@ void	shutdown(int sig)
 	print_clients_of_all_servers();
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
 	exit(EXIT_SUCCESS);
-}
+}*/
 
 int main(int argc, char *argv[])
 {
@@ -106,7 +142,6 @@ int main(int argc, char *argv[])
 			break;
 		else
 		{
-			LOG_WRT(Logger::DEBUG, "iterating over existing servers ...");
 			std::vector<Server*>::iterator it_s = g_conf._servers.begin();
 			for (; it_s != g_conf._servers.end(); it_s++)
 			{
@@ -155,7 +190,7 @@ int main(int argc, char *argv[])
 							continue ;
 					}
 				}
-				c = NULL;
+
 				for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
 				{
 					c = *it_c;
@@ -182,8 +217,10 @@ int main(int argc, char *argv[])
 						if (c->_read_ok == 1)
 							s->handleClientRequest(c);
 					}
+					
 					LOG_WRT(Logger::DEBUG, "client " + std::to_string(c->_accept_fd)
 										+ " secondsDiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
+					
 					if (c->_is_finished)
 						c->reset();
 

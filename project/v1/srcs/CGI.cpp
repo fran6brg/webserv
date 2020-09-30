@@ -118,6 +118,7 @@ void		Response::ft_cgi(Request *req)
 			close(tubes[0]);
 			req->_client->_wfd = tubes[1];
 			FD_SET(req->_client->_wfd, &g_conf._save_writefds);
+			g_conf.add_fd(req->_client->_wfd);
 		}
 		utils_tmp::free_strtab(&args);
 		utils_tmp::free_strtab(&env);

@@ -13,8 +13,8 @@ Server::Server(std::string serverName, int port, std::string host, std::string e
 Server::~Server()
 {
 	LOG_WRT(Logger::INFO, _name + " killed");
-    g_conf.remove_fd(_socket_fd);
     FD_CLR(_socket_fd, &g_conf._save_readfds);
+    g_conf.remove_fd(_socket_fd);
 }
 
 /*
@@ -281,6 +281,7 @@ int Server::sendResponse(Client *c)
 			{
                 c->_rfd = c->_response.read_fd;
                 FD_SET(c->_rfd, &g_conf._save_readfds);
+                g_conf.add_fd(c->_rfd);
                 if (c->_read_ok == 1)
 					c->_response.send_status = c->_response.COMPLETE;
 			}
