@@ -208,7 +208,10 @@ int Response::method_not_allowed(Request *req)
         {
             LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method);
             if ((req->_location->_method)[i] == req->_method)
+            {
+                LOG_WRT(Logger::DEBUG, "method " + req->_method + " is allowed");
                 return (0);
+            }
         }
         LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
         _status_code = METHOD_NOT_ALLOWED_405;
@@ -390,7 +393,10 @@ int Response::request_entity_too_large(Request *req)
                 _status_code = REQUEST_ENTITY_TOO_LARGE_413;
                 std::string path = std::string(_client->_server->_error + "/413.html");
                 req->_client->_rfd = open(path.c_str(), O_RDONLY);
+                LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() path =" + path + " | _rfd =" + std::to_string(req->_client->_rfd) + "\n");
+                LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() before set\n");
                 FD_SET(req->_client->_rfd, &g_conf._save_readfds);
+                LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() after set\n");
                 return (1);
             }
         }

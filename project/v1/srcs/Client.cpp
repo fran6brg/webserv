@@ -102,7 +102,7 @@ void	Client::read_file(std::string &buff)
 		_read_ok = 1;
 		if (ret == 0)
 		{
-			FD_CLR(_rfd, &g_conf._save_readfds);
+			// FD_CLR(_rfd, &g_conf._save_readfds);
 			_rfd = -1;
 		}
 	}
