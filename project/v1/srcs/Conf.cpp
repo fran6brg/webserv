@@ -28,7 +28,7 @@ Conf::Conf()
 int Conf::parse(char *file)
 {
 	Config_parser conf(file);
-	conf.setup_server(_servers);
+	conf.setup_server();
 
 	for (size_t i = 0; i < _servers.size(); ++i)
 	{

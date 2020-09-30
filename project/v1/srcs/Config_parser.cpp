@@ -28,7 +28,7 @@ void Config_parser::fail_double_token(int val)
 		fail("Double token [" + std::to_string(line_count) + "]");
 }
 
-void Config_parser::setup_server(std::vector<Server *> &servers)
+void Config_parser::setup_server()
 {
 	parse_conf();
 	check_conf();
@@ -36,7 +36,7 @@ void Config_parser::setup_server(std::vector<Server *> &servers)
 	for (size_t i = 0; i < serv.size(); ++i)
 	{
 		Server *server = new Server(serv[i].name, stoi(serv[i].port), serv[i].host, serv[i].error_page);
-		servers.push_back(server);
+		g_conf._servers.push_back(server);
 
 		LOG_WRT(Logger::DEBUG, "SERVER       " + std::to_string(i));
 		LOG_WRT(Logger::DEBUG, "host       = " + serv[i].host);

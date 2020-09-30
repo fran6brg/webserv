@@ -72,7 +72,7 @@ private:
 public:
 	Config_parser(char *conf);
 	~Config_parser();
-	void setup_server(std::vector<Server *> &servers);
+	void setup_server();
 
 private:
 	void parse_conf();

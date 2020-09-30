@@ -25,7 +25,7 @@ void print_clients_of_all_servers(void)
 int erase_client_from_vector(Server *s, std::vector<Client*> &v, std::vector<Client*>::iterator &it_c)
 {
 	Client *c = *it_c;
-	// delete c;
+	delete c;
 	it_c = v.erase(it_c);
 	
 	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(v.size()) + " client(s) connected");
@@ -57,57 +57,32 @@ void	shutdown(int sig)
 	
 	g_conf._on = false;
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " deleting clients ...");
-	
+
+
 	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); it_s++)
 	{
 		s = *it_s;
 		for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
 		{
 			c = *it_c;
-			if (erase_client_from_vector(s, s->_clients, it_c))
-			{
-				break;
-			}
-			else
-				continue;
+			free(c->_buffermalloc);
+			//delete c;
 		}
-		
 		for (it_c = s->_clients_503.begin(); it_c != s->_clients_503.end(); it_c++)
 		{
 			c = *it_c;
-			if (erase_client_from_vector(s, s->_clients_503, it_c))
-			{
-				break;
-			}
-			else
-				continue;
+			free(c->_buffermalloc);
+			//delete c;
 		}
-		
-		for (it_l = s->_locations.begin(); it_l != s->_locations.end(); it_l++)
-		{
-			l = *it_l;
-			// delete l;
-			it_l = s->_locations.erase(it_l);
-			if (s->_locations.empty())
-				break;
-			else
-				it_l = s->_locations.begin();
-		}
-		
-		delete s;
-		
-		// it_s = g_conf._servers.erase(it_s);
-		// if (g_conf._servers.empty())
-		// {
-		// 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " g_conf._servers.empty()");
-		// 	break;
-		// }
-		// else
-		// {
-		// 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " server size " + std::to_string(g_conf._servers.size()));
-		// 	it_s = g_conf._servers.begin();
-		// }
 	}
+	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); it_s++)
+	{
+		s = *it_s;
+		s->_clients.clear();
+		s->_clients_503.clear();
+		s->_locations.clear();
+	}
+
 	g_conf._servers.clear();
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " server size " + std::to_string(g_conf._servers.size()));
 	print_clients_of_all_servers();
@@ -129,9 +104,6 @@ int main(int argc, char *argv[])
     {
 		if (g_conf.run_select() == -1)
 			break;
-
-		if (g_conf._servers.empty())
-			break;
 		else
 		{
 			LOG_WRT(Logger::DEBUG, "iterating over existing servers ...");
@@ -139,6 +111,8 @@ int main(int argc, char *argv[])
 			for (; it_s != g_conf._servers.end(); it_s++)
 			{
 				s = *it_s;
+				LOG_WRT(Logger::DEBUG, "iterating over existing server:" + s->_name);
+				print_clients_of_all_servers();
 				// pour chaque serveur:
 				// 1 - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
 				// 2 - on itère sur les clients_503 du serveur pour les servir
@@ -186,6 +160,7 @@ int main(int argc, char *argv[])
 				for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
 				{
 					c = *it_c;
+					LOG_WRT(Logger::DEBUG, "iterating over existing client:" + std::to_string(c->_accept_fd));
 
 					if (!c->_is_connected)
 					{
