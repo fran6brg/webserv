@@ -9,53 +9,11 @@ if ac > 1:
 	for av in sys.argv[1:]:
 		# print ("to run: test", av)
 		tests_to_run.append(int(av))
+from printReqAndResp import * 
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+i = 0
 
-def props(cls):   
-  return [i for i in cls.__dict__.keys() if i[:1] != '_']
-# https://stackoverflow.com/questions/16923898/how-to-get-the-raw-content-of-a-response-in-requests-with-python
-# https://stackoverflow.com/questions/9058305/getting-attributes-of-a-class
-
-def printResponse(r, i):
-
-	print ("-------- REQUEST")
-	# print (props(r.request))
-	print (r.request.method, "on", r.request.url)
-	print ()
-	for h in r.request.headers:
-		print (h + ": " + r.request.headers[h])
-	print ()
-	print ("Body:", r.request.body)
-
-	print ()
-	print ("-------- RESPONSE")
-	# print (props(r.raw))
-	print ("Status code:", r.status_code)
-	print ("Reason:", r.raw.reason)
-	# print ("headers:", r.raw.headers)
-	print ()
-	for h in r.headers:
-		print (h + ": " + r.headers[h])
-	print ()
-	print ("Body:", r.text)
-
-	# print ("-------- ENCODING")
-	# print (r.encoding)
-	print ("------------------\n")
-
-# PUT -------------------------------------------------------------------------
-
-i = 0;
-
+# ---
 i += 1
 print (bcolors.OKBLUE + "\n" + str(i) + ". Create file 'abc' == Update file 'abc' that doesn't exist:\n" + bcolors.ENDC)
 body = "abc"
@@ -94,31 +52,8 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-# requests for chunked body doesn't work
-# idem for postman https://community.postman.com/t/how-to-send-chunked-request/9010
-# i += 1
-# print (bcolors.OKBLUE + "\n" + str(i) + ". chunked PUT\n" + bcolors.ENDC)
-
-# def gen():
-#     yield 'h'
-#     yield 'hi'
-#     yield 'there'
-
-# r = requests.put('http://localhost:8081/putTests/chunked.txt', data=gen())
-# printResponse(r, i)
-
-# ---
-# requests for chunked body doesn't work
-# idem for postman https://community.postman.com/t/how-to-send-chunked-request/9010
-# i += 1
-# print (bcolors.OKBLUE + "\n" + str(i) + ". invalid chunked PUT\n" + bcolors.ENDC)
-# body = "invalid chunked PUT"
-# r = requests.put('http://localhost:8081/putTests/chunked.txt', data=body)
-# printResponse(r, i)
-
-# ---
-from requests.auth import HTTPBasicAuth
 i += 1
+from requests.auth import HTTPBasicAuth
 print (bcolors.OKBLUE + "\n" + str(i) + ". Auth success:\n" + bcolors.ENDC)
 body = "auth success"
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -126,8 +61,8 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-from requests.auth import HTTPBasicAuth
 i += 1
+from requests.auth import HTTPBasicAuth
 print (bcolors.OKBLUE + "\n" + str(i) + ". Auth failed:\n" + bcolors.ENDC)
 body = "auth failed"
 if len(tests_to_run) == 0 or i in tests_to_run:
@@ -135,20 +70,18 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-from requests.auth import HTTPBasicAuth
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + ". max body < content length -> 413:\n" + bcolors.ENDC)
-body = "1234"
-# headers = {'Max-Body': '3'} -> location
+from requests.auth import HTTPBasicAuth
+print (bcolors.OKBLUE + "\n" + str(i) + ". max body -> 413:\n" + bcolors.ENDC)
+body = "413" * 100
 if len(tests_to_run) == 0 or i in tests_to_run:
-	r = requests.put('http://localhost:8081/maxbody/file', data=body)
+	r = requests.put('http://localhost:8081/maxbody/index.html', data=body)
 	printResponse(r, i)
 
-
 # ---
-from requests.auth import HTTPBasicAuth
 i += 1
-print (bcolors.OKBLUE + "\n" + str(i) + "< chunked ->\n" + bcolors.ENDC)
+from requests.auth import HTTPBasicAuth
+print (bcolors.OKBLUE + "\n" + str(i) + ". chunked:\n" + bcolors.ENDC)
 body = "14\r\nabcdefghijklmnopqrst\r\nA\r\n0123456789\r\n0\r\n\r\n"
 headers = {'Transfer-Encoding': 'chunked'}
 if len(tests_to_run) == 0 or i in tests_to_run:

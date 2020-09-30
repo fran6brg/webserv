@@ -111,8 +111,7 @@ int main(int argc, char *argv[])
 			for (; it_s != g_conf._servers.end(); it_s++)
 			{
 				s = *it_s;
-				LOG_WRT(Logger::DEBUG, "iterating over existing server:" + s->_name);
-				print_clients_of_all_servers();
+				LOG_WRT(Logger::DEBUG, "iterating over server:" + s->_name);
 				// pour chaque serveur:
 				// 1 - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
 				// 2 - on itère sur les clients_503 du serveur pour les servir
