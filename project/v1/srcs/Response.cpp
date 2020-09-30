@@ -45,48 +45,47 @@ void Response::init(void)
 
 int Response::concat_to_send(void)
 {
-    std::stringstream ss;
-    //std::string response_headers;
     size_t i;
     
     // 1. Status Line
-    ss << _http_version << " ";
-    ss << _status_code << " ";
-    ss << _reason_phrase << "\r\n";
+    _to_send += _http_version + " ";
+    _to_send += std::to_string(_status_code) + " ";
+    _to_send += _reason_phrase + "\r\n";
 
     // 2. Request Headers, dans l'ordre du sujet
     if (_content_length >= 0)
-        ss << "Content-Length: " << _content_length << "\r\n";
-    if (!_allow.empty())                { ss << "allow: " << _allow << "\r\n"; }
-    if (!_last_modified.empty())        { ss << "Last-Modified: " << _last_modified << "\r\n"; }
-    if (_retry_after >= 0)              { ss << "Retry-After: " << std::to_string(_retry_after) << "\r\n"; }
-    if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
-    if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
-    if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
-    if (!_transfer_encoding.empty())	{ ss << "Transfer-Encoding: " << _transfer_encoding << "\r\n";}
+    {
+        _to_send += "Content-Length: " + std::to_string(_content_length) + "\r\n";
+    }
+
+    if (!_allow.empty())                { _to_send += "allow: " + _allow + "\r\n"; }
+    if (!_last_modified.empty())        { _to_send += "Last-Modified: " + _last_modified + "\r\n"; }
+    if (_retry_after >= 0)              { _to_send += "Retry-After: " + std::to_string(_retry_after) + "\r\n"; }
+    if (!_location.empty() && _status_code == 201)  { _to_send += "Location: " + _location + "\r\n"; }
+    if (!_date.empty())                 { _to_send += "Date: " + _date + "\r\n"; }
+    if (!_server.empty())               { _to_send += "Server: " + _server + "\r\n"; }
+    if (!_transfer_encoding.empty())	{ _to_send += "Transfer-Encoding: " + _transfer_encoding + "\r\n";}
 	if (!_content_type.empty())
 	{
-		ss << "Content-Type:";
+		_to_send += "Content-Type:";
         i = 0;
     	while (i < _content_type.size())
     	{
-    	    ss << " " << _content_type[i];
+    	    _to_send += " " + _content_type[i];
     	    if (i + 1 < _content_type.size())
-    	        ss << ";";
+    	        _to_send += ";";
             i++;
     	}
-    	ss << "\r\n";
+    	_to_send += "\r\n";
 	}
 
     // 3. Request body
-    ss << "\r\n";
+    _to_send += "\r\n";
     if (!_body.empty())
 	{
-		ss << _body;
+		_to_send += _body;
 		LOG_WRT(Logger::DEBUG, "BODY EMPTY IN RESPONSE");
 	}
-    _to_send = ss.str();
-
     return (1);
 }
 
