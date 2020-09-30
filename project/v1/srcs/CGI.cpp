@@ -117,43 +117,9 @@ void		Response::ft_cgi(Request *req)
 		{
 			close(tubes[0]);
 			req->_client->_wfd = tubes[1];
+			FD_SET(req->_client->_wfd, &g_conf._save_writefds);
 		}
 		utils_tmp::free_strtab(&args);
 		utils_tmp::free_strtab(&env);
-    }
-}
-
-void        Response::get_cgi_ret(Request *req)
-{
-    std::ifstream               temp_file("./www/temp_file");
-    std::string                 line;
-    std::vector<std::string>    split_ret;
-    if (temp_file.is_open())
-    {
-        getline(temp_file, line);
-		utils_tmp::remove_return(line);
-        LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 1) line = -" + line + "-");
-        if (line.find("Status:") != std::string::npos
-            && req->_location->_cgi_root != "")
-        {
-            split_ret = utils_tmp::split(line, ' ');
-            _status_code = std::stoi(split_ret[1]);
-            split_ret.clear();
-        }
-        else
-            _status_code = OK_200;
-        getline(temp_file, line);
-		utils_tmp::remove_return(line);
-        LOG_WRT(Logger::DEBUG, "Response::get_cgi_ret(): 2) line = -" + line + "-");
-        if (line.find("Content-Type:") != std::string::npos
-            && req->_location->_cgi_root != "")
-        {
-            split_ret.clear();
-            split_ret = utils_tmp::split(line, ':');
-            _content_type[0] = utils_tmp::trim(split_ret[1]);
-            split_ret.clear();
-        }
-        else
-            _content_type[0] = "text/html";
     }
 }

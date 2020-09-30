@@ -21,10 +21,12 @@ void			Response::put(Request *req)
 			LOG_WRT(Logger::DEBUG, "put: file created\n");
 			close(req->_client->_wfd);
  		}
+		
 		ret = utils_tmp::file_exists(req->_file.c_str());
 		if (ret)
 		{
 			req->_client->_wfd  = open(req->_file.c_str(), O_APPEND|O_WRONLY|O_NONBLOCK, 0666);
+			FD_SET(req->_client->_wfd, &g_conf._save_writefds);
 			LOG_WRT(Logger::DEBUG, "put: writing req->text_body (len=" + std::to_string(req->_text_body.length()) + ") inside _file\n");
 		}
 		else
@@ -35,6 +37,7 @@ void			Response::put(Request *req)
 	}
 	else
 	{
+		FD_CLR(req->_client->_wfd, &g_conf._save_writefds);
 		close(req->_client->_wfd);
 		req->_client->_wfd = -1;
 	}

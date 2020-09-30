@@ -280,6 +280,7 @@ int Server::sendResponse(Client *c)
 			if (!c->_request._body_file.empty() && c->_response.read_fd != -1)
 			{
                 c->_rfd = c->_response.read_fd;
+                FD_SET(c->_rfd, &g_conf._save_readfds);
                 if (c->_read_ok == 1)
 					c->_response.send_status = c->_response.COMPLETE;
 			}

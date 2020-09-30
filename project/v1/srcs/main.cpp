@@ -169,14 +169,14 @@ int main(int argc, char *argv[])
 					}
 					if (!c->_is_finished)
 					{
-						if (c->_wfd != -1 && c->_read_ok == 1)
+						if (c->_wfd != -1 && c->_read_ok == 1) // tant qu'on a pas ouvert le file && -
 						{
-						//	if (FD_ISSET(c->_wfd, &g_conf._writefds))
+							if (FD_ISSET(c->_wfd, &g_conf._writefds))
 								c->write_file();
 						}
 						if (c->_rfd != -1)
 						{
-					//		if (FD_ISSET(c->_rfd, &g_conf._readfds))
+							if (FD_ISSET(c->_rfd, &g_conf._readfds))
 								c->read_file(c->_response._body);
 						}
 						if (c->_read_ok == 1)
