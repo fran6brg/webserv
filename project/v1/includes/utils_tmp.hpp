@@ -13,6 +13,7 @@
 # include <fcntl.h>
 # include "../srcs/get_next_line/get_next_line.hpp"
 # include "Logger.hpp"
+# include <algorithm>
 
 
 class utils_tmp
@@ -33,6 +34,8 @@ public:
 	static void print_map(std::stringstream &ss1, std::map<int, std::string> map);
 	static void free_strtab(char ***tab);
 	static int is_valide_methods(std::string &meth);
+	static std::string dec_to_hex(long int dec);
+	static size_t find_body_position(std::string file);
 };
 
 #endif

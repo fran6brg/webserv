@@ -4,65 +4,42 @@ void			Response::get(Request *req)
 {
 	int		language = 0;
 	int		charset = 0;
-	int		ret = 0;
-	if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
+	if (_body != "")
 	{
-		if (_body != "")
-		{
-			_status_code = OK_200;
-			_content_type[0] = "text/html";
-			return ;
-		}
-		language = set_laguage(req);
-		charset = set_charset(req);
+		_status_code = OK_200;
+		_content_type[0] = "text/html";
+		return ;
 	}
-	ret = utils_tmp::file_exists(req->_file.c_str());
+	language = set_laguage(req);
+	charset = set_charset(req);
+	std::ifstream file(req->_file);
 	if ((req->_method == "GET" 
 		&& ((req->_location->_cgi_root != ""
 		&& is_extension(req->_file, ".cgi")) 
 		|| (req->_location->_php_root != ""
 		&& is_extension(req->_file, ".php"))))
-		&& ret)
+		&& file.good())
 	{
-		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
-		{
-
-			LOG_WRT(Logger::DEBUG, "get: cgi\n");
-			ft_cgi(req);
-			_status_code = OK_200;
-			_content_type[0] = "text/html";
-			_last_modified = get_last_modif(req->_file);
-			req->_client->_rfd = open("./www/temp_file", O_RDONLY);
-		}
-		else
-		{
-			remove("./www/temp_file");
-			close(req->_client->_rfd);
-			req->_client->_rfd = -1;
-		}
+		LOG_WRT(Logger::DEBUG, "get: cgi\n");
+		ft_cgi(req);
+		_status_code = OK_200;
+		_content_type[0] = "text/html";
+		_last_modified = get_last_modif(req->_file);
+		utils_tmp::get_buffer("./www/temp_file", _body);// ne pas lire fichier 
+		remove("./www/temp_file");
 	}
-	else if (ret)
+	else if (file.good())
 	{
-		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
-		{
-			req->_client->_rfd = open(req->_file.c_str(), O_RDONLY);
-			_last_modified = get_last_modif(req->_file);
-			_status_code = OK_200;
-		}
-		else
-		{
-			close(req->_client->_rfd);
-			req->_client->_rfd = -1;
-		}
-		
+		std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+		_body = buffer;
+		_last_modified = get_last_modif(req->_file);
+		_status_code = OK_200;
 	}
 	else
 		not_found(req);
-	if (req->_client->_read_ok == 1)
-	{
-		if (charset)
-			unset_extension(req);
-		if (language)
-			unset_extension(req);
-	}
+
+	if (charset)
+		unset_extension(req);
+	if (language)
+		unset_extension(req);
 }

@@ -20,9 +20,6 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
 /*
 ** Headers
@@ -83,7 +80,7 @@ class Response
 		// - Contexte de réponse:
 		std::string 				_server; // contient des informations à propos du système (ou sous-système) en place sur le serveur qui s'occupe de la requête. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Serveur
 		// - Contexte de réponse:
-		std::map<int, std::string> 	_transfer_encoding; // specifies the form of encoding used to safely transfer the payload body to the user. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding
+		std::string				 	_transfer_encoding; // specifies the form of encoding used to safely transfer the payload body to the user. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Transfer-Encoding
 		// - Authentification:
 		std::map<int, std::string> 	_www_authenticate; // définit la méthode d'authentification qui doit être utilisé pour obtenir l'accès à une ressource. https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/WWW-Authenticate
 
@@ -110,6 +107,15 @@ class Response
 		*/
 
 		size_t						_bytes_send;
+
+		int							read_fd;
+		enum status
+    	{
+			HANDLE_RESPONSE,
+			SENDING,
+			COMPLETE
+    	};
+		int							send_status;
 
 	/*
 	** methods
@@ -148,6 +154,9 @@ class Response
 
 		char			**create_env_tab(Request *req);
 		void			ft_cgi(Request *req);
+		void			get_cgi_ret(Request *req);
+
+		int				build_chunked(Request &req);
 	/*
 	** friends
 	*/
