@@ -103,6 +103,12 @@ ubuntu_launch: all
 ubuntu_tester: 
 	../../intra/ubuntu_tester http://localhost:8080
 
+valgrind_light: all 
+	valgrind ./webserv conf/ubuntu_tester.conf
+
+valgrind: all 
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./webserv conf/ubuntu_tester.conf
+
 re:	fclean all
 
 re: fclean all

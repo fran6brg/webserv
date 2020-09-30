@@ -12,8 +12,9 @@ Server::Server(std::string serverName, int port, std::string host, std::string e
 
 Server::~Server()
 {
-	LOG_WRT(Logger::INFO, _name + "status killed");
-    g_conf.remove_fd(_socket_fd); 
+	LOG_WRT(Logger::INFO, _name + " killed");
+    g_conf.remove_fd(_socket_fd);
+    FD_CLR(_socket_fd, &g_conf._save_readfds);
 }
 
 /*
