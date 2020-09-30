@@ -237,6 +237,8 @@ int Server::sendResponse(Client *c)
     if (c->_response.send_status == c->_response.HANDLE_RESPONSE)
     {
         c->_response.handle_response(&(c->_request));
+        if (c->_wfd != -1 || c->_rfd != -1)
+            return (1);
         c->_response.format_to_send(&(c->_request));
 		if (!c->_request._body_file.empty())
 		{
@@ -269,11 +271,15 @@ int Server::sendResponse(Client *c)
 			c->_response._bytes_send = 0;
 			c->_response._to_send.clear();
 
-			if (c->_response.send_status == c->_response.COMPLETE)
-				c->_is_finished = true;
-			else if (!c->_request._body_file.empty())
+//			if (c->_response.send_status == c->_response.COMPLETE)
+ //           {
+ //               LOG_WRT(Logger::DEBUG, "ICI 1");
+//				c->_is_finished = true;
+//            }
+			if (!c->_request._body_file.empty() && c->_response.read_fd != -1)
 			{
-				if (c->_response.build_chunked(c->_request))
+                c->_rfd = c->_response.read_fd;
+                if (c->_read_ok == 1)
 					c->_response.send_status = c->_response.COMPLETE;
 			}
 			else
@@ -321,6 +327,5 @@ int Server::handleClientRequest(Client *c)
     }
     else
         LOG_WRT(Logger::DEBUG, "writing not set for client " + std::to_string(c->_accept_fd));
-
     return (ok_read || ok_write);
 }

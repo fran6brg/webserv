@@ -157,8 +157,20 @@ int main(int argc, char *argv[])
 				}
 
 				if (!c->_is_finished)
-					s->handleClientRequest(c);
-
+				{
+					if (c->_wfd != -1 && c->_read_ok == 1)
+					{
+					//	if (FD_ISSET(c->_wfd, &g_conf._writefds))
+							c->write_file();
+					}
+					if (c->_rfd != -1)
+					{
+					//	if (FD_ISSET(c->_rfd, &g_conf._readfds))
+							c->read_file(c->_response._body);
+					}
+					if (c->_read_ok == 1)
+						s->handleClientRequest(c);
+				}
 				LOG_WRT(Logger::DEBUG, "client " + std::to_string(c->_accept_fd)
 									+ " secondsDiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
 

@@ -94,7 +94,7 @@ void		Response::ft_cgi(Request *req)
 
 	if (req->_method == "GET")
 		close(tubes[1]);
-	if ((pid = fork()) == 0)
+	if ((req->_client->_pid = fork()) == 0)
 	{
 		dup2(temp_fd, 1);
 		if (stat(binaire.c_str(), &php) != 0 ||
@@ -115,19 +115,9 @@ void		Response::ft_cgi(Request *req)
 	{
 		if (req->_method == "POST")
 		{
-			ret2 = write(tubes[1], req->_text_body.c_str(), req->_text_body.length());
-			if (ret2 == -1)
-				_status_code = INTERNAL_ERROR_500;
-			else if (ret2 == 0)
-				;
-			close(tubes[1]);
+			close(tubes[0]);
+			req->_client->_wfd = tubes[1];
 		}
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			LOG_WRT(Logger::DEBUG, "WEXITSTATUS(status) = " + std::to_string(WEXITSTATUS(status)));
-		close(tubes[0]);
-		close(temp_fd);
-
 		utils_tmp::free_strtab(&args);
 		utils_tmp::free_strtab(&env);
     }

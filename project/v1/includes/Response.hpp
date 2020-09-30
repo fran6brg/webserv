@@ -20,6 +20,9 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 /*
 ** Headers
@@ -156,7 +159,7 @@ class Response
 		void			ft_cgi(Request *req);
 		void			get_cgi_ret(Request *req);
 
-		int				build_chunked(Request &req);
+		int				build_chunked(Request &req, char *buffer, int ret);
 	/*
 	** friends
 	*/

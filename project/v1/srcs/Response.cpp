@@ -166,34 +166,58 @@ int		Response::accepted_method(Request *req)
 
 int				Response::bad_request(Request *req)
 {
-    if (accepted_method(req))
-        return (0);
-    LOG_WRT(Logger::DEBUG, "BAD_REQUEST_400\n");
-    _status_code = BAD_REQUEST_400;
-	_allow = vector_to_string(req->_location->_method, ',');
-	std::string path = std::string(_client->_server->_error + "/400.html");
-    std::ifstream error400(path);
-    std::string buffer((std::istreambuf_iterator<char>(error400)), std::istreambuf_iterator<char>());
-    _body = buffer;
-	return (1);
+    if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
+    { 
+        if (accepted_method(req))
+           return (0);
+        LOG_WRT(Logger::DEBUG, "BAD_REQUEST_400\n");
+        _status_code = BAD_REQUEST_400;
+	    _allow = vector_to_string(req->_location->_method, ',');
+	    std::string path = std::string(_client->_server->_error + "/400.html");
+	    req->_client->_rfd = open(path.c_str(), O_RDONLY); 
+        return (1);
+    }
+    else
+    {
+        if (accepted_method(req))
+           return (0);
+        close(req->_client->_rfd);
+        req->_client->_rfd = -1;
+        return (1);
+    }
+    
 }
 
 int				Response::method_not_allowed(Request *req)
 {
-	for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
-	{
-		LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method);
-		if ((req->_location->_method)[i] == req->_method)
-			return (0);
-	}
-	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
-    _status_code = METHOD_NOT_ALLOWED_405;
-	_allow = vector_to_string(req->_location->_method, ',');
-	std::string path = std::string(_client->_server->_error + "/405.html");
-    std::ifstream error405(path);
-    std::string buffer((std::istreambuf_iterator<char>(error405)), std::istreambuf_iterator<char>());
-    _body = buffer;
-	return (1);
+    if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
+    { 
+	    for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
+	    {
+	    	LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method);
+	    	if ((req->_location->_method)[i] == req->_method)
+	    		return (0);
+    	}
+    	LOG_WRT(Logger::DEBUG, "METHOD_NOT_ALLOWED_405\n");
+        _status_code = METHOD_NOT_ALLOWED_405;
+    	_allow = vector_to_string(req->_location->_method, ',');
+    	std::string path = std::string(_client->_server->_error + "/405.html");
+        req->_client->_rfd = open(path.c_str(), O_RDONLY); 	
+        return (1);
+    }
+    else
+    {
+        for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
+	    {
+	    	LOG_WRT(Logger::DEBUG, "test if " + (req->_location->_method)[i] + " == " + req->_method);
+	    	if ((req->_location->_method)[i] == req->_method)
+	    		return (0);
+    	}
+        close(req->_client->_rfd);
+        req->_client->_rfd = -1; 
+        return (1);
+    }
+    
 }
 
 // https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
@@ -256,68 +280,118 @@ std::string base64_decode(std::string const &encoded_string)
 
 int				Response::unauthorized(Request *req)
 {
-    if (!req->_location->_auth.empty())
-    {
-     	LOG_WRT(Logger::DEBUG, "inside unauthorized():");
-     	LOG_WRT(Logger::DEBUG, "1) req->_location->_auth = " + req->_location->_auth);
-     	
-        std::vector<std::string> tokens;
-        tokens = utils_tmp::split(req->_authorization, ' ');
-        std::string creds = tokens[1];
-        LOG_WRT(Logger::DEBUG, "2) base64_decode(creds) = " + base64_decode(creds));
-        if (req->_location->_auth == base64_decode(creds))
+    if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
+    { 
+        if (!req->_location->_auth.empty())
         {
-            LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ok authorized\n");
-            _status_code = OK_200;
-            return (0);
+     	    LOG_WRT(Logger::DEBUG, "inside unauthorized():");
+     	    LOG_WRT(Logger::DEBUG, "1) req->_location->_auth = " + req->_location->_auth);
+     	
+            std::vector<std::string> tokens;
+            tokens = utils_tmp::split(req->_authorization, ' ');
+            std::string creds = tokens[1];
+            LOG_WRT(Logger::DEBUG, "2) base64_decode(creds) = " + base64_decode(creds));
+            if (req->_location->_auth == base64_decode(creds))
+            {
+                LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ok authorized\n");
+                _status_code = OK_200;
+                return (0);
+            }
+            else
+	        {
+                LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ko unauthorized\n");
+                _status_code = UNAUTHORIZED_401;
+                std::string path = std::string(_client->_server->_error + "/401.html");
+                req->_client->_rfd = open(path.c_str(), O_RDONLY); 
+                return (1);
+            }
         }
         else
-	    {
-            LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ko unauthorized\n");
-            _status_code = UNAUTHORIZED_401;
-            std::string path = std::string(_client->_server->_error + "/401.html");
-            std::ifstream error401(path);
-            std::string buffer((std::istreambuf_iterator<char>(error401)), std::istreambuf_iterator<char>());
-            _body = buffer;
-            return (1);
-        }
+	         return (0);
     }
     else
-	    return (0);
+    {
+        if (!req->_location->_auth.empty())
+        {
+            std::vector<std::string> tokens;
+            tokens = utils_tmp::split(req->_authorization, ' ');
+            std::string creds = tokens[1];
+            if (req->_location->_auth == base64_decode(creds))
+            {
+                _status_code = OK_200;
+                return (0);
+            }
+            else
+	        {
+                close(req->_client->_rfd);
+			    req->_client->_rfd = -1; 
+                return (1);
+            }
+        }
+        else
+	         return (0);
+    }   
 }
 
 int				Response::service_unavailable(Request *req)
 {
-    if (_retry_after == UNAVAILABLE_TIME)
+    if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
     {
-        LOG_WRT(Logger::INFO, "Response::service_unavailable()\n");
-        _status_code = SERVICE_UNAVAILABLE_503;
-        std::string path = std::string(_client->_server->_error + "/503.html");
-        std::ifstream error503(path);
-        std::string buffer((std::istreambuf_iterator<char>(error503)), std::istreambuf_iterator<char>());
-        _body = buffer;
-        return (1);
-    }    
+        if (_retry_after == UNAVAILABLE_TIME)
+        {
+            LOG_WRT(Logger::INFO, "Response::service_unavailable()\n");
+            _status_code = SERVICE_UNAVAILABLE_503;
+            std::string path = std::string(_client->_server->_error + "/503.html");
+            req->_client->_rfd = open(path.c_str(), O_RDONLY);
+            return (1);
+        }   
+        else
+            return (0);
+    }
     else
-        return (0);
+    {
+       if (_retry_after == UNAVAILABLE_TIME)
+        {
+            close(req->_client->_rfd);
+			req->_client->_rfd = -1;
+            return (1);
+        }   
+        else
+            return (0); 
+    }
 }
 
 int				Response::request_entity_too_large(Request *req)
 {
-    if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
-        || (req->_content_length > 0 && req->_location->_max_body > 0))
+    if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
     {
         if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
-            || (req->_content_length > req->_location->_max_body))
+         || (req->_content_length > 0 && req->_location->_max_body > 0))
         {
-            LOG_WRT(Logger::INFO, "Response::request_entity_too_large()\n");
-            _status_code = REQUEST_ENTITY_TOO_LARGE_413;
-            std::string path = std::string(_client->_server->_error + "/413.html");
-            std::ifstream error413(path);
-            std::string buffer((std::istreambuf_iterator<char>(error413)), std::istreambuf_iterator<char>());
-            _body = buffer;
-            return (1);
+            if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
+             || (req->_content_length > req->_location->_max_body))
+            {
+                LOG_WRT(Logger::INFO, "Response::request_entity_too_large()\n");
+                _status_code = REQUEST_ENTITY_TOO_LARGE_413;
+                std::string path = std::string(_client->_server->_error + "/413.html");
+                req->_client->_rfd = open(path.c_str(), O_RDONLY);
+                return (1);
+            }
         }
+    }
+    else
+    {
+       if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
+         || (req->_content_length > 0 && req->_location->_max_body > 0))
+        {
+            if (req->_saved_error == REQUEST_ENTITY_TOO_LARGE_413
+             || (req->_content_length > req->_location->_max_body))
+            {
+                close(req->_client->_rfd);
+			    req->_client->_rfd = -1;
+                return (1);
+            }
+        } 
     }
     return (0);
 }
@@ -325,25 +399,24 @@ int				Response::request_entity_too_large(Request *req)
 int				Response::not_found(Request *req)
 {
 	(void)req;
-    _status_code = NOT_FOUND_404;
-	std::string path = std::string(_client->_server->_error + "/404.html");
-    std::ifstream error404(path);
-    std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
-    _body = buffer;
-	return (1);
+    if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
+	{
+        _status_code = NOT_FOUND_404;
+	    std::string path = std::string(_client->_server->_error + "/404.html");
+        req->_client->_rfd = open(path.c_str(), O_RDONLY);
+    }
+    else
+    {
+        close(req->_client->_rfd);
+		req->_client->_rfd = -1;
+    }
+    return (1);
 }	
 
-int		Response::build_chunked(Request &req)
+int		Response::build_chunked(Request &req, char *buffer, int ret)
 {
-	int ret;
-	char buffer[BUFFER_SIZE + 1];
 	std::string tmp;
-
-	if ((ret = read(read_fd, buffer, BUFFER_SIZE)) < 0)
-		return (-1);
-	buffer[ret] = '\0';
 	tmp = buffer;
-
 	if (req._is_body_file_header)
 	{
 		LOG_WRT(Logger::DEBUG, "AVANT ret=" + std::to_string(ret));
@@ -361,8 +434,10 @@ int		Response::build_chunked(Request &req)
 	if (ret == 0)
 	{
 		close (read_fd);
+		read_fd = -1;
+        _client->_rfd = -1;
+        _client->_is_finished = true;
 		remove(req._body_file.c_str());
-		return (1);
 	}
 	return (0);
 }

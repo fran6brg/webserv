@@ -22,6 +22,9 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	recv_status = HEADER;
 	_line_size = -1;
 	_last_active_time = utils_tmp::get_date();
+	_wfd = -1;
+	_rfd = -1;
+	_read_ok = 1;
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "client constructor " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
 
@@ -56,4 +59,55 @@ void Client::reset(void)
 	recv_status = HEADER;
 	_line_size = -1;
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
+}
+
+void	Client::write_file()
+{
+	int	ret;
+	LOG_WRT(Logger::DEBUG, "IS SET WRITE");
+	ret = write(_wfd, _request._text_body.c_str(), _request._text_body.length());
+	if (ret == -1)
+	{
+		_response._status_code = INTERNAL_ERROR_500;
+		return ;
+	}
+	else if (ret == 0)
+		;
+}
+
+void	Client::read_file(std::string &buff)
+{
+	int	ret;
+	int	status;
+	char buffer[BUFFER_SIZE + 1];
+
+	LOG_WRT(Logger::DEBUG, "rfd = " + std::to_string(_rfd));
+	LOG_WRT(Logger::DEBUG, "wfd = " + std::to_string(_wfd));
+	waitpid((pid_t)_pid, (int *)&status, 0);
+	ret = read(_rfd, buffer, BUFFER_SIZE);
+	if (ret == -1)
+	{
+		_response._status_code = INTERNAL_ERROR_500;
+		return ;	
+	}
+	if (ret == 0)
+		_read_ok = 1;
+	else if (ret > 0)
+		_read_ok = 0;
+	if (ret >= 0 && !(_request._body_file.empty()))
+	{
+		LOG_WRT(Logger::DEBUG, "RET1 =  [" + std::to_string(ret) + "]");
+		buffer[ret] = '\0';
+		_response.build_chunked(_request, buffer, ret);
+		_read_ok = 1;
+		if (ret == 0)
+			_rfd = -1;
+	}
+	else
+	{
+		LOG_WRT(Logger::DEBUG, "RET2 =  [" + std::to_string(ret) + "]");
+		buffer[ret] = '\0';
+		buff += std::string(buffer);
+	}
+
 }

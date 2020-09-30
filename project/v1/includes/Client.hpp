@@ -58,6 +58,10 @@ class Client
         int         _line_size;
 
 		std::string	_last_active_time;
+        int         _wfd;
+        int         _rfd;
+        int 	    _pid;
+        int         _read_ok;
 
     	enum status
     	{
@@ -85,6 +89,8 @@ class Client
         ~Client();
 
         void reset(void);
+        void	write_file();
+        void	read_file(std::string &buff);
 
     /*
     ** friends
