@@ -50,7 +50,9 @@ void	shutdown(int sig)
 {
 	Server *s;
 	Client *c;
+	Location *l;
 	std::vector<Client*>::iterator it_c;
+	std::vector<Location*>::iterator it_l;
 	
 	g_conf._on = false;
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " deleting clients ...");
@@ -74,6 +76,16 @@ void	shutdown(int sig)
 				break;
 			else
 				continue;
+		}
+		for (it_l = s->_locations.begin(); it_l != s->_locations.end(); it_l++)
+		{
+			l = *it_l;
+			delete l;
+			it_l = s->_locations.erase(it_l);
+			if (s->_locations.empty())
+				break ;
+			else
+				it_l = s->_locations.begin();
 		}
 	}
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
