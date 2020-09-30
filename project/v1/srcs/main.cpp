@@ -31,7 +31,6 @@ int erase_client_from_vector(Server *s, std::vector<Client*> &v, std::vector<Cli
 	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(v.size()) + " client(s) connected");
 
 	// print_clients_of_all_servers();
-
 	if (v.empty())
 	{
 		LOG_WRT(Logger::DEBUG, s->_name + " v.empty()");
@@ -78,7 +77,6 @@ void	shutdown(int sig)
 		}
 	}
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
-	// while (1);
 	exit(EXIT_SUCCESS);
 }
 
@@ -161,10 +159,8 @@ int main(int argc, char *argv[])
 				if (!c->_is_finished)
 					s->handleClientRequest(c);
 
-				LOG_WRT(Logger::DEBUG, "client "
-										+ std::to_string(c->_accept_fd)
-										+ " secondsDiff = "
-										+ std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
+				LOG_WRT(Logger::DEBUG, "client " + std::to_string(c->_accept_fd)
+									+ " secondsDiff = " + std::to_string(utils_tmp::getSecondsDiff(c->_last_active_time)));
 
 				if (c->_is_finished)
 					c->reset();

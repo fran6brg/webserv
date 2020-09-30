@@ -52,7 +52,6 @@ void Client::reset(void)
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
-	// free(_buffermalloc);
 	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;

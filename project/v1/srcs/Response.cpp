@@ -235,7 +235,6 @@ std::string base64_decode(std::string const &encoded_string)
             i = 0;
         }
     }
-
     if (i)
     {
         for (j = i; j < 4; j++)

@@ -243,8 +243,6 @@ int Server::sendResponse(Client *c)
 			if ((c->_response.read_fd = open(c->_request._body_file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
 				return (-1);
 		}
-        //c->_request.reset();
-        //c->_concat_body.clear();
     	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
 		c->_response.send_status = c->_response.SENDING;
     }
@@ -268,7 +266,7 @@ int Server::sendResponse(Client *c)
         {
             LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
 
-			c->_response._bytes_send  = 0;
+			c->_response._bytes_send = 0;
 			c->_response._to_send.clear();
 
 			if (c->_response.send_status == c->_response.COMPLETE)
@@ -307,6 +305,7 @@ int Server::handleClientRequest(Client *c)
     }
     else
         LOG_WRT(Logger::DEBUG, "reading not set for client " + std::to_string(c->_accept_fd));
+        
     if (FD_ISSET(c->_accept_fd, &g_conf._writefds))
     {
         if (c->recv_status != Client::COMPLETE)
