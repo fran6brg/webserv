@@ -40,12 +40,13 @@ void Response::init(void)
     _keep_alive.clear();
     // Other
     _bytes_send = 0;
+	send_status = HANDLE_RESPONSE;
 }
 
 int Response::concat_to_send(void)
 {
     std::stringstream ss;
-    std::string response_headers;
+    //std::string response_headers;
     size_t i;
     
     // 1. Status Line
@@ -62,7 +63,8 @@ int Response::concat_to_send(void)
     if (!_location.empty() && _status_code == 201)  { ss << "Location: " << _location << "\r\n"; }
     if (!_date.empty())                 { ss << "Date: " << _date << "\r\n"; }
     if (!_server.empty())               { ss << "Server: " << _server << "\r\n"; }
-    if (!_content_type.empty())
+    if (!_transfer_encoding.empty())	{ ss << "Transfer-Encoding: " << _transfer_encoding << "\r\n";}
+	if (!_content_type.empty())
 	{
 		ss << "Content-Type:";
         i = 0;
@@ -78,14 +80,13 @@ int Response::concat_to_send(void)
 
     // 3. Request body
     ss << "\r\n";
-    if (_content_length >= 100)
-        response_headers = ss.str();
-    if (!_body.empty())                 { ss << _body; }
-    // Convert
-    if (_content_length < 100)
-        response_headers = ss.str();
+    if (!_body.empty())
+	{
+		ss << _body;
+		LOG_WRT(Logger::DEBUG, "BODY EMPTY IN RESPONSE");
+	}
     _to_send = ss.str();
-    LOG_WRT(Logger::DEBUG, "_to_send = \n" + response_headers + "--------------------\n");
+
     return (1);
 }
 
@@ -98,7 +99,8 @@ int Response::format_to_send(Request *req)
     // Status Line
     _http_version = "HTTP/1.1";
     _reason_phrase = code_to_reason[_status_code];
-    _content_length = _body.length(); // https://stackoverflow.com/questions/13821263/should-newline-be-included-in-http-response-content-length
+
+	_content_length = _body.length(); // https://stackoverflow.com/questions/13821263/should-newline-be-included-in-http-response-content-length
 	
 	// Response headers, dans l'ordre du sujet
     _date = get_date();
@@ -110,7 +112,10 @@ int Response::format_to_send(Request *req)
 		_location = get_location_header(req);	
 	_content_language.clear();
     _content_location.clear();
-    _transfer_encoding.clear();
+	if (!req->_body_file.empty())
+		_transfer_encoding = "chunked";
+	else
+    	_transfer_encoding.clear();
     _www_authenticate.clear();
 	// Response body
 	if (req->_method == "HEAD")
@@ -327,6 +332,40 @@ int				Response::not_found(Request *req)
     std::string buffer((std::istreambuf_iterator<char>(error404)), std::istreambuf_iterator<char>());
     _body = buffer;
 	return (1);
+}	
+
+int		Response::build_chunked(Request &req)
+{
+	int ret;
+	char buffer[BUFFER_SIZE + 1];
+	std::string tmp;
+
+	if ((ret = read(read_fd, buffer, BUFFER_SIZE)) < 0)
+		return (-1);
+	buffer[ret] = '\0';
+	tmp = buffer;
+
+	if (req._is_body_file_header)
+	{
+		LOG_WRT(Logger::DEBUG, "AVANT ret=" + std::to_string(ret));
+		utils_tmp::extract_body(tmp);
+		ret = tmp.length();
+		req._is_body_file_header = false;
+		LOG_WRT(Logger::DEBUG, "APREÈS ret=" + std::to_string(ret));
+	}
+
+	// Taille equal body avec ou sans "\r\n" ?
+	_to_send += utils_tmp::dec_to_hex(ret) + "\r\n";
+	_to_send += tmp;
+	_to_send += "\r\n";
+	LOG_WRT(Logger::DEBUG, "_to_send ==>[" + std::to_string(_to_send.length()) + "]");
+	if (ret == 0)
+	{
+		close (read_fd);
+		remove(req._body_file.c_str());
+		return (1);
+	}
+	return (0);
 }
 
 /*

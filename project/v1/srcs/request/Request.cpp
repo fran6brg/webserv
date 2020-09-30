@@ -15,6 +15,7 @@ void    Request::init(void)
     _method.clear();
     _uri.clear();
     _http_version.clear();
+	_body_file = "";
     // Request Headers, dans l'ordre du sujet
     _accept_charset.clear();
     _accept_language.clear();

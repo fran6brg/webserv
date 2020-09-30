@@ -70,7 +70,10 @@ class Request
 		std::string 										_uri; // 2
 		std::string 										_http_version; // 3
 	
-		std::string											_query;	
+		std::string											_query; //c'et quoi ?
+		
+		std::string											_body_file;
+		bool												_is_body_file_header;
 		/*
 		** Request Headers, dans l'ordre du sujet
 		*/ 

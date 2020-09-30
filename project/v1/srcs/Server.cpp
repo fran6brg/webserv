@@ -234,17 +234,21 @@ int Server::sendResponse(Client *c)
     int ret = 0;
     errno = 0;
 
-    if (c->_response._bytes_send == 0)
+    if (c->_response.send_status == c->_response.HANDLE_RESPONSE)
     {
         c->_response.handle_response(&(c->_request));
-        if (c->_wfd != -1 || c->_rfd != -1)
-            return (1);
         c->_response.format_to_send(&(c->_request));
-        c->_request.reset();
-        c->_concat_body.clear();
+		if (!c->_request._body_file.empty())
+		{
+			if ((c->_response.read_fd = open(c->_request._body_file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
+				return (-1);
+		}
+        //c->_request.reset();
+        //c->_concat_body.clear();
     	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
+		c->_response.send_status = c->_response.SENDING;
     }
-    
+
     if ((ret = send(c->_accept_fd,
                     c->_response._to_send.c_str() + c->_response._bytes_send,
                     c->_response._to_send.length() - c->_response._bytes_send,
@@ -257,28 +261,28 @@ int Server::sendResponse(Client *c)
     else if (ret >= 0)
     {
         c->_last_active_time = utils_tmp::get_date();
-
         c->_response._bytes_send += ret;
-
-		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> client "
-            + std::to_string(c->_accept_fd) + " | send = OK | ret = " + std::to_string(ret));
+		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> client " + std::to_string(c->_accept_fd) + " | send = OK | ret = " + std::to_string(ret));
 
         if (ret == 0 || c->_response._bytes_send >= c->_response._to_send.length())
         {
-            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send="
-                + std::to_string(c->_response._bytes_send)
-                + " >= _to_send.length()="
-                + std::to_string(c->_response._to_send.length())
-                + " -> disconnecting client");
-            c->_is_finished = true;
+            LOG_WRT(Logger::DEBUG, "sendResponse: c->_response._bytes_send=" + std::to_string(c->_response._bytes_send) + " >= _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> disconnecting client");
+
+			c->_response._bytes_send  = 0;
+			c->_response._to_send.clear();
+
+			if (c->_response.send_status == c->_response.COMPLETE)
+				c->_is_finished = true;
+			else if (!c->_request._body_file.empty())
+			{
+				if (c->_response.build_chunked(c->_request))
+					c->_response.send_status = c->_response.COMPLETE;
+			}
+			else
+				c->_is_finished = true;
         }
         else
-        {
-            LOG_WRT(Logger::DEBUG, "sendResponse(): _bytes_send="
-                + std::to_string(c->_response._bytes_send) + " < _to_send.length()="
-                + std::to_string(c->_response._to_send.length())
-                + " -> keep going send()");
-        }
+            LOG_WRT(Logger::DEBUG, "sendResponse(): _bytes_send=" + std::to_string(c->_response._bytes_send) + " < _to_send.length()=" + std::to_string(c->_response._to_send.length()) + " -> keep going send()");
     }
     return (1);
 }
