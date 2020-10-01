@@ -57,15 +57,21 @@ void Client::reset(void)
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
-	
-	// FD_CLR(_rfd, &g_conf._save_readfds);
-	// g_conf.remove_fd(_rfd); 
-	// FD_CLR(_wfd, &g_conf._save_writefds);
-	// g_conf.remove_fd(_wfd);
-
 	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;
+	if (_wfd != -1)
+	{
+		g_conf.remove_fd(_wfd); 
+		close(_wfd);
+		_wfd = -1;
+	}
+	if (_rfd != -1)
+	{
+		g_conf.remove_fd(_rfd); 
+		close(_rfd);
+		_rfd = -1;
+	}
 }
 
 void	Client::write_file()
