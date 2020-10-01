@@ -89,7 +89,7 @@ void		Response::ft_cgi(Request *req)
       	args[0] = strdup(req->_location->_php_root.c_str());
 	args[1] = strdup(req->_file.c_str());
     args[2] = NULL;
-	temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);//set tempfile + fd client
+	temp_fd = open("./www/temp_file", O_WRONLY | O_CREAT, 0666);
 	pipe(tubes);
 
 	if (req->_method == "GET")

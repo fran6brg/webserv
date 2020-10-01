@@ -115,9 +115,9 @@ void    Request::fill_request(std::string key, std::string value)
         _user_agent = value;
     else if (key == "Transfer-Encoding") // 17
         _transfer_encoding = value;
-    else if (key == "X-Secret-Header-For-Test") // ?
+    else if (key == "X-Secret-Header-For-Test") 
         _secret_header = value;
-    else if (key == "Keep-Alive") // ?
+    else if (key == "Keep-Alive") 
         _keep_alive = value;
     else if (key == "Connection")
         ;
@@ -210,7 +210,6 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 
 	if (_location)
 	{
-        LOG_WRT(Logger::DEBUG, "1) parse_filename(): " + _file);
 		i = (_location->_root).size() - 1;
 		if ((_location->_root)[i] == '/')
 			_file = _location->_root + _file;
@@ -233,7 +232,6 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 			 }
 		}
 	}
-    LOG_WRT(Logger::DEBUG, "2) parse_filename(): " + _file);
 	return (1);
 }
 
@@ -273,8 +271,6 @@ void    Request::parse_body_length()
 		return ;
 	}
 	size_t new_body_size = body.length() + _client->_concat_body.length();
-	LOG_WRT(Logger::DEBUG, " body.length()= "+std::to_string( body.length()) + " strlen(buff="+std::to_string(strlen(buff)));
-	LOG_WRT(Logger::DEBUG, "new_body_size= "+std::to_string(new_body_size) + " _content_length="+std::to_string(_content_length));
 	if (new_body_size >= _content_length)
 	{
 		cut = _content_length - body.length();

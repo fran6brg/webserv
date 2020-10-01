@@ -235,29 +235,3 @@ std::string utils_tmp::dec_to_hex(long int dec)
    	std::reverse(hexa.begin(), hexa.end());
 	return (hexa);
 }
-
-// fonction pas ouf pour trouver fin de header
-// mieux gérer les protection ...
-/*
-size_t	utils_tmp::find_body_position(std::string file)
-{
-    int fd;	
-	int ret;	
-	char buffer[BUFFER_SIZE + 1];
-	std::string buff;
-
-	if ((fd = open(file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)	
-		return (-1);	
-	while ((ret = read(fd, buffer, BUFFER_SIZE)) > 0)	
-	{	
-		buffer[ret] = '\0'; 	
-		buff += buffer;
-		if ((ret = buff.find("\r\n\r\n")) != std::string::npos)
-		{
-			close(fd);
-			return (ret + 4);
-		}
-	}	
-	close(fd);	
-	return (-1);		
-}*/
