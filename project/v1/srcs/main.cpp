@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 	Client *c;
 	std::vector<Client*>::iterator it_c;
 
-	LOG_START(Logger::DEBUG, "", false);
+	LOG_START(Logger::INFO, "", false);
 	signal(SIGINT, shutdown);
 	if (argc != 2 || !g_conf.parse(argv[1]))
         return (EXIT_ERROR);
