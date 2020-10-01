@@ -111,13 +111,8 @@ void	Client::read_file(std::string &buff)
 		LOG_WRT(Logger::DEBUG, "RET1 =  [" + std::to_string(ret) + "]");
 		buffer[ret] = '\0';
 		_response.build_chunked(_request, buffer, ret);
-		// _read_ok = 1;
-		// if (ret == 0)
-		// {
-			// FD_CLR(_rfd, &g_conf._save_readfds);
-			// g_conf.remove_fd(_rfd); 
-			_rfd = -1;
-		// }
+		_read_ok = 1;
+		_rfd = -1;
 	}
 	else
 	{
