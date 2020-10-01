@@ -245,8 +245,8 @@ int Server::sendResponse(Client *c)
 		{
 			if ((c->_response.read_fd = open(c->_request._body_file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
 				return (-1);
-            FD_SET(c->_response.read_fd, &g_conf._save_readfds);
-            g_conf.add_fd(c->_response.read_fd);
+            //FD_SET(c->_response.read_fd, &g_conf._save_readfds);
+            //g_conf.add_fd(c->_response.read_fd);
 		}
     	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
 		c->_response.send_status = c->_response.SENDING;
@@ -279,8 +279,8 @@ int Server::sendResponse(Client *c)
 			if (!c->_request._body_file.empty() && c->_response.read_fd != -1)
 			{
                 c->_rfd = c->_response.read_fd;
-                // FD_SET(c->_rfd, &g_conf._save_readfds);
-                // g_conf.add_fd(c->_rfd);
+                FD_SET(c->_rfd, &g_conf._save_readfds);
+                g_conf.add_fd(c->_rfd);
                 if (c->_read_ok == 1)
 					c->_response.send_status = c->_response.COMPLETE;
 			}

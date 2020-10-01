@@ -127,7 +127,20 @@ int main(int argc, char *argv[])
 							continue ;
 					}
 					if (!c->_is_finished)
-						s->handleClientRequest(c);
+					{
+						if (c->_wfd != -1 && c->_read_ok == 1)
+						{
+							if (FD_ISSET(c->_wfd, &g_conf._writefds))
+								c->write_file(); // si POST ou PUT et on doit écrire dans un fichier
+						}
+						if (c->_rfd != -1) // d'abord ici pour lire
+						{
+							if (FD_ISSET(c->_rfd, &g_conf._readfds))
+								c->read_file(c->_response._body); // pour tous les read
+						}
+						if (c->_read_ok == 1)	
+							s->handleClientRequest(c);
+					}
 					if (c->_is_finished)
 							c->reset();
 					if (utils_tmp::getSecondsDiff(c->_last_active_time) >= CLIENT_CONNECTION_TIMEOUT)

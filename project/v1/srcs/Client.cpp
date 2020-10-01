@@ -113,6 +113,8 @@ void	Client::read_file(std::string &buff)
 		_response.build_chunked(_request, buffer, ret);
 		_read_ok = 1;
 		_rfd = -1;
+        FD_CLR(_rfd, &g_conf._save_readfds);
+        g_conf.remove_fd(_rfd);
 	}
 	else
 	{
