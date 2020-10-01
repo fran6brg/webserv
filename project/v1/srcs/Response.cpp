@@ -308,12 +308,10 @@ int Response::unauthorized(Request *req)
         if (!req->_location->_auth.empty())
         {
             LOG_WRT(Logger::DEBUG, "inside unauthorized():");
-            LOG_WRT(Logger::DEBUG, "1) req->_location->_auth = " + req->_location->_auth);
 
             std::vector<std::string> tokens;
             tokens = utils_tmp::split(req->_authorization, ' ');
             std::string creds = tokens[1];
-            LOG_WRT(Logger::DEBUG, "2) base64_decode(creds) = " + base64_decode(creds));
             if (req->_location->_auth == base64_decode(creds))
             {
                 LOG_WRT(Logger::INFO, "Response::unauthorized() ? -> ok authorized\n");
@@ -405,10 +403,8 @@ int Response::request_entity_too_large(Request *req)
                 std::string path = std::string(_client->_server->_error + "/413.html");
                 req->_client->_rfd = open(path.c_str(), O_RDONLY);
                 LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() path =" + path + " | _rfd =" + std::to_string(req->_client->_rfd) + "\n");
-                LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() before set\n");
                 FD_SET(req->_client->_rfd, &g_conf._save_readfds);
                 g_conf.add_fd(req->_client->_rfd);
-                LOG_WRT(Logger::DEBUG, "Response::request_entity_too_large() after set\n");
                 return (1);
             }
         }
@@ -435,18 +431,14 @@ int Response::not_found(Request *req)
     LOG_WRT(Logger::DEBUG, "inside notfound()");
     if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
     {
-        LOG_WRT(Logger::DEBUG, "if");
         _status_code = NOT_FOUND_404;
         std::string path = std::string(_client->_server->_error + "/404.html");
         req->_client->_rfd = open(path.c_str(), O_RDONLY);
-        LOG_WRT(Logger::DEBUG, "if 2 | " + std::to_string(req->_client->_rfd));
         FD_SET(req->_client->_rfd, &g_conf._save_readfds);
         g_conf.add_fd(req->_client->_rfd);
-        LOG_WRT(Logger::DEBUG, "if 3");
     }
     else
     {
-        LOG_WRT(Logger::DEBUG, "else");
         FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
         g_conf.remove_fd(req->_client->_rfd);
         close(req->_client->_rfd);
@@ -465,8 +457,6 @@ int Response::build_chunked(Request &req, char *buffer, int ret)
         ret = tmp.length();
         req._is_body_file_header = false;
     }
-
-    // Taille equal body avec ou sans "\r\n" ?
     _to_send += utils_tmp::dec_to_hex(ret) + "\r\n";
     _to_send += tmp;
     _to_send += "\r\n";

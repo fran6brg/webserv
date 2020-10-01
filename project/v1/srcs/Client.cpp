@@ -85,7 +85,7 @@ void	Client::write_file()
 {
 	int	ret;
 
-	LOG_WRT(Logger::DEBUG, "IS SET WRITE");
+	LOG_WRT(Logger::DEBUG, "write_file()");
 	ret = write(_wfd, _request._text_body.c_str(), _request._text_body.length());
 	if (ret == -1)
 	{
@@ -121,16 +121,13 @@ void	Client::read_file(std::string &buff)
 	
 	if (ret >= 0 && !(_request._body_file.empty()))
 	{
-		LOG_WRT(Logger::DEBUG, "RET1 =  [" + std::to_string(ret) + "]");
 		buffer[ret] = '\0';
 		_response.build_chunked(_request, buffer, ret);
 		_read_ok = 1;
 		_rfd = -1;
-		LOG_WRT(Logger::DEBUG, "RET1 =  [" + std::to_string(ret) + "]");
 	}
 	else
 	{
-		LOG_WRT(Logger::DEBUG, "RET2 =  [" + std::to_string(ret) + "]");
 		buffer[ret] = '\0';
 		buff += std::string(buffer);
 	}

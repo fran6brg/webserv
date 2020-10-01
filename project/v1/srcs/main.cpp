@@ -27,22 +27,11 @@ int erase_client_from_vector(Server *s, std::vector<Client*> &v, std::vector<Cli
 	Client *c = *it_c;
 	delete c;
 	it_c = v.erase(it_c);
-	
 	LOG_WRT(Logger::INFO, s->_name + " has now " + std::to_string(v.size()) + " client(s) connected");
-
-	// print_clients_of_all_servers();
 	if (v.empty())
-	{
-		LOG_WRT(Logger::DEBUG, s->_name + " v.empty()");
 		return (1);
-	}
 	else
-	{
-		LOG_WRT(Logger::DEBUG, s->_name + " il reste encore des clients");
 		it_c = v.begin();
-	}
-	
-	LOG_WRT(Logger::DEBUG, s->_name + " go to next client");
 	return (0);
 }
 
@@ -87,7 +76,7 @@ int main(int argc, char *argv[])
 	Client *c;
 	std::vector<Client*>::iterator it_c;
 
-	LOG_START(Logger::DEBUG, "", false);
+	LOG_START(Logger::INFO, "", false);
 	signal(SIGINT, shutdown);
 	if (argc != 2 || !g_conf.parse(argv[1]))
         return (EXIT_ERROR);
@@ -113,7 +102,6 @@ int main(int argc, char *argv[])
 				if (FD_ISSET(s->_socket_fd, &g_conf._readfds))
 				{
 					LOG_WRT(Logger::INFO, std::string(GREEN_C) + "new client on server " + s->_name + std::string(RESET));
-					// Logger::ChangeFile();
 					s->acceptNewClient();
 					g_conf._nb_accepted_connections += 1;
 					LOG_WRT(Logger::INFO, std::string(YELLOW_C) + "_nb_accepted_connections = " + std::to_string(g_conf._nb_accepted_connections) + std::string(RESET));
@@ -134,12 +122,12 @@ int main(int argc, char *argv[])
 						if (c->_wfd != -1 && c->_read_ok == 1)
 						{
 							if (FD_ISSET(c->_wfd, &g_conf._writefds))
-								c->write_file(); // si POST ou PUT et on doit écrire dans un fichier
+								c->write_file(); 
 						}
-						if (c->_rfd != -1) // d'abord ici pour lire
+						if (c->_rfd != -1)
 						{
 							if (FD_ISSET(c->_rfd, &g_conf._readfds))
-								c->read_file(c->_response._body); // pour tous les read
+								c->read_file(c->_response._body); 
 						}
 						if (c->_read_ok == 1)	
 							s->handleClientRequest(c);
@@ -175,12 +163,12 @@ int main(int argc, char *argv[])
 						if (c->_wfd != -1 && c->_read_ok == 1)
 						{
 							if (FD_ISSET(c->_wfd, &g_conf._writefds))
-								c->write_file(); // si POST ou PUT et on doit écrire dans un fichier
+								c->write_file();
 						}
-						if (c->_rfd != -1) // d'abord ici pour lire
-						{
+						if (c->_rfd != -1)
+						{ 
 							if (FD_ISSET(c->_rfd, &g_conf._readfds))
-								c->read_file(c->_response._body); // pour tous les read
+								c->read_file(c->_response._body); 
 						}
 						if (c->_read_ok == 1)
 							s->handleClientRequest(c);

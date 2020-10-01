@@ -61,6 +61,9 @@ OBJREQ		= 	$(addprefix $(OBJREQ_PATH)/,$(OBJREQ_NAME))
 
 all: $(NAME)
 	@touch ./www/perso/delete/to_delete
+	@$(RM) ./www/tester/file_should_exist_after
+	@$(RM) ./www/tester/multiple_same
+	@$(RM) ./www/tester/temp_file
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL) $(OBJREQ)
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJ} ${OBJLIB} ${OBJGNL} $(OBJREQ)
 

@@ -9,7 +9,6 @@ void			Response::get(Request *req)
 	LOG_WRT(Logger::DEBUG, "inside GET");
 	if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
 	{
-		LOG_WRT(Logger::DEBUG, "1er passage dans get");
 		if (_body != "")
 		{
 			_status_code = OK_200;
@@ -20,7 +19,6 @@ void			Response::get(Request *req)
 		charset = set_charset(req);
 	}
 	ret = utils_tmp::file_exists(req->_file.c_str());
-	LOG_WRT(Logger::DEBUG, "req->_file=-" + req->_file + "- | ret = " + std::to_string(ret));
 	// CGI
 	if ((req->_method == "GET" 
 		&& ((req->_location->_cgi_root != ""
@@ -40,7 +38,6 @@ void			Response::get(Request *req)
 	// Pas de CGI
 	else if (ret)
 	{
-		LOG_WRT(Logger::DEBUG, "pas de CGI");
 		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
 		{
 			req->_client->_rfd = open(req->_file.c_str(), O_RDONLY);
@@ -59,7 +56,6 @@ void			Response::get(Request *req)
 	}
 	else
 	{
-		LOG_WRT(Logger::DEBUG, "not found");
 		not_found(req);
 	}
 	if (req->_client->_read_ok == 1)

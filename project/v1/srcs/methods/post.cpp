@@ -5,7 +5,6 @@ void		Response::post(Request *req)
 	int			fd;
 	int 		ret;
 
-	// CGI
 	if (((req->_location->_cgi_root != "" && is_extension(req->_file, req->_location->_cgi))
 		|| (req->_location->_php_root != "" && is_extension(req->_file, "php"))))
 	{
@@ -27,7 +26,6 @@ void		Response::post(Request *req)
 			req->_client->_wfd = -1;
 		}
 	}
-	// Pas CGI
 	else
 	{
 		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
