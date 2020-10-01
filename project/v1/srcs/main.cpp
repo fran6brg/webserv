@@ -71,6 +71,7 @@ void	shutdown(int sig)
 	}
 	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); ++it_s)
 		delete *it_s;
+	g_conf._servers.clear();
 
 	g_conf._servers.clear();
 	

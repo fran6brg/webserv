@@ -34,3 +34,18 @@ server {
 		method	DELETE
 	}
 }
+
+server {
+    listen 	8080
+    error	./www/perso/error
+	name	post_server
+	host	localhost
+	
+    location /	{
+    	root    	./www/methods/post
+		index		index.html
+		method	    POST GET TRACE CONNECT
+		cgi_path 	./www/CGI/ubuntu_cgi_tester
+		cgi			.cgi
+    }
+}
