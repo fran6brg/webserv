@@ -5,8 +5,11 @@ void			Response::get(Request *req)
 	int		language = 0;
 	int		charset = 0;
 	int		ret = 0;
-	if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
+
+	LOG_WRT(Logger::DEBUG, "inside GET");
+	if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
 	{
+		LOG_WRT(Logger::DEBUG, "1er passage dans get");
 		if (_body != "")
 		{
 			_status_code = OK_200;
@@ -25,7 +28,7 @@ void			Response::get(Request *req)
 		&& is_extension(req->_file, ".php"))))
 		&& ret)
 	{
-			LOG_WRT(Logger::DEBUG, "get: cgi\n");
+			LOG_WRT(Logger::DEBUG, "CGI");
 			ft_cgi(req);
 			req->_body_file = "./www/temp_file";
 			req->_is_body_file_header = true;
@@ -36,6 +39,7 @@ void			Response::get(Request *req)
 	// Pas de CGI
 	else if (ret)
 	{
+		LOG_WRT(Logger::DEBUG, "pas de CGI");
 		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	
 		{
 			req->_client->_rfd = open(req->_file.c_str(), O_RDONLY);
@@ -53,7 +57,10 @@ void			Response::get(Request *req)
 		}
 	}
 	else
+	{
+		LOG_WRT(Logger::DEBUG, "not found");
 		not_found(req);
+	}
 	if (req->_client->_read_ok == 1)
 	{
 		if (charset)

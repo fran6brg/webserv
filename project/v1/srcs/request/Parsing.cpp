@@ -210,6 +210,7 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 
 	if (_location)
 	{
+        LOG_WRT(Logger::DEBUG, "1) parse_filename(): " + _file);
 		i = (_location->_root).size() - 1;
 		if ((_location->_root)[i] == '/')
 			_file = _location->_root + _file;
@@ -232,6 +233,7 @@ int	    Request::parse_filename(std::vector<Location*> locations)
 			 }
 		}
 	}
+    LOG_WRT(Logger::DEBUG, "2) parse_filename(): " + _file);
 	return (1);
 }
 
