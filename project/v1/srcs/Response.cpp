@@ -154,6 +154,8 @@ void Response::handle_response(Request *req)
         return;
     else if (request_entity_too_large(req)) // 413
         return;
+    else if (_status_code == NOT_FOUND_404) // 404
+        not_found(req);
     else if (req->_method == "GET" || req->_method == "HEAD")
         get(req);
     else if (req->_method == "POST")
@@ -204,6 +206,7 @@ int Response::bad_request(Request *req)
 
 int Response::method_not_allowed(Request *req)
 {
+    LOG_WRT(Logger::DEBUG, "method_not_allowed()");
     if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
     {
         for (std::size_t i = 0; i < (req->_location->_method).size(); ++i)
@@ -429,17 +432,21 @@ int Response::request_entity_too_large(Request *req)
 
 int Response::not_found(Request *req)
 {
-    (void)req;
+    LOG_WRT(Logger::DEBUG, "inside notfound()");
     if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
     {
+        LOG_WRT(Logger::DEBUG, "if");
         _status_code = NOT_FOUND_404;
         std::string path = std::string(_client->_server->_error + "/404.html");
         req->_client->_rfd = open(path.c_str(), O_RDONLY);
+        LOG_WRT(Logger::DEBUG, "if 2 | " + std::to_string(req->_client->_rfd));
         FD_SET(req->_client->_rfd, &g_conf._save_readfds);
         g_conf.add_fd(req->_client->_rfd);
+        LOG_WRT(Logger::DEBUG, "if 3");
     }
     else
     {
+        LOG_WRT(Logger::DEBUG, "else");
         FD_CLR(req->_client->_rfd, &g_conf._save_readfds);
         g_conf.remove_fd(req->_client->_rfd);
         close(req->_client->_rfd);
@@ -454,11 +461,9 @@ int Response::build_chunked(Request &req, char *buffer, int ret)
     tmp = buffer;
     if (req._is_body_file_header)
     {
-        LOG_WRT(Logger::DEBUG, "AVANT ret=" + std::to_string(ret));
         utils_tmp::extract_body(tmp);
         ret = tmp.length();
         req._is_body_file_header = false;
-        LOG_WRT(Logger::DEBUG, "APREÈS ret=" + std::to_string(ret));
     }
 
     // Taille equal body avec ou sans "\r\n" ?

@@ -23,7 +23,7 @@ while (($i < 10000)); do
 	pid=$!
 	sleep 0.05
     # https://www.interserver.net/tips/kb/http-load-testing-siege/
-	siege --quiet -t20s http://localhost:8080 &>/dev/null &
+	siege --quiet -bt2s http://localhost:8080/getindex.html &>/dev/null &
 	pid_siege=$!
 	sleep 0.5
 	# wait $pid # 1. pour faire des requêtes pendant x secondes

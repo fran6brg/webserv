@@ -90,7 +90,7 @@ fclean: clean
 	$(RM) www/tester/file_should_exist_after
 	$(RM) www/tester/multiple_same
 	$(RM) www/tester/temp_file
-
+	
 launch: all
 	./webserv conf/tester.conf
 
@@ -103,11 +103,11 @@ ubuntu_launch: all
 ubuntu_tester: 
 	../../intra/ubuntu_tester http://localhost:8080
 
-valgrind_light: all 
-	valgrind ./webserv conf/ubuntu_tester.conf
-
 valgrind: all 
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./webserv conf/ubuntu_tester.conf
+
+valgrind_light: all 
+	valgrind ./webserv conf/ubuntu_tester.conf
 
 re:	fclean all
 

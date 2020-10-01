@@ -38,7 +38,7 @@ if len(tests_to_run) == 0 or i in tests_to_run:
 	printResponse(r, i)
 
 # ---
-print (bcolors.OKBLUE + "\n" + str(i) + ". Test head fr utf8\n" + bcolors.ENDC)
+print (bcolors.OKBLUE + "\n" + str(i) + ". Test yolo (404)\n" + bcolors.ENDC)
 i += 1
 headers = {'Accept-Language': 'fr', 'Accept-Charset': 'utf8'}
 if len(tests_to_run) == 0 or i in tests_to_run:

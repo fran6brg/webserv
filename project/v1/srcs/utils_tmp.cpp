@@ -46,7 +46,17 @@ std::vector<std::string> utils_tmp::split_string(std::string &str, std::string s
 bool utils_tmp::file_exists(const char *filename)
 {
 	struct stat	buffer;
-	return (stat (filename, &buffer) == 0);
+    int fd = 0;
+
+	if (stat (filename, &buffer) == 0)
+        return (true);
+    else if ((fd = open(filename, O_RDONLY)) >= 0)
+    {
+        close(fd);
+        return (true);
+    }
+    else
+        return (false);
 }
 
 int utils_tmp::get_buffer(std::string file, std::string &buff)

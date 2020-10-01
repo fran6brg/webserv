@@ -20,6 +20,7 @@ void			Response::get(Request *req)
 		charset = set_charset(req);
 	}
 	ret = utils_tmp::file_exists(req->_file.c_str());
+	LOG_WRT(Logger::DEBUG, "req->_file=-" + req->_file + "- | ret = " + std::to_string(ret));
 	// CGI
 	if ((req->_method == "GET" 
 		&& ((req->_location->_cgi_root != ""

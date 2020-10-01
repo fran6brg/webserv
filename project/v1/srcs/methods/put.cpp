@@ -2,7 +2,7 @@
 
 void			Response::put(Request *req)
 {
-	LOG_WRT(Logger::DEBUG, "inside put\n");
+	LOG_WRT(Logger::DEBUG, "inside put");
 	int		ret = 0;
 
 	if (req->_client->_wfd == -1 && req->_client->_rfd == -1)
@@ -15,7 +15,13 @@ void			Response::put(Request *req)
 		}
 		else
 		{
-			req->_client->_wfd = open(req->_file.c_str(), O_CREAT|O_APPEND|O_WRONLY|O_NONBLOCK, 0666);
+			req->_client->_wfd = open(req->_file.c_str(), O_CREAT|O_APPEND|O_WRONLY, 0666);
+			LOG_WRT(Logger::DEBUG, "put: req->_client->_wfd=" + std::to_string(req->_client->_wfd));
+			if (req->_client->_wfd == -1)
+			{
+				not_found(req);
+				return ;
+			}
 			_status_code = CREATED_201;
 			_body = "Ressource created";
 			LOG_WRT(Logger::DEBUG, "put: file created\n");
@@ -38,6 +44,7 @@ void			Response::put(Request *req)
 	}
 	else
 	{
+		LOG_WRT(Logger::DEBUG, "end of put\n");
 		FD_CLR(req->_client->_wfd, &g_conf._save_writefds);
 		g_conf.remove_fd(req->_client->_wfd);
 		close(req->_client->_wfd);
