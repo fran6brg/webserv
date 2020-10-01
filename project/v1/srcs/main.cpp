@@ -71,6 +71,7 @@ void	shutdown(int sig)
 	}
 	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); ++it_s)
 		delete *it_s;
+	g_conf._servers.clear();
 
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " server size " + std::to_string(g_conf._servers.size()));
 	print_clients_of_all_servers();
