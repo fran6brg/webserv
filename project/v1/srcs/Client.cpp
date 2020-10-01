@@ -31,14 +31,18 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 Client::~Client()
 {
 	LOG_WRT(Logger::INFO, std::string(RED_C) + "Destructor of client " + std::to_string(_accept_fd) + std::string(RESET));
-	FD_CLR(_accept_fd, &g_conf._save_readfds);
-	FD_CLR(_accept_fd, &g_conf._readfds);
-	FD_CLR(_accept_fd, &g_conf._save_writefds);
-	FD_CLR(_accept_fd, &g_conf._writefds);
-	g_conf.remove_fd(_accept_fd); 
-	free(_buffermalloc);
-	close(_accept_fd);
-	_accept_fd = -1;
+	if (_buffermalloc)
+		free(_buffermalloc);
+	if (_accept_fd != -1)
+	{
+		FD_CLR(_accept_fd, &g_conf._save_readfds);
+		FD_CLR(_accept_fd, &g_conf._readfds);
+		FD_CLR(_accept_fd, &g_conf._save_writefds);
+		FD_CLR(_accept_fd, &g_conf._writefds);
+		g_conf.remove_fd(_accept_fd); 
+		close(_accept_fd);
+		_accept_fd = -1;
+	}
 }
 
 /*
@@ -57,15 +61,21 @@ void Client::reset(void)
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
-	
-	// FD_CLR(_rfd, &g_conf._save_readfds);
-	// g_conf.remove_fd(_rfd); 
-	// FD_CLR(_wfd, &g_conf._save_writefds);
-	// g_conf.remove_fd(_wfd);
-
 	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;
+	if (_wfd != -1)
+	{
+		g_conf.remove_fd(_wfd); 
+		close(_wfd);
+		_wfd = -1;
+	}
+	if (_rfd != -1)
+	{
+		g_conf.remove_fd(_rfd); 
+		close(_rfd);
+		_rfd = -1;
+	}
 }
 
 void	Client::write_file()
