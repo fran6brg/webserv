@@ -17,6 +17,7 @@ void			Response::get(Request *req)
 		charset = set_charset(req);
 	}
 	ret = utils_tmp::file_exists(req->_file.c_str());
+	// CGI
 	if ((req->_method == "GET" 
 		&& ((req->_location->_cgi_root != ""
 		&& is_extension(req->_file, ".cgi")) 
@@ -32,6 +33,7 @@ void			Response::get(Request *req)
 			_content_type[0] = "text/html";
 			_last_modified = get_last_modif(req->_file);
 	}
+	// Pas de CGI
 	else if (ret)
 	{
 		if (req->_client->_wfd == -1 && req->_client->_rfd == -1)	

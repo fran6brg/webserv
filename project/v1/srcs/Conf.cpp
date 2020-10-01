@@ -63,11 +63,13 @@ int Conf::get_nb_open_fds(void) const
 
 void Conf::add_fd(int fd)
 {
+    LOG_WRT(Logger::DEBUG, "add_fd() " + std::to_string(fd));
     _active_fds.push_back(fd);
 }
 
 void Conf::remove_fd(int fd)
 {
+    LOG_WRT(Logger::DEBUG, "remove_fd() " + std::to_string(fd));
     _active_fds.remove(fd);
 }
 

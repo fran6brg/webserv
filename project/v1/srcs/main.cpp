@@ -62,69 +62,21 @@ void	shutdown(int sig)
 	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); ++it_s)
 	{
 		s = *it_s;
-		//s->_clients.clear();
 		for (it_c = s->_clients.begin(); it_c!= s->_clients.end(); ++it_c)
 			delete *it_c;
-		//s->_clients_503.clear();
 		for (it_c = s->_clients_503.begin(); it_c!= s->_clients_503.end(); ++it_c)
-			delete *it_c;//delete free buffer...
-		//s->_locations.clear();
+			delete *it_c;
 		for (it_l = s->_locations.begin(); it_l!= s->_locations.end(); ++it_l)
 			delete *it_l;
-		
 	}
-	//g_conf._servers.clear();
 	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); ++it_s)
 		delete *it_s;
-	
+
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " server size " + std::to_string(g_conf._servers.size()));
 	print_clients_of_all_servers();
 	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
 	exit(EXIT_SUCCESS);
 }
-/*void	shutdown(int sig)
-{
-	Server *s;
-	std::vector<Server*>::iterator it_s;
-	Client *c;
-	std::vector<Client*>::iterator it_c;
-	Location *l;
-	std::vector<Location*>::iterator it_l;
-	
-	g_conf._on = false;
-	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " deleting clients ...");
-
-
-	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); it_s++)
-	{
-		s = *it_s;
-		for (it_c = s->_clients.begin(); it_c != s->_clients.end(); it_c++)
-		{
-			c = *it_c;
-			free(c->_buffermalloc);
-			//delete c;
-		}
-		for (it_c = s->_clients_503.begin(); it_c != s->_clients_503.end(); it_c++)
-		{
-			c = *it_c;
-			free(c->_buffermalloc);
-			//delete c;
-		}
-	}
-	for (it_s = g_conf._servers.begin(); it_s != g_conf._servers.end(); it_s++)
-	{
-		s = *it_s;
-		s->_clients.clear();
-		s->_clients_503.clear();
-		s->_locations.clear();
-	}
-
-	g_conf._servers.clear();
-	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " server size " + std::to_string(g_conf._servers.size()));
-	print_clients_of_all_servers();
-	LOG_WRT(Logger::INFO, "\33[2K\r" + g_conf._webserv + " status off");
-	exit(EXIT_SUCCESS);
-}*/
 
 int main(int argc, char *argv[])
 {
@@ -204,15 +156,15 @@ int main(int argc, char *argv[])
 					}
 					if (!c->_is_finished)
 					{
-						if (c->_wfd != -1 && c->_read_ok == 1) // tant qu'on a pas ouvert le file && -
+						if (c->_wfd != -1 && c->_read_ok == 1)
 						{
-							// if (FD_ISSET(c->_wfd, &g_conf._writefds))
-								c->write_file();
+							if (FD_ISSET(c->_wfd, &g_conf._writefds))
+								c->write_file(); // si POST ou PUT et on doit écrire dans un fichier
 						}
-						if (c->_rfd != -1)
+						if (c->_rfd != -1) // d'abord ici pour lire
 						{
-							// if (FD_ISSET(c->_rfd, &g_conf._readfds))
-								c->read_file(c->_response._body);
+							if (FD_ISSET(c->_rfd, &g_conf._readfds))
+								c->read_file(c->_response._body); // pour tous les read
 						}
 						if (c->_read_ok == 1)
 							s->handleClientRequest(c);

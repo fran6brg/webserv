@@ -47,6 +47,8 @@ Client::~Client()
 
 void Client::reset(void)
 {
+	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
+	
 	_is_finished = false;
     _request.reset();
     _response.reset();
@@ -55,10 +57,15 @@ void Client::reset(void)
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
+	
+	// FD_CLR(_rfd, &g_conf._save_readfds);
+	// g_conf.remove_fd(_rfd); 
+	// FD_CLR(_wfd, &g_conf._save_writefds);
+	// g_conf.remove_fd(_wfd);
+
 	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;
-	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
 
 void	Client::write_file()
@@ -84,6 +91,7 @@ void	Client::read_file(std::string &buff)
 
 	LOG_WRT(Logger::DEBUG, "rfd = " + std::to_string(_rfd));
 	LOG_WRT(Logger::DEBUG, "wfd = " + std::to_string(_wfd));
+
 	waitpid((pid_t)_pid, (int *)&status, 0);
 	
 	ret = read(_rfd, buffer, BUFFER_SIZE);
@@ -103,13 +111,13 @@ void	Client::read_file(std::string &buff)
 		LOG_WRT(Logger::DEBUG, "RET1 =  [" + std::to_string(ret) + "]");
 		buffer[ret] = '\0';
 		_response.build_chunked(_request, buffer, ret);
-		_read_ok = 1;
-		if (ret == 0)
-		{
+		// _read_ok = 1;
+		// if (ret == 0)
+		// {
 			// FD_CLR(_rfd, &g_conf._save_readfds);
 			// g_conf.remove_fd(_rfd); 
 			_rfd = -1;
-		}
+		// }
 	}
 	else
 	{
