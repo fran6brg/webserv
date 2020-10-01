@@ -32,7 +32,10 @@ Client::~Client()
 {
 	LOG_WRT(Logger::INFO, std::string(RED_C) + "Destructor of client " + std::to_string(_accept_fd) + std::string(RESET));
 	if (_buffermalloc)
-		free(_buffermalloc);
+	{
+		try { free(_buffermalloc); }
+		catch (...) { }
+	}
 	if (_accept_fd != -1)
 	{
 		FD_CLR(_accept_fd, &g_conf._save_readfds);
