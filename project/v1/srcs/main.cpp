@@ -25,12 +25,17 @@ void print_clients_of_all_servers(void)
 void print_all_fd()
 {
 	std::list<int>::iterator it_fd = g_conf._active_fds.begin();
+	std::string fds;
 
-	LOG_WRT(Logger::DEBUG, "lIST ACTIVE FD (" + std::to_string(g_conf._active_fds.size()));
+	LOG_WRT(Logger::DEBUG, "LIST _active_fds (size=" + std::to_string(g_conf._active_fds.size()) + ")");
 	//g_conf._active_fds.sort();
 	for (; it_fd != g_conf._active_fds.end(); ++it_fd)
-		std::cout << *it_fd << " | ";
-	LOG_WRT(Logger::DEBUG, "");
+	{
+		fds += std::to_string(*it_fd) + " | ";
+	}
+	fds += "\n";
+	LOG_WRT(Logger::DEBUG, fds);
+	LOG_WRT(Logger::DEBUG, "-------------------------------");
 }
 
 int erase_client_from_vector(Server *s, std::vector<Client*> &v, std::vector<Client*>::iterator &it_c)
@@ -97,6 +102,7 @@ int main(int argc, char *argv[])
 			break;
 		else
 		{
+			print_all_fd();
 			std::vector<Server*>::iterator it_s = g_conf._servers.begin();
 			for (; it_s != g_conf._servers.end(); it_s++)
 			{

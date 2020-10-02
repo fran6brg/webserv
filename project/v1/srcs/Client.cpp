@@ -25,6 +25,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	_wfd = -1;
 	_rfd = -1;
 	_read_ok = 1;
+	_concat_body.clear();
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "client constructor " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
 
@@ -79,6 +80,7 @@ void Client::reset(void)
 		close(_rfd);
 		_rfd = -1;
 	}
+	_read_ok = 1;
 }
 
 void	Client::write_file()

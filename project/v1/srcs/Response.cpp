@@ -40,6 +40,7 @@ void Response::init(void)
     // Other
     _bytes_send = 0;
     send_status = HANDLE_RESPONSE;
+    read_fd = -1;
 }
 
 int Response::concat_to_send(void)
