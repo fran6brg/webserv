@@ -61,6 +61,20 @@ int Conf::get_nb_open_fds(void) const
     return (_active_fds.size()); // https://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector
 }
 
+
+void find_fd(int fd)
+{
+    std::list<int>::iterator it_fd = g_conf._active_fds.begin();
+
+    for (; it_fd != g_conf._active_fds.end(); ++it_fd)
+    {
+        if (*it_fd == fd)
+            return;
+    }
+    LOG_WRT(Logger::DEBUG, "error no fd " + std::to_string(fd) + "in active_fds");
+    exit(EXIT_FAILURE);
+}
+
 void Conf::add_fd(int fd)
 {
     LOG_WRT(Logger::DEBUG, "add_fd() " + std::to_string(fd));
@@ -70,6 +84,7 @@ void Conf::add_fd(int fd)
 void Conf::remove_fd(int fd)
 {
     LOG_WRT(Logger::DEBUG, "remove_fd() " + std::to_string(fd));
+    find_fd(fd);
     _active_fds.remove(fd);
 }
 

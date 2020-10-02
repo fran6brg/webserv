@@ -22,7 +22,7 @@ void print_clients_of_all_servers(void)
     LOG_WRT(Logger::DEBUG, "-------------------------------");
 }
 
-void print_all_fd()
+void print_all_fd(void)
 {
 	std::list<int>::iterator it_fd = g_conf._active_fds.begin();
 	std::string fds;
@@ -35,6 +35,82 @@ void print_all_fd()
 	}
 	fds += "\n";
 	LOG_WRT(Logger::DEBUG, fds);
+	LOG_WRT(Logger::DEBUG, "-------------------------------");
+}
+
+void print_save_fds(void)
+{
+	std::list<int>::iterator it_fd;
+	int nb;
+
+	it_fd = g_conf._active_fds.begin();
+	std::string saved_read_fds;
+	nb = 0;
+
+	for (; it_fd != g_conf._active_fds.end(); ++it_fd)
+	{
+		if (FD_ISSET(*it_fd, &g_conf._save_readfds))
+		{
+			saved_read_fds += std::to_string(*it_fd) + ", ";
+			nb++;
+		}
+	}
+	saved_read_fds = "saved_read_fds (nb=" + std::to_string(nb) + "): " + saved_read_fds;
+	LOG_WRT(Logger::DEBUG, std::string(CYAN_C) + saved_read_fds + std::string(RESET));
+	
+	it_fd = g_conf._active_fds.begin();
+	std::string saved_write_fds;
+	nb = 0;
+
+	for (; it_fd != g_conf._active_fds.end(); ++it_fd)
+	{
+		if (FD_ISSET(*it_fd, &g_conf._save_writefds))
+		{
+			saved_write_fds += std::to_string(*it_fd) + ", ";
+			nb++;
+		}
+	}
+	saved_write_fds = "saved_write_fds (nb=" + std::to_string(nb) + "): " + saved_write_fds;
+	LOG_WRT(Logger::DEBUG, std::string(CYAN_C) + saved_write_fds + std::string(RESET));
+
+	LOG_WRT(Logger::DEBUG, "-------------------------------");
+}
+
+void print_set_fds(void)
+{
+	std::list<int>::iterator it_fd;
+	int nb;
+
+	it_fd = g_conf._active_fds.begin();
+	std::string set_read_fds;
+	nb = 0;
+
+	for (; it_fd != g_conf._active_fds.end(); ++it_fd)
+	{
+		if (FD_ISSET(*it_fd, &g_conf._readfds))
+		{
+			set_read_fds += std::to_string(*it_fd) + ", ";
+			nb++;
+		}
+	}
+	set_read_fds = "set_read_fds (nb=" + std::to_string(nb) + "): " + set_read_fds;
+	LOG_WRT(Logger::DEBUG, std::string(MAGENTA_C) + set_read_fds + std::string(RESET));
+	
+	it_fd = g_conf._active_fds.begin();
+	std::string set_write_fds;
+	nb = 0;
+
+	for (; it_fd != g_conf._active_fds.end(); ++it_fd)
+	{
+		if (FD_ISSET(*it_fd, &g_conf._writefds))
+		{
+			set_write_fds += std::to_string(*it_fd) + ", ";
+			nb++;
+		}
+	}
+	set_write_fds = "set_write_fds (nb=" + std::to_string(nb) + "): " + set_write_fds;
+	LOG_WRT(Logger::DEBUG,  std::string(MAGENTA_C) + set_write_fds + std::string(RESET));
+
 	LOG_WRT(Logger::DEBUG, "-------------------------------");
 }
 
@@ -91,6 +167,7 @@ int main(int argc, char *argv[])
 	Server *s;
 	Client *c;
 	std::vector<Client*>::iterator it_c;
+	int select_ret = 0;
 
 	LOG_START(Logger::DEBUG, "", false);
 	signal(SIGINT, shutdown);
@@ -98,8 +175,21 @@ int main(int argc, char *argv[])
         return (EXIT_ERROR);
     while (g_conf._on)
     {
-		if (g_conf.run_select() == -1)
-			break;
+		print_save_fds();
+		select_ret = g_conf.run_select();
+		print_set_fds();
+		if (select_ret == -1)
+		{
+			LOG_WRT(Logger::INFO, std::string(RED_C) + "break on select() == -1" + std::string(RESET));
+			exit(EXIT_FAILURE);
+			// break ;
+		}
+		else if (select_ret == 0)
+		{
+			LOG_WRT(Logger::INFO, std::string(RED_C) + "break on select() == 0" + std::string(RESET));
+			exit(EXIT_FAILURE);
+			// break ;
+		}		
 		else
 		{
 			print_all_fd();
@@ -126,6 +216,8 @@ int main(int argc, char *argv[])
 		
 				for (it_c = s->_clients_503.begin(); it_c != s->_clients_503.end(); it_c++)
 				{
+					LOG_WRT(Logger::DEBUG, "iterating over client 503:" + std::to_string(c->_accept_fd));
+					exit(EXIT_FAILURE);
 					c = *it_c;
 					if (!c->_is_connected)
 					{

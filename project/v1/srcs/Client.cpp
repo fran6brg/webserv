@@ -26,16 +26,20 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	_rfd = -1;
 	_read_ok = 1;
 	_concat_body.clear();
+	_is_finished = false;
 	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "client constructor " + _ip + ":" + std::to_string(_port) + std::string(RESET));
 }
 
 Client::~Client()
 {
-	LOG_WRT(Logger::INFO, std::string(RED_C) + "Destructor of client " + std::to_string(_accept_fd) + std::string(RESET));
+	LOG_WRT(Logger::INFO, std::string(RED_C) + "Destructor of client " + std::to_string(_accept_fd)
+		+ " / _rfd = " + std::to_string(_rfd)
+		+ " / _wfd = " + std::to_string(_wfd)
+		+ std::string(RESET));
 	if (_buffermalloc)
 	{
 		try { free(_buffermalloc); }
-		catch (...) { }
+		catch (...) { LOG_WRT(Logger::DEBUG, "double free destructor client"); }
 	}
 	if (_accept_fd != -1)
 	{
@@ -55,8 +59,11 @@ Client::~Client()
 
 void Client::reset(void)
 {
-	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "reset() client " + _ip + ":" + std::to_string(_port) + std::string(RESET));
-	
+	LOG_WRT(Logger::INFO, std::string(BLUE_C) + "Destructor of client " + std::to_string(_accept_fd)
+		+ " / _rfd = " + std::to_string(_rfd)
+		+ " / _wfd = " + std::to_string(_wfd)
+		+ std::string(RESET));
+
 	_is_finished = false;
     _request.reset();
     _response.reset();
@@ -104,18 +111,26 @@ void	Client::read_file(std::string &buff)
 	int	status;
 	char buffer[BUFFER_SIZE + 1];
 
+	LOG_WRT(Logger::DEBUG, "inside read_file()");
+
 	LOG_WRT(Logger::DEBUG, "rfd = " + std::to_string(_rfd));
 	LOG_WRT(Logger::DEBUG, "wfd = " + std::to_string(_wfd));
 
 	waitpid((pid_t)_pid, (int *)&status, 0);
 	
+	LOG_WRT(Logger::DEBUG, "ok waitpid");
+
 	ret = read(_rfd, buffer, BUFFER_SIZE);
 	if (ret == -1)
 	{
+		LOG_WRT(Logger::DEBUG, "KO read() ret=" + std::to_string(ret));
+		// exit(EXIT_FAILURE);
 		_response._status_code = INTERNAL_ERROR_500;
 		return ;	
 	}
 	
+	LOG_WRT(Logger::DEBUG, "ok read() ret=" + std::to_string(ret));
+
 	if (ret == 0)
 		_read_ok = 1;
 	else if (ret > 0)
