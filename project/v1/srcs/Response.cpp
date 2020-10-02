@@ -465,10 +465,10 @@ int Response::build_chunked(Request &req, char *buffer, int ret)
     {
         FD_CLR(_client->_rfd, &g_conf._save_readfds);
         g_conf.remove_fd(_client->_rfd);
-        close(read_fd);
-        read_fd = -1;
+        close( _client->_rfd);
+        //read_fd = -1;
         _client->_rfd = -1;
-        _client->_is_finished = true;
+        //_client->_is_finished = true;
         remove(req._body_file.c_str());
     }
     return (0);
