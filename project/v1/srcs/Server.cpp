@@ -245,14 +245,11 @@ int Server::sendResponse(Client *c)
 		{
 			if ((c->_rfd = open(c->_request._body_file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
 				return (-1);
-			c->_read_ok = 0;
 			FD_SET(c->_rfd, &g_conf._save_readfds);
         	g_conf.add_fd(c->_rfd);
 		}
     	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
 		c->_response.send_status = c->_response.SENDING;
-
-
     }
 std::cout <<"FD= "<< c->_rfd << std::endl;
     if ((ret = send(c->_accept_fd,
@@ -285,7 +282,7 @@ std::cout <<"FD= "<< c->_rfd << std::endl;
                 //FD_SET(c->_rfd, &g_conf._save_readfds);
                 //g_conf.add_fd(c->_rfd);
 				std::cout << "c->_read_ok= "<< c->_read_ok << std::endl;
-                if (c->_read_ok == 1)
+                if (c->_rfd == -1)
 					c->_is_finished = true;
 			}
 			else

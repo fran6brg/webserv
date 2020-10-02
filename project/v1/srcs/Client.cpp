@@ -124,7 +124,7 @@ std::cout << "ret=" <<ret << std::endl;
 	{
 		buffer[ret] = '\0';
 		_response.build_chunked(_request, buffer, ret);
-		//_read_ok = 1;
+		_read_ok = 1;
 		//_rfd = -1;
 	}
 	else
