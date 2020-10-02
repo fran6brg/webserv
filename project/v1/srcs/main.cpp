@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	Client *c;
 	std::vector<Client*>::iterator it_c;
 
-	LOG_START(Logger::DEBUG, "", false);
+	LOG_START(Logger::INFO, "", false);
 	signal(SIGINT, shutdown);
 	if (argc != 2 || !g_conf.parse(argv[1]))
         return (EXIT_ERROR);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 			for (; it_s != g_conf._servers.end(); it_s++)
 			{
 				s = *it_s;
-				LOG_WRT(Logger::CLEAR, "iterating over server:" + s->_name);
+				LOG_WRT(Logger::DEBUG, "iterating over server:" + s->_name);
 				// pour chaque serveur:
 				// 1 - on accepte, s'il y en a une, la demande de connexion du client auprès du serveur it_s (FD_ISSET())
 				// 2 - on itère sur les clients_503 du serveur pour les servir

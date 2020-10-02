@@ -241,16 +241,15 @@ int Server::sendResponse(Client *c)
         if (c->_wfd != -1 || c->_rfd != -1)
             return (1);
         c->_response.format_to_send(&(c->_request));
-		FD_CLR(c->_accept_fd, &g_conf._save_readfds);
-		c->_response.send_status = c->_response.SENDING;
 		if (!c->_request._body_file.empty())
 		{
-			if ((c->_rfd = open(c->_request._body_file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
+			if ((c->_response.read_fd = open(c->_request._body_file.c_str(), O_RDONLY|O_NONBLOCK)) < 0)
 				return (-1);
-			FD_SET(c->_rfd, &g_conf._save_readfds);
-        	g_conf.add_fd(c->_rfd);
 		}
+    	FD_CLR(c->_accept_fd, &g_conf._save_readfds);
+		c->_response.send_status = c->_response.SENDING;
     }
+
     if ((ret = send(c->_accept_fd,
                     c->_response._to_send.c_str() + c->_response._bytes_send,
                     c->_response._to_send.length() - c->_response._bytes_send,
@@ -274,11 +273,14 @@ int Server::sendResponse(Client *c)
 
 			c->_response._bytes_send = 0;
 			c->_response._to_send.clear();
-			if (!c->_request._body_file.empty())
+
+			if (!c->_request._body_file.empty() && c->_response.read_fd != -1)
 			{
-				LOG_WRT(Logger::DEBUG, "send body file fd = " + std::to_string(c->_rfd));
-                if (c->_rfd == -1)
-					c->_is_finished = true;
+                c->_rfd = c->_response.read_fd;
+                FD_SET(c->_rfd, &g_conf._save_readfds);
+                g_conf.add_fd(c->_rfd);
+                if (c->_read_ok == 1)
+					c->_response.send_status = c->_response.COMPLETE;
 			}
 			else
 				c->_is_finished = true;
