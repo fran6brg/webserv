@@ -60,7 +60,7 @@ int utils_tmp::get_buffer(std::string file, std::string &buff)
 	while ((ret = read(fd, buffer, BUFFER_SIZE)) > 0)	
 	{	
 		buffer[ret] = '\0'; 	
-		buff += buffer;	
+		buff.append(buffer);	
 	}	
 	close(fd);	
 	return (ret);	

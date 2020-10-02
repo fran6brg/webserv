@@ -43,68 +43,156 @@ void Response::init(void)
     read_fd = -1;
 }
 
+// int Response::concat_to_send(void)
+// {
+//     size_t i;
+
+//     // 1. Status Line
+//     _to_send += _http_version + " ";
+//     _to_send += std::to_string(_status_code) + " ";
+//     _to_send += _reason_phrase + "\r\n";
+
+//     // 2. Request Headers, dans l'ordre du sujet
+//     if (_content_length >= 0)
+//     {
+//         _to_send += "Content-Length: " + std::to_string(_content_length) + "\r\n";
+//     }
+
+//     if (!_allow.empty())
+//     {
+//         _to_send += "allow: " + _allow + "\r\n";
+//     }
+//     if (!_last_modified.empty())
+//     {
+//         _to_send += "Last-Modified: " + _last_modified + "\r\n";
+//     }
+//     if (_retry_after >= 0)
+//     {
+//         _to_send += "Retry-After: " + std::to_string(_retry_after) + "\r\n";
+//     }
+//     if (!_location.empty() && _status_code == 201)
+//     {
+//         _to_send += "Location: " + _location + "\r\n";
+//     }
+//     if (!_date.empty())
+//     {
+//         _to_send += "Date: " + _date + "\r\n";
+//     }
+//     if (!_server.empty())
+//     {
+//         _to_send += "Server: " + _server + "\r\n";
+//     }
+//     if (!_transfer_encoding.empty())
+//     {
+//         _to_send += "Transfer-Encoding: " + _transfer_encoding + "\r\n";
+//     }
+//     if (!_content_type.empty())
+//     {
+//         _to_send += "Content-Type:";
+//         i = 0;
+//         while (i < _content_type.size())
+//         {
+//             _to_send += " " + _content_type[i];
+//             if (i + 1 < _content_type.size())
+//                 _to_send += ";";
+//             i++;
+//         }
+//         _to_send += "\r\n";
+//     }
+
+//     // 3. Request body
+//     _to_send += "\r\n";
+//     if (!_body.empty())
+//     {
+//         _to_send += _body;
+//         LOG_WRT(Logger::DEBUG, "BODY EMPTY IN RESPONSE");
+//     }
+//     return (1);
+// }
+
+
 int Response::concat_to_send(void)
 {
     size_t i;
 
     // 1. Status Line
-    _to_send += _http_version + " ";
-    _to_send += std::to_string(_status_code) + " ";
-    _to_send += _reason_phrase + "\r\n";
+    _to_send.append(_http_version);
+    _to_send.append(" ");
+    _to_send.append(std::to_string(_status_code));
+    _to_send.append(" ");
+    _to_send.append(_reason_phrase);
+    _to_send.append("\r\n");
 
     // 2. Request Headers, dans l'ordre du sujet
     if (_content_length >= 0)
     {
-        _to_send += "Content-Length: " + std::to_string(_content_length) + "\r\n";
+        _to_send.append("Content-Length: ");
+        _to_send.append(std::to_string(_content_length));
+        _to_send.append("\r\n");
     }
 
     if (!_allow.empty())
     {
-        _to_send += "allow: " + _allow + "\r\n";
+        _to_send.append("allow: ");
+        _to_send.append(_allow);
+        _to_send.append("\r\n");
     }
     if (!_last_modified.empty())
     {
-        _to_send += "Last-Modified: " + _last_modified + "\r\n";
+        _to_send.append("Last-Modified: ");
+        _to_send.append(_last_modified);
+        _to_send.append("\r\n");
     }
     if (_retry_after >= 0)
     {
-        _to_send += "Retry-After: " + std::to_string(_retry_after) + "\r\n";
+        _to_send.append("Retry-After: ");
+        _to_send.append(std::to_string(_retry_after));
+        _to_send.append("\r\n");
     }
     if (!_location.empty() && _status_code == 201)
     {
-        _to_send += "Location: " + _location + "\r\n";
+        _to_send.append("Location: ");
+        _to_send.append(_location);
+        _to_send.append("\r\n");
     }
     if (!_date.empty())
     {
-        _to_send += "Date: " + _date + "\r\n";
+        _to_send.append("Date: ");
+        _to_send.append(_date);
+        _to_send.append("\r\n");
     }
     if (!_server.empty())
     {
-        _to_send += "Server: " + _server + "\r\n";
+        _to_send.append("Server: ");
+        _to_send.append(_server);
+        _to_send.append("\r\n");
     }
     if (!_transfer_encoding.empty())
     {
-        _to_send += "Transfer-Encoding: " + _transfer_encoding + "\r\n";
+        _to_send.append("Transfer-Encoding: ");
+        _to_send.append(_transfer_encoding);
+        _to_send.append("\r\n");
     }
     if (!_content_type.empty())
     {
-        _to_send += "Content-Type:";
+        _to_send.append("Content-Type:");
         i = 0;
         while (i < _content_type.size())
         {
-            _to_send += " " + _content_type[i];
+            _to_send.append(" ");
+            _to_send.append(_content_type[i]);
             if (i + 1 < _content_type.size())
-                _to_send += ";";
+                _to_send.append(";");
             i++;
         }
-        _to_send += "\r\n";
+        _to_send.append("\r\n");
     }
 
     // 3. Request body
-    _to_send += "\r\n";
+    _to_send.append("\r\n");
     if (!_body.empty())
     {
-        _to_send += _body;
+        _to_send.append(_body);
         LOG_WRT(Logger::DEBUG, "BODY EMPTY IN RESPONSE");
     }
     return (1);
@@ -458,9 +546,9 @@ int Response::build_chunked(Request &req, char *buffer, int ret)
         ret = tmp.length();
         req._is_body_file_header = false;
     }
-    _to_send += utils_tmp::dec_to_hex(ret) + "\r\n";
-    _to_send += tmp;
-    _to_send += "\r\n";
+    _to_send.append(utils_tmp::dec_to_hex(ret) + "\r\n");
+    _to_send.append(tmp);
+    _to_send.append("\r\n");
     LOG_WRT(Logger::DEBUG, "_to_send ==>[" + std::to_string(_to_send.length()) + "]");
     if (ret == 0)
     {

@@ -144,17 +144,17 @@ void    Request::create_autoindex()
 	dir = opendir(_file.c_str());
 	if (dir)
 	{
-		_client->_response._body += "<html><body><h1>";
+		_client->_response._body.append("<html><body><h1>");
 		while ((dent = readdir(dir)) != NULL)
 		{
 			if (std::string(dent->d_name) != "..")
 			{
-				_client->_response._body += dent->d_name;
-				_client->_response._body += "\n";
+				_client->_response._body.append(dent->d_name);
+				_client->_response._body.append("\n");
 			}
 		}
 		closedir(dir);
-		_client->_response._body += "</h1></body></html>";
+		_client->_response._body.append("</h1></body></html>");
 	}
 	std::cout << _client->_response._body;
 }
@@ -274,14 +274,14 @@ void    Request::parse_body_length()
 	if (new_body_size >= _content_length)
 	{
 		cut = _content_length - body.length();
-		body += _client->_concat_body.substr(0, cut);
+		body.append(_client->_concat_body.substr(0, cut));
         LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
 		memset(buff, 0, RECV_BUFFER + 1);
 	}
 	else
 	{
-		body += _client->_concat_body;
+		body.append(_client->_concat_body);
 		memset(buff, 0, RECV_BUFFER + 1);
 	}
 }

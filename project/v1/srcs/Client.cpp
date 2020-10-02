@@ -146,7 +146,7 @@ void	Client::read_file(std::string &buff)
 	else
 	{
 		buffer[ret] = '\0';
-		buff += std::string(buffer);
+		buff.append(std::string(buffer));
 	}
 
 }
