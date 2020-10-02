@@ -111,7 +111,7 @@ class Response
 
 		size_t						_bytes_send;
 
-		//int							read_fd;
+		int							read_fd;
 		enum status
     	{
 			HANDLE_RESPONSE,

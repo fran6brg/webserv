@@ -108,13 +108,12 @@ void	Client::read_file(std::string &buff)
 	waitpid((pid_t)_pid, (int *)&status, 0);
 	
 	ret = read(_rfd, buffer, BUFFER_SIZE);
-std::cout << "ret=" <<ret << std::endl;
-
 	if (ret == -1)
 	{
 		_response._status_code = INTERNAL_ERROR_500;
 		return ;	
 	}
+	
 	if (ret == 0)
 		_read_ok = 1;
 	else if (ret > 0)
