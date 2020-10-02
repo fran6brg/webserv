@@ -464,7 +464,9 @@ int Response::build_chunked(Request &req, char *buffer, int ret)
     if (ret == 0)
     {
         FD_CLR(_client->_rfd, &g_conf._save_readfds);
+		print_all_fd();
         g_conf.remove_fd(_client->_rfd);
+		print_all_fd();
         close(read_fd);
         read_fd = -1;
         _client->_rfd = -1;
