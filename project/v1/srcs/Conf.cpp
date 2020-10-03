@@ -72,13 +72,19 @@ void find_fd(int fd)
             return;
     }
     LOG_WRT(Logger::DEBUG, "error no fd " + std::to_string(fd) + "in active_fds");
-    // exit(EXIT_FAILURE);
 }
 
 void Conf::add_fd(int fd)
 {
-    LOG_WRT(Logger::DEBUG, "add_fd() " + std::to_string(fd));
-    _active_fds.push_back(fd);
+    if (fd >= 0)
+    {
+        LOG_WRT(Logger::DEBUG, "add_fd() " + std::to_string(fd));
+        _active_fds.push_back(fd);
+    }
+    else
+    {
+        LOG_WRT(Logger::DEBUG, "can't add_fd(-1) " + std::to_string(fd));
+    }    
 }
 
 void Conf::remove_fd(int fd)
