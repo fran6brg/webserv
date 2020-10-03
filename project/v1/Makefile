@@ -63,7 +63,7 @@ all: $(NAME)
 	@touch ./www/perso/delete/to_delete
 	@$(RM) ./www/tester/file_should_exist_after
 	@$(RM) ./www/tester/multiple_same
-	@$(RM) ./www/tester/temp_file
+	@$(RM) ./www/temp_file
 
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL) $(OBJREQ)
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJ} ${OBJLIB} ${OBJGNL} $(OBJREQ)
@@ -89,11 +89,11 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME)
-	$(RM) webserv.dSYM
-	$(RM) log/*.txt
-	$(RM) www/tester/file_should_exist_after
-	$(RM) www/tester/multiple_same
-	$(RM) www/tester/temp_file
+	$(RM) ./webserv.dSYM
+	$(RM) ./log/*.txt
+	$(RM) ./www/tester/file_should_exist_after
+	$(RM) ./www/tester/multiple_same
+	$(RM) ./www/temp_file
 
 re:	fclean all
 
