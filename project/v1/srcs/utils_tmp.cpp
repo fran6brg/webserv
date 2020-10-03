@@ -200,6 +200,7 @@ void utils_tmp::free_strtab(char ***tab)
         free((*tab)[j++]);
     }
     free(*tab);
+    tab = NULL;
 }
 
 int utils_tmp::is_valide_methods(std::string &meth)

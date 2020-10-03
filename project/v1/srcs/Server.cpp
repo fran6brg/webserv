@@ -104,7 +104,7 @@ int Server::acceptNewClient(void)
     else
     {
 		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));	
-        fcntl(accept_fd, F_SETFL, O_NONBLOCK);
+        // fcntl(accept_fd, F_SETFL, O_NONBLOCK);
         Client	*c = new Client(this, accept_fd, client_addr);
         if (g_conf.get_nb_open_fds() > 256)
         {
@@ -195,7 +195,7 @@ int Server::recvRequest(Client *c)
                     size_t pos = c->_concat_body.find("\r\n\r\n");
                     c->_concat_body.erase(0, pos + 4);
                     LOG_WRT(Logger::DEBUG, "c->_concat_body = " + c->_concat_body);
-                    memset(c->_buffermalloc, 0, RECV_BUFFER + 1);
+                    memset(c->_buffermalloc, '\0', RECV_BUFFER + 1);
                 }
                 else
                     c->recv_status = Client::COMPLETE;

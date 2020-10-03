@@ -18,7 +18,7 @@ Client::Client(Server *server, int accept_fd, struct sockaddr_in addr):
 	FD_SET(_accept_fd, &g_conf._save_readfds);
 	g_conf.add_fd(_accept_fd);
 	_buffermalloc = (char *)malloc(sizeof(char) * (RECV_BUFFER + 1));
-	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
+	memset((void *)_buffermalloc, '\0', RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;
 	_last_active_time = utils_tmp::get_date();
@@ -38,7 +38,7 @@ Client::~Client()
 		+ std::string(RESET));
 	if (_buffermalloc)
 	{
-		try { free(_buffermalloc); }
+		try { free(_buffermalloc); _buffermalloc = NULL; }
 		catch (...) { LOG_WRT(Logger::DEBUG, "double free destructor client"); }
 	}
 	if (_accept_fd != -1)
@@ -72,7 +72,7 @@ void Client::reset(void)
 	FD_CLR(_accept_fd, &g_conf._readfds);
 	FD_CLR(_accept_fd, &g_conf._save_writefds);
 	FD_CLR(_accept_fd, &g_conf._writefds);
-	memset((void *)_buffermalloc, 0, RECV_BUFFER + 1);
+	memset((void *)_buffermalloc, '\0', RECV_BUFFER + 1);
 	recv_status = HEADER;
 	_line_size = -1;
 	if (_wfd != -1)

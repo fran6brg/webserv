@@ -277,12 +277,12 @@ void    Request::parse_body_length()
 		body.append(_client->_concat_body.substr(0, cut));
         LOG_WRT(Logger::DEBUG, "Request::parse_body_length(): Client::COMPLETE");
 		_client->recv_status = Client::COMPLETE;
-		memset(buff, 0, RECV_BUFFER + 1);
+		memset(buff, '\0', RECV_BUFFER + 1);
 	}
 	else
 	{
 		body.append(_client->_concat_body);
-		memset(buff, 0, RECV_BUFFER + 1);
+		memset(buff, '\0', RECV_BUFFER + 1);
 	}
 }
 
@@ -355,7 +355,7 @@ void    Request::parse_body_chunked()
         }
         LOG_WRT(Logger::DEBUG, "--- end while ---\n");
 	}
-	memset(recv_buffer, 0, RECV_BUFFER + 1);
+	memset(recv_buffer, '\0', RECV_BUFFER + 1);
     LOG_WRT(Logger::DEBUG, "end parse_body_chunked()");
 }
 
