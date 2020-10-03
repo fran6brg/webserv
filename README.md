@@ -49,6 +49,9 @@ cd project/v1 && make tester
 - wiki https://fr.wikipedia.org/wiki/Chunked_transfer_encoding
 - the idea https://www.geeksforgeeks.org/http-headers-transfer-encoding/
 
+### utils
+- https://blog.seboss666.info/2015/08/reprenez-le-controle-du-cache-memoire-du-noyau-linux/
+
 # 3. testing
 
 - python library to make http requests https://requests.readthedocs.io/en/master/
