@@ -104,8 +104,8 @@ int Server::acceptNewClient(void)
     else
     {
 		LOG_WRT(Logger::DEBUG, _name + "(" + std::to_string(_port) + ") -> accept_fd = " + std::to_string(accept_fd));	
+        fcntl(accept_fd, F_SETFL, O_NONBLOCK);
         Client	*c = new Client(this, accept_fd, client_addr);
-
         if (g_conf.get_nb_open_fds() > 256)
         {
             LOG_WRT(Logger::INFO, std::string(MAGENTA_C)
@@ -276,12 +276,8 @@ int Server::sendResponse(Client *c)
 			c->_response._bytes_send = 0;
 			c->_response._to_send.clear();
 
-			if (!c->_request._body_file.empty()/* && c->_response.read_fd != -1*/)
-			{
+			if (!c->_request._body_file.empty())
                 c->_rfd = c->_response.read_fd;
-                //if (c->_read_ok == 1)
-				//	c->_response.send_status = c->_response.COMPLETE;
-			}
 			else
 				c->_is_finished = true;
         }

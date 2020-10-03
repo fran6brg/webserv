@@ -1,4 +1,4 @@
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re cache
 
 CC			= 	clang++
 CPPFLAGS	= 	-Wall -Wextra -Werror -g
@@ -64,6 +64,7 @@ all: $(NAME)
 	@$(RM) ./www/tester/file_should_exist_after
 	@$(RM) ./www/tester/multiple_same
 	@$(RM) ./www/tester/temp_file
+
 $(NAME): $(OBJ) $(OBJLIB) $(OBJGNL) $(OBJREQ)
 	${CC} ${VERSION} ${CPPFLAGS} -o ${NAME} ${OBJ} ${OBJLIB} ${OBJGNL} $(OBJREQ)
 
@@ -93,25 +94,26 @@ fclean: clean
 	$(RM) www/tester/file_should_exist_after
 	$(RM) www/tester/multiple_same
 	$(RM) www/tester/temp_file
-	
+
+re:	fclean all
+
+cache:
+	free && sync && sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches' && free
+
 launch: all
 	./webserv conf/tester.conf
 
 tester:
 	../../intra/tester http://localhost:8080
 
-ubuntu_launch: all
+ubuntu_launch: all cache
 	./webserv conf/ubuntu_tester.conf
 
-ubuntu_tester: 
+ubuntu_tester: cache
 	../../intra/ubuntu_tester http://localhost:8080
 
-valgrind: all 
+valgrind: all cache
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./webserv conf/ubuntu_tester.conf
 
-valgrind_light: all 
+valgrind_light: all cache
 	valgrind ./webserv conf/ubuntu_tester.conf
-
-re:	fclean all
-
-re: fclean all

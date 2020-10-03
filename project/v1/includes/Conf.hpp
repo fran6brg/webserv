@@ -5,7 +5,7 @@
 ** Const
 */
 
-#define CLIENT_CONNECTION_TIMEOUT  25
+#define CLIENT_CONNECTION_TIMEOUT  60
 #define OPEN_MAX_PADDING           10
 
 /*

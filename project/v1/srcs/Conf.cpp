@@ -72,7 +72,7 @@ void find_fd(int fd)
             return;
     }
     LOG_WRT(Logger::DEBUG, "error no fd " + std::to_string(fd) + "in active_fds");
-    exit(EXIT_FAILURE);
+    // exit(EXIT_FAILURE);
 }
 
 void Conf::add_fd(int fd)

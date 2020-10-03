@@ -181,14 +181,12 @@ int main(int argc, char *argv[])
 		if (select_ret == -1)
 		{
 			LOG_WRT(Logger::INFO, std::string(RED_C) + "break on select() == -1" + std::string(RESET));
-			exit(EXIT_FAILURE);
-			// break ;
+			break ;
 		}
 		else if (select_ret == 0)
 		{
 			LOG_WRT(Logger::INFO, std::string(RED_C) + "break on select() == 0" + std::string(RESET));
-			exit(EXIT_FAILURE);
-			// break ;
+			break ;
 		}		
 		else
 		{
