@@ -50,6 +50,7 @@ cd project/v1 && make tester
 - the idea https://www.geeksforgeeks.org/http-headers-transfer-encoding/
 
 ### utils
+- https://superuser.com/questions/48505/how-to-find-virtual-memory-size-and-cache-size-of-a-linux-system
 - https://blog.seboss666.info/2015/08/reprenez-le-controle-du-cache-memoire-du-noyau-linux/
 
 # 3. testing
