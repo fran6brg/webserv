@@ -1,4 +1,6 @@
 work in progress
+# 42 mandatory project
+Teamed with : [ylegzouli](https://github.com/ylegzouli) and [flavienfr](https://github.com/flavienfr) 42 students
 
 # 1. usage
 
