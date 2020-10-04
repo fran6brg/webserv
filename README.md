@@ -1,8 +1,8 @@
-work in progress
 # 42 mandatory project
-Teamed with 42 students [ylegzouli](https://github.com/ylegzouli) and [flavienfr](https://github.com/flavienfr) 🚀
+- project name: webserv
+- Teamed with 42 students [ylegzouli](https://github.com/ylegzouli) and [flavienfr](https://github.com/flavienfr) 🚀
 
-# 1. usage
+# 1. usage (work in progress)
 
 ```
 cd project/v1 && make launch
