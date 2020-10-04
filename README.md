@@ -2,7 +2,7 @@
 - project name: webserv
 - Teamed with 42 students [ylegzouli](https://github.com/ylegzouli) and [flavienfr](https://github.com/flavienfr) 🚀
 
-# 1. usage (work in progress)
+# 1. usage (mac OS)
 
 ```
 cd project/v1 && make launch
